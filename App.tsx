@@ -642,18 +642,21 @@ const StudentDashboard: React.FC<{
 };
 
 const AdminDashboard: React.FC<{
-  student: StudentProfile,
+  students: StudentProfile[],
+  selectedStudent: StudentProfile,
+  onSelectStudent: (id: string) => void,
   onUpdateStatus: (status: StudentProfile['status'], feedback?: string) => void,
   onUpdateEvidenceStatus: (cat: CriterionType, id: string, status: Evidence['status'], feedback?: string) => void,
   onUpdateFieldVerification: (field: keyof StudentProfile['verifications'], action: FieldVerification['status'], feedback?: string) => void,
   faces: FeaturedFace[],
   onUpdateFaces: (faces: FeaturedFace[]) => void
-}> = ({ student, onUpdateStatus, onUpdateEvidenceStatus, onUpdateFieldVerification, faces, onUpdateFaces }) => {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+}> = ({ students, selectedStudent, onSelectStudent, onUpdateStatus, onUpdateEvidenceStatus, onUpdateFieldVerification, faces, onUpdateFaces }) => {
   const [activeTab, setActiveTab] = useState<'profiles' | 'criteria' | 'users' | 'posts' | 'stats' | 'faces'>('profiles');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const isSelected = selectedId === student.id;
+
+  const isSelected = !!selectedStudent && (selectedStudent.status !== 'Draft');
+  const [isReviewing, setIsReviewing] = useState(false);
 
   // State for CRUD
   const LEVELS = ['Cấp Khoa/CLB', 'Cấp Trường/Phường/Xã', 'Cấp ĐHĐN', 'Cấp Tỉnh/Thành phố', 'Cấp Trung ương'];
@@ -686,11 +689,11 @@ const AdminDashboard: React.FC<{
     if (!window.confirm(`Xác nhận thực hiện hành động: ${actionTxt}?`)) return;
     let fb = '';
     if (status === 'Rejected') { fb = prompt('Lý do hồ sơ KHÔNG ĐẠT:') || ''; if (!fb) return; }
-    else if (status === 'Processing') { fb = prompt(`Nhập lời nhắn giải trình gửi đến SV ${student.fullName}:`) || 'Vui lòng kiểm tra và giải trình các mục Admin đã đánh dấu.'; }
+    else if (status === 'Processing') { fb = prompt(`Nhập lời nhắn giải trình gửi đến SV ${selectedStudent.fullName}:`) || 'Vui lòng kiểm tra và giải trình các mục Admin đã đánh dấu.'; }
     onUpdateStatus(status, fb);
-    if (status === 'Processing') alert(`✅ Đã gửi yêu cầu giải trình đến sinh viên ${student.fullName} thành công!`);
-    else if (status === 'Approved') alert(`🌟 Đã công nhận danh hiệu cho SV ${student.fullName}.`);
-    setSelectedId(null);
+    if (status === 'Processing') alert(`✅ Đã gửi yêu cầu giải trình đến sinh viên ${selectedStudent.fullName} thành công!`);
+    else if (status === 'Approved') alert(`🌟 Đã công nhận danh hiệu cho SV ${selectedStudent.fullName}.`);
+    setIsReviewing(false);
   };
 
   const handleEvidenceAction = (cat: CriterionType, id: string, action: 'Approved' | 'Rejected' | 'NeedsExplanation') => {
@@ -705,10 +708,108 @@ const AdminDashboard: React.FC<{
     onUpdateFieldVerification(fieldKey, action, feedback);
   };
 
+  // Featured Faces Management
+  const [faceForm, setFaceForm] = useState<{ mode: 'add' | 'edit', id?: string, name: string, achievement: string, content: string, image: string } | null>(null);
+
+  const handleSaveFace = () => {
+    if (!faceForm) return;
+    let newFaces = [...faces];
+    if (faceForm.mode === 'add') {
+      const newFace: FeaturedFace = {
+        id: Date.now().toString(),
+        name: faceForm.name,
+        achievement: faceForm.achievement,
+        content: faceForm.content,
+        image: faceForm.image || `https://picsum.photos/seed/${Date.now()}/400/400`
+      };
+      newFaces.push(newFace);
+    } else {
+      newFaces = newFaces.map(f => f.id === faceForm.id ? { ...f, name: faceForm.name, achievement: faceForm.achievement, content: faceForm.content, image: faceForm.image } : f);
+    }
+    onUpdateFaces(newFaces);
+    setFaceForm(null);
+  };
+
+  const handleDeleteFace = (id: string) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa gương mặt này?')) {
+      onUpdateFaces(faces.filter(f => f.id !== id));
+    }
+  };
+
+  const openAddFace = () => setFaceForm({ mode: 'add', name: '', achievement: '', content: '', image: '' });
+  const openEditFace = (face: FeaturedFace) => setFaceForm({ mode: 'edit', id: face.id, name: face.name, achievement: face.achievement, content: face.content, image: face.image });
+
+  const renderFaces = () => (
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-black text-blue-900 uppercase">Quản lý Gương mặt tiêu biểu</h2>
+        <button onClick={openAddFace} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-md">
+          <i className="fas fa-plus mr-2"></i>Thêm gương mặt
+        </button>
+      </div>
+
+      {faceForm && (
+        <div className="bg-white border-2 border-blue-900/10 rounded-xl p-8 shadow-xl animate-fade-in">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><i className="fas fa-user-edit"></i></div>
+            <h3 className="text-sm font-black text-blue-900 uppercase tracking-widest">{faceForm.mode === 'add' ? 'Thêm gương mặt mới' : 'Chỉnh sửa thông tin'}</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tên sinh viên</label>
+              <input type="text" value={faceForm.name} onChange={e => setFaceForm({ ...faceForm, name: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="VD: Nguyễn Văn A" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Thành tích nổi bật</label>
+              <input type="text" value={faceForm.achievement} onChange={e => setFaceForm({ ...faceForm, achievement: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="VD: Giải Nhất NCKH Cấp Quốc gia" />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tiêu đề / Trích dẫn</label>
+              <textarea value={faceForm.content} onChange={e => setFaceForm({ ...faceForm, content: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-medium h-24" placeholder="VD: Gương mặt sinh viên xuất sắc tiêu biểu của nhà trường." />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">URL Hình ảnh</label>
+              <div className="flex gap-4">
+                <input type="text" value={faceForm.image} onChange={e => setFaceForm({ ...faceForm, image: e.target.value })} className="flex-1 px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-xs" placeholder="https://..." />
+                {faceForm.image && <img src={faceForm.image} className="w-12 h-12 rounded object-cover border" alt="Preview" />}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
+            <button onClick={() => setFaceForm(null)} className="px-6 py-3 border text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Hủy bỏ</button>
+            <button onClick={handleSaveFace} disabled={!faceForm.name || !faceForm.achievement} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 shadow-md disabled:opacity-50">Lưu thông tin</button>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {faces.map(face => (
+          <div key={face.id} className="bg-white border rounded-xl overflow-hidden group hover:shadow-xl transition-all relative">
+            <div className="aspect-[4/3] bg-gray-100 overflow-hidden relative">
+              <img src={face.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt={face.name} />
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                <button onClick={() => openEditFace(face)} className="w-8 h-8 bg-white/90 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-lg"><i className="fas fa-pen text-[10px]"></i></button>
+                <button onClick={() => handleDeleteFace(face.id)} className="w-8 h-8 bg-white/90 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-lg"><i className="fas fa-trash text-[10px]"></i></button>
+              </div>
+            </div>
+            <div className="p-6">
+              <h4 className="text-sm font-black text-blue-900 uppercase mb-1 font-formal">{face.name}</h4>
+              <p className="text-orange-600 font-black text-[9px] uppercase tracking-widest mb-3">{face.achievement}</p>
+              <p className="text-xs text-gray-400 italic line-clamp-2">"{face.content}"</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const getExplanationCount = () => {
     let count = 0;
-    (Object.values(student.verifications) as FieldVerification[]).forEach(v => { if (v.status === 'NeedsExplanation') count++; });
-    (Object.values(student.evidences) as Evidence[][]).forEach(list => list.forEach(e => { if (e.status === 'NeedsExplanation') count++; }));
+    if (!selectedStudent) return 0;
+    (Object.values(selectedStudent.verifications) as FieldVerification[]).forEach(v => { if (v.status === 'NeedsExplanation') count++; });
+    (Object.values(selectedStudent.evidences) as Evidence[][]).forEach(list => list.forEach(e => { if (e.status === 'NeedsExplanation') count++; }));
     return count;
   };
 
@@ -722,90 +823,186 @@ const AdminDashboard: React.FC<{
   ];
 
   // ====== RENDER CONTENT AREAS ======
-  const renderProfiles = () => (
-    <div className="space-y-6 animate-fade-in">
-      {/* Search & Filter */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 relative">
-          <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
-          <input type="text" placeholder="Tìm kiếm theo tên hoặc mã SV..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-lg text-sm font-medium focus:border-blue-500 outline-none transition-all" />
-        </div>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-100 rounded-lg text-xs font-bold uppercase tracking-widest focus:border-blue-500 outline-none">
-          <option value="all">Tất cả trạng thái</option>
-          <option value="Submitted">Chờ thẩm định</option>
-          <option value="Processing">Đang giải trình</option>
-          <option value="Approved">Đã duyệt</option>
-          <option value="Rejected">Từ chối</option>
-        </select>
-      </div>
-      {/* Table */}
-      <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-50 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
-            <tr><th className="px-6 py-4">Sinh viên</th><th className="px-6 py-4">Lớp</th><th className="px-6 py-4 text-center">Trạng thái</th><th className="px-6 py-4 text-center">Điểm</th><th className="px-6 py-4"></th></tr>
-          </thead>
-          <tbody className="divide-y">
-            <tr className="hover:bg-blue-50/50 transition-colors">
-              <td className="px-6 py-5">
-                <span className="block font-black text-blue-900 uppercase text-sm">{student.fullName}</span>
-                <span className="block text-[9px] text-gray-400 font-bold uppercase mt-0.5">{student.studentId}</span>
-              </td>
-              <td className="px-6 py-5 text-xs font-bold text-gray-500">{student.class}</td>
-              <td className="px-6 py-5 text-center">
-                <div className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest inline-block rounded-full ${student.status === 'Approved' ? 'bg-green-100 text-green-700' : student.status === 'Rejected' ? 'bg-red-100 text-red-600' : student.status === 'Processing' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}`}>
-                  {student.status === 'Submitted' ? 'Chờ thẩm định' : student.status === 'Processing' ? 'Đang giải trình' : student.status === 'Approved' ? 'Đã duyệt' : student.status === 'Rejected' ? 'Từ chối' : student.status}
-                </div>
-              </td>
-              <td className="px-6 py-5 text-center text-xl font-black text-blue-900 font-formal">{student.totalScore}</td>
-              <td className="px-6 py-5 text-right">
-                <button onClick={() => setSelectedId(student.id)} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-sm">
-                  <i className="fas fa-eye mr-1.5"></i>Thẩm định
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  const renderProfiles = () => {
+    const filtered = students.filter(s => {
+      const matchesSearch = s.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || s.studentId.includes(searchQuery);
+      const matchesStatus = statusFilter === 'all' || s.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
 
-  const renderStats = () => (
-    <div className="space-y-8 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        {[
-          { label: 'Tổng hồ sơ', val: '128', icon: 'fa-file-alt', color: 'bg-blue-500', bg: 'bg-blue-50' },
-          { label: 'Đã duyệt', val: '42', icon: 'fa-check-circle', color: 'bg-green-500', bg: 'bg-green-50' },
-          { label: 'Đang giải trình', val: '15', icon: 'fa-clock', color: 'bg-orange-500', bg: 'bg-orange-50' },
-          { label: 'Từ chối', val: '8', icon: 'fa-times-circle', color: 'bg-red-500', bg: 'bg-red-50' },
-        ].map((stat, i) => (
-          <div key={i} className={`${stat.bg} p-6 rounded-xl border flex items-center gap-5`}>
-            <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-white text-lg shadow-md`}><i className={`fas ${stat.icon}`}></i></div>
-            <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
-              <p className="text-2xl font-black text-blue-900 font-formal">{stat.val}</p>
-            </div>
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Search & Filter */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
+            <input type="text" placeholder="Tìm kiếm theo tên hoặc mã SV..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-lg text-sm font-medium focus:border-blue-500 outline-none transition-all" />
           </div>
-        ))}
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-100 rounded-lg text-xs font-bold uppercase tracking-widest focus:border-blue-500 outline-none">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="Submitted">Chờ thẩm định</option>
+            <option value="Processing">Đang giải trình</option>
+            <option value="Approved">Đã duyệt</option>
+            <option value="Rejected">Từ chối</option>
+          </select>
+        </div>
+        {/* Table */}
+        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+          <table className="w-full text-left">
+            <thead className="bg-gray-50 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
+              <tr><th className="px-6 py-4">Sinh viên</th><th className="px-6 py-4">Lớp</th><th className="px-6 py-4 text-center">Trạng thái</th><th className="px-6 py-4 text-center">Điểm</th><th className="px-6 py-4"></th></tr>
+            </thead>
+            <tbody className="divide-y">
+              {filtered.map(s => (
+                <tr key={s.id} className="hover:bg-blue-50/50 transition-colors">
+                  <td className="px-6 py-5">
+                    <span className="block font-black text-blue-900 uppercase text-sm">{s.fullName}</span>
+                    <span className="block text-[9px] text-gray-400 font-bold uppercase mt-0.5">{s.studentId}</span>
+                  </td>
+                  <td className="px-6 py-5 text-xs font-bold text-gray-500">{s.class}</td>
+                  <td className="px-6 py-5 text-center">
+                    <div className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest inline-block rounded-full ${s.status === 'Approved' ? 'bg-green-100 text-green-700' : s.status === 'Rejected' ? 'bg-red-100 text-red-600' : s.status === 'Processing' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {s.status === 'Submitted' ? 'Chờ thẩm định' : s.status === 'Processing' ? 'Đang giải trình' : s.status === 'Approved' ? 'Đã duyệt' : s.status === 'Rejected' ? 'Từ chối' : s.status}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-center text-xl font-black text-blue-900 font-formal">{s.totalScore}</td>
+                  <td className="px-6 py-5 text-right">
+                    <button onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-sm">
+                      <i className="fas fa-eye mr-1.5"></i>Thẩm định
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-xs font-bold uppercase tracking-widest">Không tìm thấy hồ sơ nào</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className="bg-white border rounded-xl p-8 space-y-6">
-        <h3 className="text-sm font-black text-blue-900 uppercase tracking-widest">Phân bố trạng thái hồ sơ</h3>
-        <div className="flex items-end gap-3 h-48">
+    );
+  };
+
+  const renderStats = () => {
+    const total = students.length;
+    const approved = students.filter(s => s.status === 'Approved').length;
+    const processing = students.filter(s => s.status === 'Processing').length;
+    const rejected = students.filter(s => s.status === 'Rejected').length;
+
+    // Faculty breakdown
+    const faculties = Array.from(new Set(students.map(s => s.faculty)));
+    const facultyStats = faculties.map(f => {
+      const sInF = students.filter(s => s.faculty === f);
+      const appInF = sInF.filter(s => s.status === 'Approved').length;
+      return { name: f, total: sInF.length, approved: appInF };
+    });
+
+    // Top students
+    const topStudents = [...students].sort((a, b) => b.totalScore - a.totalScore).slice(0, 5);
+
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { label: 'Chờ', pct: 50, color: 'bg-blue-500' },
-            { label: 'Giải trình', pct: 12, color: 'bg-orange-500' },
-            { label: 'Đã duyệt', pct: 33, color: 'bg-green-500' },
-            { label: 'Từ chối', pct: 6, color: 'bg-red-500' },
-          ].map((bar, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-2">
-              <span className="text-xs font-black text-gray-500">{bar.pct}%</span>
-              <div className={`w-full ${bar.color} rounded-t-lg transition-all`} style={{ height: `${bar.pct * 1.6}%` }}></div>
-              <span className="text-[8px] font-bold text-gray-400 uppercase">{bar.label}</span>
+            { label: 'Tổng hồ sơ', val: total, icon: 'fa-file-alt', color: 'bg-blue-500', bg: 'bg-blue-50' },
+            { label: 'Đã duyệt', val: approved, icon: 'fa-check-circle', color: 'bg-green-500', bg: 'bg-green-50' },
+            { label: 'Cần giải trình', val: processing, icon: 'fa-clock', color: 'bg-orange-500', bg: 'bg-orange-50' },
+            { label: 'Từ chối', val: rejected, icon: 'fa-times-circle', color: 'bg-red-500', bg: 'bg-red-50' },
+          ].map((stat, i) => (
+            <div key={i} className={`${stat.bg} p-6 rounded-xl border flex items-center gap-5`}>
+              <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-white text-lg shadow-md`}><i className={`fas ${stat.icon}`}></i></div>
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
+                <p className="text-2xl font-black text-blue-900 font-formal">{stat.val}</p>
+              </div>
             </div>
           ))}
         </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white border rounded-xl overflow-hidden">
+            <div className="px-6 py-5 border-b bg-gray-50/50 flex justify-between items-center">
+              <h3 className="text-xs font-black text-blue-900 uppercase tracking-[0.2em]">Thống kê theo đơn vị</h3>
+              <i className="fas fa-university text-gray-300"></i>
+            </div>
+            <div className="p-0 overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-white border-b text-[8px] font-black uppercase text-gray-400 tracking-widest">
+                  <tr><th className="px-6 py-4">Khoa/Đơn vị</th><th className="px-6 py-4 text-center">Hồ sơ</th><th className="px-6 py-4 text-center">Đã duyệt</th><th className="px-6 py-4 text-center">Tỷ lệ</th></tr>
+                </thead>
+                <tbody className="divide-y">
+                  {facultyStats.map((f, i) => (
+                    <tr key={i} className="hover:bg-blue-50/30">
+                      <td className="px-6 py-4 text-[10px] font-black text-blue-900 uppercase">{f.name}</td>
+                      <td className="px-6 py-4 text-center text-sm font-bold text-gray-500">{f.total}</td>
+                      <td className="px-6 py-4 text-center text-sm font-bold text-green-600">{f.approved}</td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-black text-blue-900">{Math.round((f.approved / f.total) * 100)}%</span>
+                          <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden min-w-[60px]">
+                            <div className="h-full bg-blue-500" style={{ width: `${(f.approved / f.total) * 100}%` }}></div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="bg-white border rounded-xl overflow-hidden">
+            <div className="px-6 py-5 border-b bg-gray-50/50 flex justify-between items-center">
+              <h3 className="text-xs font-black text-blue-900 uppercase tracking-[0.2em]">Top hồ sơ xuất sắc</h3>
+              <i className="fas fa-trophy text-orange-400"></i>
+            </div>
+            <div className="p-0">
+              {topStudents.map((s, i) => (
+                <div key={s.id} className="px-6 py-4 flex items-center justify-between hover:bg-orange-50/30 border-b last:border-0">
+                  <div className="flex items-center gap-4">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${i === 0 ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-400'}`}>{i + 1}</span>
+                    <div>
+                      <p className="text-[10px] font-black text-blue-900 uppercase">{s.fullName}</p>
+                      <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{s.class}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-black text-blue-900 font-formal">{s.totalScore}</p>
+                    <p className="text-[7px] font-bold text-gray-400 uppercase tracking-widest">Điểm xét duyệt</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white border rounded-xl p-8 space-y-6">
+          <h3 className="text-xs font-black text-blue-900 uppercase tracking-widest">Tiến độ xét duyệt chung</h3>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { label: 'Hoàn tất', val: approved, total: total, color: 'bg-green-500' },
+              { label: 'Chờ xử lý', val: total - approved - rejected, total: total, color: 'bg-blue-500' },
+              { label: 'Từ chối', val: rejected, total: total, color: 'bg-red-500' },
+              { label: 'Mục tiêu', val: total, total: total, color: 'bg-orange-500' },
+            ].map((circle, i) => (
+              <div key={i} className="flex flex-col items-center gap-4">
+                <div className="relative w-24 h-24">
+                  <svg className="w-full h-full -rotate-90">
+                    <circle cx="48" cy="48" r="40" fill="none" stroke="#f3f4f6" strokeWidth="8" />
+                    <circle cx="48" cy="48" r="40" fill="none" stroke="currentColor" strokeWidth="8" strokeDasharray={251.2} strokeDashoffset={251.2 * (1 - circle.val / circle.total)} className={`${circle.color.replace('bg-', 'text-')} transition-all duration-1000`} />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-lg font-black text-blue-900">{Math.round((circle.val / circle.total) * 100)}%</span>
+                  </div>
+                </div>
+                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{circle.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Criteria form modal state
   const [criteriaForm, setCriteriaForm] = useState<{ mode: 'add' | 'edit'; cat: string; id?: string; description: string; isHard: boolean; hasDecisionNumber: boolean; levelPoints: Record<string, number> } | null>(null);
@@ -1027,6 +1224,7 @@ const AdminDashboard: React.FC<{
       case 'criteria': return renderCriteria();
       case 'users': return renderUsers();
       case 'posts': return renderPosts();
+      case 'faces': return renderFaces();
       default: return null;
     }
   };
@@ -1079,41 +1277,41 @@ const AdminDashboard: React.FC<{
           </div>
         </div>
         {/* Content */}
-        <div className="flex-1 p-8">{activeTab === 'faces' ? null : renderContent()}</div>
+        <div className="flex-1 p-8">{renderContent()}</div>
       </div>
 
 
       {/* Profile Review Modal - Full screen */}
-      {isSelected && (
+      {isReviewing && selectedStudent && (
         <div className="fixed inset-0 z-[1100] bg-white animate-fade-in overflow-y-auto">
           <div className="bg-white w-full min-h-full">
             <div className="px-8 py-5 bg-gradient-to-r from-[#002b5c] to-[#003d7a] flex justify-between items-center shadow-lg">
               <div className="flex items-center gap-6">
-                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white text-xl font-formal italic">{student.fullName.charAt(0)}</div>
+                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white text-xl font-formal italic">{selectedStudent.fullName.charAt(0)}</div>
                 <div>
-                  <h3 className="text-xl font-black uppercase font-formal tracking-tight text-white">{student.fullName}</h3>
-                  <p className="text-[10px] font-bold text-blue-200/60 uppercase mt-0.5 tracking-widest">{student.studentId} • {student.class} • {student.faculty}</p>
+                  <h3 className="text-xl font-black uppercase font-formal tracking-tight text-white">{selectedStudent.fullName}</h3>
+                  <p className="text-[10px] font-bold text-blue-200/60 uppercase mt-0.5 tracking-widest">{selectedStudent.studentId} • {selectedStudent.class} • {selectedStudent.faculty}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[9px] font-bold text-blue-200/50 uppercase">Điểm: <span className="text-orange-400 font-black text-sm">{student.totalScore}</span></span>
+                <span className="text-[9px] font-bold text-blue-200/50 uppercase">Điểm: <span className="text-orange-400 font-black text-sm">{selectedStudent.totalScore}</span></span>
                 <button onClick={() => handleAction('Rejected')} className="px-4 py-2 border border-red-400/40 text-red-300 font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-red-500/20 transition-all">Từ chối</button>
                 {getExplanationCount() > 0 && <button onClick={() => handleAction('Processing')} className="px-4 py-2 bg-orange-500/80 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-500 transition-all animate-pulse">Giải trình ({getExplanationCount()})</button>}
                 <button onClick={() => handleAction('Approved')} className="px-5 py-2 bg-green-500 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-green-600 transition-all shadow-md">Duyệt</button>
-                <button onClick={() => setSelectedId(null)} className="w-10 h-10 rounded-lg bg-white/10 hover:bg-red-500/30 text-white/60 hover:text-white flex items-center justify-center transition-all ml-2"><i className="fas fa-times text-sm"></i></button>
+                <button onClick={() => setIsReviewing(false)} className="w-10 h-10 rounded-lg bg-white/10 hover:bg-red-500/30 text-white/60 hover:text-white flex items-center justify-center transition-all ml-2"><i className="fas fa-times text-sm"></i></button>
               </div>
             </div>
 
             <div className="p-8 space-y-8 bg-gray-50">
               {Object.values(CriterionType).map((cat) => {
-                const list = student.evidences[cat] || [];
-                const isHardMet = checkHardMet(cat, student);
+                const list = selectedStudent.evidences[cat] || [];
+                const isHardMetValue = checkHardMet(cat, selectedStudent);
                 let dataValue = "", contextName = "", fieldKey: keyof StudentProfile['verifications'] | null = null;
-                if (cat === CriterionType.ETHICS) { dataValue = `${student.trainingPoints}`; contextName = "Điểm rèn luyện"; fieldKey = "trainingPoints"; }
-                if (cat === CriterionType.ACADEMIC) { dataValue = `${student.gpa}`; contextName = "GPA"; fieldKey = "gpa"; }
-                if (cat === CriterionType.PHYSICAL) { dataValue = `${student.peScore}`; contextName = "Điểm Thể dục"; fieldKey = "peScore"; }
-                if (cat === CriterionType.INTEGRATION) { dataValue = `${student.englishLevel}`; contextName = "Ngoại ngữ"; fieldKey = "english"; }
-                const verification = fieldKey ? student.verifications[fieldKey] : { status: 'Pending' };
+                if (cat === CriterionType.ETHICS) { dataValue = `${selectedStudent.trainingPoints}`; contextName = "Điểm rèn luyện"; fieldKey = "trainingPoints"; }
+                if (cat === CriterionType.ACADEMIC) { dataValue = `${selectedStudent.gpa}`; contextName = "GPA"; fieldKey = "gpa"; }
+                if (cat === CriterionType.PHYSICAL) { dataValue = `${selectedStudent.peScore}`; contextName = "Điểm Thể dục"; fieldKey = "peScore"; }
+                if (cat === CriterionType.INTEGRATION) { dataValue = `${selectedStudent.englishLevel}`; contextName = "Ngoại ngữ"; fieldKey = "english"; }
+                const verification = fieldKey ? selectedStudent.verifications[fieldKey] : { status: 'Pending' };
 
                 return (
                   <div key={cat} className={`bg-white border rounded-lg shadow-sm overflow-hidden transition-all duration-300 ${verification.status === 'NeedsExplanation' ? 'ring-2 ring-orange-500' : verification.status === 'Rejected' ? 'ring-2 ring-red-500' : ''}`}>
@@ -1407,31 +1605,63 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin') => void, onNavi
   );
 };
 
+const MOCK_STUDENTS: StudentProfile[] = [
+  {
+    id: 'SV001', fullName: 'Lê Thanh Bình', studentId: '20123456', class: 'K20.CNTT', faculty: 'Khoa Công nghệ thông tin',
+    gpa: 3.8, peScore: 9.0, trainingPoints: 95, englishLevel: 'B2', englishGpa: 3.5, isPartyMember: true, noViolation: true, status: 'Approved',
+    evidences: { [CriterionType.ETHICS]: [], [CriterionType.ACADEMIC]: [], [CriterionType.PHYSICAL]: [], [CriterionType.VOLUNTEER]: [], [CriterionType.INTEGRATION]: [] },
+    totalScore: 0.7,
+    verifications: { gpa: { status: 'Approved' }, trainingPoints: { status: 'Approved' }, peScore: { status: 'Approved' }, english: { status: 'Approved' }, partyMember: { status: 'Approved' } }
+  },
+  {
+    id: 'SV002', fullName: 'Nguyễn Diệu Linh', studentId: '21123457', class: 'K21.KToan', faculty: 'Khoa Kế toán',
+    gpa: 3.6, peScore: 8.5, trainingPoints: 88, englishLevel: 'B1', englishGpa: 3.2, isPartyMember: false, noViolation: true, status: 'Submitted',
+    evidences: { [CriterionType.ETHICS]: [], [CriterionType.ACADEMIC]: [], [CriterionType.PHYSICAL]: [], [CriterionType.VOLUNTEER]: [], [CriterionType.INTEGRATION]: [] },
+    totalScore: 0,
+    verifications: { gpa: { status: 'Pending' }, trainingPoints: { status: 'Pending' }, peScore: { status: 'Pending' }, english: { status: 'Pending' }, partyMember: { status: 'Pending' } }
+  },
+  {
+    id: 'SV003', fullName: 'Trần Minh Quân', studentId: '20123458', class: 'K20.QTKD', faculty: 'Khoa Quản trị kinh doanh',
+    gpa: 3.2, peScore: 7.5, trainingPoints: 82, englishLevel: 'None', englishGpa: 0, isPartyMember: false, noViolation: true, status: 'Processing',
+    evidences: { [CriterionType.ETHICS]: [], [CriterionType.ACADEMIC]: [], [CriterionType.PHYSICAL]: [], [CriterionType.VOLUNTEER]: [], [CriterionType.INTEGRATION]: [] },
+    totalScore: 0,
+    verifications: { gpa: { status: 'NeedsExplanation' }, trainingPoints: { status: 'Approved' }, peScore: { status: 'Pending' }, english: { status: 'Pending' }, partyMember: { status: 'Pending' } }
+  },
+  {
+    id: 'SV004', fullName: 'Phạm Hải Yến', studentId: '22123459', class: 'K22.NganHang', faculty: 'Khoa Ngân hàng',
+    gpa: 3.9, peScore: 9.5, trainingPoints: 98, englishLevel: 'B2', englishGpa: 3.8, isPartyMember: true, noViolation: true, status: 'Approved',
+    evidences: { [CriterionType.ETHICS]: [], [CriterionType.ACADEMIC]: [], [CriterionType.PHYSICAL]: [], [CriterionType.VOLUNTEER]: [], [CriterionType.INTEGRATION]: [] },
+    totalScore: 0.8,
+    verifications: { gpa: { status: 'Approved' }, trainingPoints: { status: 'Approved' }, peScore: { status: 'Approved' }, english: { status: 'Approved' }, partyMember: { status: 'Approved' } }
+  },
+  {
+    id: 'SV005', fullName: 'Hoàng Quốc Việt', studentId: '21123460', class: 'K21.TMDDT', faculty: 'Khoa TMĐT',
+    gpa: 3.5, peScore: 8.0, trainingPoints: 91, englishLevel: 'B1', englishGpa: 3.1, isPartyMember: false, noViolation: true, status: 'Rejected',
+    evidences: { [CriterionType.ETHICS]: [], [CriterionType.ACADEMIC]: [], [CriterionType.PHYSICAL]: [], [CriterionType.VOLUNTEER]: [], [CriterionType.INTEGRATION]: [] },
+    totalScore: 0,
+    verifications: { gpa: { status: 'Rejected' }, trainingPoints: { status: 'Approved' }, peScore: { status: 'Approved' }, english: { status: 'Approved' }, partyMember: { status: 'Pending' } }
+  }
+];
+
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'profile' | 'admin' | 'login'>('home');
   const [userRole, setUserRole] = useState<'student' | 'admin' | 'guest'>('guest');
   const [faces, setFaces] = useState<FeaturedFace[]>(INITIAL_FACES.map((f, i) => ({ ...f, id: i.toString(), content: 'Gương mặt sinh viên xuất sắc tiêu biểu của nhà trường.' })));
 
-  const [student, setStudent] = useState<StudentProfile>({
-    id: 'SV001', fullName: 'Lê Thanh Bình', studentId: '20123456', class: 'K20.CNTT', faculty: 'Khoa Công nghệ thông tin',
-    gpa: 0, peScore: 0, trainingPoints: 0, englishLevel: 'None', englishGpa: 0, isPartyMember: false, noViolation: true, status: 'Draft',
-    evidences: { [CriterionType.ETHICS]: [], [CriterionType.ACADEMIC]: [], [CriterionType.PHYSICAL]: [], [CriterionType.VOLUNTEER]: [], [CriterionType.INTEGRATION]: [] },
-    totalScore: 0,
-    verifications: {
-      gpa: { status: 'Pending' },
-      trainingPoints: { status: 'Pending' },
-      peScore: { status: 'Pending' },
-      english: { status: 'Pending' },
-      partyMember: { status: 'Pending' }
-    }
-  });
+  const [students, setStudents] = useState<StudentProfile[]>(MOCK_STUDENTS);
+  const [activeStudentId, setActiveStudentId] = useState<string>('SV001');
+
+  const student = students.find(s => s.id === activeStudentId) || students[0];
+
+  const updateStudentInList = (updated: StudentProfile) => {
+    setStudents(prev => prev.map(s => s.id === updated.id ? updated : s));
+  };
 
   useEffect(() => {
+    // Recalculate score for active student
     let score = 0;
     (Object.values(student.evidences) as Evidence[][]).forEach(list => {
       list.forEach(ev => {
-        // Nếu là Admin hoặc hồ sơ đã duyệt, chỉ tính điểm đã duyệt
-        // Nếu là Sinh viên đang làm hồ sơ, tính cả điểm đang chờ duyệt (dự kiến)
         if (ev.status === 'Approved' || (student.status === 'Draft' || student.status === 'Submitted' || student.status === 'Processing')) {
           score += ev.points;
         }
@@ -1440,49 +1670,52 @@ const App: React.FC = () => {
     if (student.isPartyMember) score += 0.4;
     if (student.gpa >= 3.4) score += 0.1;
     if (student.trainingPoints >= 90) score += 0.1;
-    setStudent(prev => ({ ...prev, totalScore: Number(score.toFixed(1)) }));
+
+    const newTotal = Number(score.toFixed(1));
+    if (student.totalScore !== newTotal) {
+      updateStudentInList({ ...student, totalScore: newTotal });
+    }
   }, [student.evidences, student.isPartyMember, student.gpa, student.trainingPoints, student.status]);
 
-  const addEvidence = (type: CriterionType, ev: Evidence) => setStudent(prev => ({ ...prev, evidences: { ...prev.evidences, [type]: [...prev.evidences[type], { ...ev, status: 'Pending' }] } }));
-  const removeEvidence = (type: CriterionType, id: string) => setStudent(prev => ({ ...prev, evidences: { ...prev.evidences, [type]: prev.evidences[type].filter(ev => ev.id !== id) } }));
-  const updateProfile = (data: Partial<StudentProfile>) => setStudent(prev => ({ ...prev, ...data }));
+  const addEvidence = (type: CriterionType, ev: Evidence) => updateStudentInList({ ...student, evidences: { ...prevEvidences(), [type]: [...student.evidences[type], { ...ev, status: 'Pending' }] } });
+
+  const prevEvidences = () => ({ ...student.evidences });
+
+  const removeEvidence = (type: CriterionType, id: string) => updateStudentInList({ ...student, evidences: { ...student.evidences, [type]: student.evidences[type].filter(ev => ev.id !== id) } });
+  const updateProfile = (data: Partial<StudentProfile>) => updateStudentInList({ ...student, ...data });
   const updateEvidenceExplanation = (cat: CriterionType, id: string, explanation: string) => {
-    setStudent(prev => {
-      const updated = { ...prev.evidences };
-      updated[cat] = updated[cat].map(ev => ev.id === id ? { ...ev, studentExplanation: explanation } : ev);
-      return { ...prev, evidences: updated };
-    });
+    const updatedEvs = { ...student.evidences };
+    updatedEvs[cat] = updatedEvs[cat].map(ev => ev.id === id ? { ...ev, studentExplanation: explanation } : ev);
+    updateStudentInList({ ...student, evidences: updatedEvs });
   };
   const updateFieldExplanation = (field: keyof StudentProfile['verifications'], explanation: string) => {
-    setStudent(prev => ({
-      ...prev,
+    updateStudentInList({
+      ...student,
       verifications: {
-        ...prev.verifications,
-        [field]: { ...prev.verifications[field], feedback: explanation }
+        ...student.verifications,
+        [field]: { ...student.verifications[field], feedback: explanation }
       }
-    }));
-  };
-  const handleAdminUpdateStatus = (status: StudentProfile['status'], feedback?: string) => setStudent(prev => ({ ...prev, status, feedback }));
-  const handleAdminUpdateEvidenceStatus = (cat: CriterionType, id: string, status: Evidence['status'], feedback?: string) => {
-    setStudent(prev => {
-      const updated = { ...prev.evidences };
-      updated[cat] = updated[cat].map(ev => ev.id === id ? { ...ev, status, adminFeedback: feedback } : ev);
-      return { ...prev, evidences: updated };
     });
   };
+  const handleAdminUpdateStatus = (status: StudentProfile['status'], feedback?: string) => updateStudentInList({ ...student, status, feedback });
+  const handleAdminUpdateEvidenceStatus = (cat: CriterionType, id: string, status: Evidence['status'], feedback?: string) => {
+    const updatedEvs = { ...student.evidences };
+    updatedEvs[cat] = updatedEvs[cat].map(ev => ev.id === id ? { ...ev, status, adminFeedback: feedback } : ev);
+    updateStudentInList({ ...student, evidences: updatedEvs });
+  };
   const handleUpdateFieldVerification = (field: keyof StudentProfile['verifications'], status: FieldVerification['status'], feedback?: string) => {
-    setStudent(prev => ({
-      ...prev,
+    updateStudentInList({
+      ...student,
       verifications: {
-        ...prev.verifications,
+        ...student.verifications,
         [field]: { status, feedback }
       }
-    }));
+    });
   };
 
   const handleResubmitExplanation = () => {
     if (window.confirm("Bạn xác nhận gửi phản hồi giải trình?")) {
-      setStudent(p => ({ ...p, status: 'Submitted' }));
+      updateStudentInList({ ...student, status: 'Submitted' });
       alert("Đã gửi phản hồi giải trình thành công!");
     }
   };
@@ -1509,7 +1742,7 @@ const App: React.FC = () => {
           updateFieldExplanation={updateFieldExplanation}
           onSubmit={() => {
             if (Object.values(CriterionType).every(cat => checkHardMet(cat, student))) {
-              setStudent(p => ({ ...p, status: 'Submitted' })); alert('Hồ sơ đã gửi thành công!');
+              updateStudentInList({ ...student, status: 'Submitted' }); alert('Hồ sơ đã gửi thành công!');
             } else alert('Bạn chưa đạt đủ các chuẩn cứng cơ bản.');
           }}
           onResubmit={handleResubmitExplanation}
@@ -1517,7 +1750,9 @@ const App: React.FC = () => {
       )}
       {currentPage === 'admin' && (
         <AdminDashboard
-          student={student}
+          students={students}
+          selectedStudent={student}
+          onSelectStudent={(id) => setActiveStudentId(id)}
           onUpdateStatus={handleAdminUpdateStatus}
           onUpdateEvidenceStatus={handleAdminUpdateEvidenceStatus}
           onUpdateFieldVerification={handleUpdateFieldVerification}
@@ -1527,7 +1762,7 @@ const App: React.FC = () => {
       )}
 
       <div className="fixed bottom-12 right-12 flex bg-white border shadow-2xl z-[100] p-1 ring-1 ring-black/5 rounded-full">
-        <button onClick={() => { setUserRole('student'); setCurrentPage('profile'); }} className={`px-6 py-2 text-[9px] font-bold uppercase transition-all rounded-full ${userRole === 'student' ? 'bg-blue-900 text-white' : 'text-gray-400'}`}>SV</button>
+        <button onClick={() => { setUserRole('student'); setCurrentPage('profile'); setActiveStudentId('SV001'); }} className={`px-6 py-2 text-[9px] font-bold uppercase transition-all rounded-full ${userRole === 'student' ? 'bg-blue-900 text-white' : 'text-gray-400'}`}>SV</button>
         <button onClick={() => { setUserRole('admin'); setCurrentPage('admin'); }} className={`px-6 py-2 text-[9px] font-bold uppercase transition-all rounded-full ${userRole === 'admin' ? 'bg-orange-600 text-white' : 'text-gray-400'}`}>Admin</button>
       </div>
     </Layout>
