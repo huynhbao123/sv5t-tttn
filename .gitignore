@@ -1,4 +1,9 @@
-# Logs
+# Python
+backend/venv/
+backend/__pycache__/
+*.pyc
+db.sqlite3
+media/
 logs
 *.log
 npm-debug.log*
