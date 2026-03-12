@@ -22,12 +22,15 @@ interface AppRoutesProps {
   updateFieldExplanation: (field: keyof StudentProfile['verifications'], explanation: string) => void;
   onSubmit: () => void;
   onResubmit: () => void;
+  onUnsubmit: () => void;
   // Admin Props
   setActiveStudentId: (id: string) => void;
   handleAdminUpdateStatus: (status: StudentProfile['status'], feedback?: string) => void;
   handleAdminUpdateEvidenceStatus: (cat: CriterionType, id: string, status: Evidence['status'], feedback?: string) => void;
   handleUpdateFieldVerification: (field: keyof StudentProfile['verifications'], action: FieldVerification['status'], feedback?: string) => void;
-  setFaces: (faces: FeaturedFace[]) => void;
+  handleAddFace: (face: Omit<FeaturedFace, 'id'>) => void;
+  handleUpdateFace: (id: string, face: Partial<FeaturedFace>) => void;
+  handleDeleteFace: (id: string) => void;
 }
 
 const AppRoutes: React.FC<AppRoutesProps> = ({
@@ -44,11 +47,14 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
   updateFieldExplanation,
   onSubmit,
   onResubmit,
+  onUnsubmit,
   setActiveStudentId,
   handleAdminUpdateStatus,
   handleAdminUpdateEvidenceStatus,
   handleUpdateFieldVerification,
-  setFaces
+  handleAddFace,
+  handleUpdateFace,
+  handleDeleteFace
 }) => {
   return (
     <Routes>
@@ -65,10 +71,11 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
             updateFieldExplanation={updateFieldExplanation}
             onSubmit={onSubmit}
             onResubmit={onResubmit}
+            onUnsubmit={onUnsubmit}
           />
         </ProtectedRoute>
       } />
-      <Route path="/admin" element={
+      <Route path="/admin/:activeTab?" element={
         <ProtectedRoute allowedRoles={['admin']}>
           <AdminDashboard
             students={students}
@@ -78,7 +85,9 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
             onUpdateEvidenceStatus={handleAdminUpdateEvidenceStatus}
             onUpdateFieldVerification={handleUpdateFieldVerification}
             faces={faces}
-            onUpdateFaces={setFaces}
+            onAddFace={handleAddFace}
+            onUpdateFace={handleUpdateFace}
+            onDeleteFace={handleDeleteFace}
           />
         </ProtectedRoute>
       } />

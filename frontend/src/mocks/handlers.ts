@@ -80,7 +80,7 @@ export const handlers = [
   // ============================================
   
   // Get My Profile
-  http.get(apiUrl('/api/profiles/me/'), async ({ request }) => {
+  http.get(apiUrl('/api/students/me/'), async ({ request }) => {
     await delay(400);
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
@@ -116,7 +116,7 @@ export const handlers = [
   }),
 
   // Update Profile fields (GPA, PE, etc)
-  http.put(apiUrl('/api/profiles/me/'), async ({ request }) => {
+  http.put(apiUrl('/api/students/me/'), async ({ request }) => {
     await delay(100); // reduced delay to prevent UI race condition
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
@@ -138,31 +138,56 @@ export const handlers = [
   }),
 
   // Add Evidence
-  http.post(apiUrl('/api/profiles/me/evidences/'), async ({ request }) => {
-    await delay(200);
+  http.post(apiUrl('/api/evidences/'), async ({ request }) => {
+    await delay(300);
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
 
+    const formData = await request.formData();
+    const type = formData.get('category') as CriterionType;
+    const subCriterionId = formData.get('TieuChi') as string;
+    
+    const evidence = {
+      id: `ev_${Date.now()}`,
+      subCriterionId,
+      name: formData.get('TenMinhChung') as string,
+      level: formData.get('CapDo') as string,
+      type: formData.get('LoaiMinhChung') as string,
+      decisionNumber: formData.get('SoQuyetDinh') as string,
+      fileName: formData.get('TenFile') as string,
+      status: 'Pending' as const,
+      date: new Date().toISOString().split('T')[0]
+    };
+
     const url = new URL(request.url);
     const mockStudentId = url.searchParams.get('studentId') || 'SV001';
-    const { type, evidence } = await request.json() as { type: CriterionType, evidence: any };
-    
     const currentStudent = mockStudents.find(s => s.studentId === mockStudentId) || mockStudents.find(s => s.id === mockStudentId);
     if (!currentStudent) return new HttpResponse(null, { status: 404 });
     
-    const newEvidenceList = [...(currentStudent.evidences[type] || []), { ...evidence, status: 'Pending' }];
-    
-    const updated = { 
-      ...currentStudent, 
-      evidences: { ...currentStudent.evidences, [type]: newEvidenceList } 
-    };
+    // Safety check for category
+    if (!type || !currentStudent.evidences[type]) {
+       // Fallback: try to guess type from subCriterionId if missing
+       const guessedType = subCriterionId.startsWith('eth') ? CriterionType.ETHICS :
+                           subCriterionId.startsWith('aca') ? CriterionType.ACADEMIC :
+                           subCriterionId.startsWith('phy') ? CriterionType.PHYSICAL :
+                           subCriterionId.startsWith('vol') ? CriterionType.VOLUNTEER :
+                           CriterionType.INTEGRATION;
+       
+       const newEvidenceList = [...(currentStudent.evidences[guessedType] || []), evidence];
+       const updated = { ...currentStudent, evidences: { ...currentStudent.evidences, [guessedType]: newEvidenceList } };
+       updateMockStudent(updated);
+       return HttpResponse.json(updated);
+    }
+
+    const newEvidenceList = [...(currentStudent.evidences[type] || []), evidence];
+    const updated = { ...currentStudent, evidences: { ...currentStudent.evidences, [type]: newEvidenceList } };
     updateMockStudent(updated);
 
     return HttpResponse.json(updated);
   }),
 
   // Remove Evidence
-  http.delete(apiUrl('/api/profiles/me/evidences/:guid'), async ({ request, params }) => {
+  http.delete(apiUrl('/api/evidences/:guid/'), async ({ request, params }) => {
     await delay(300);
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
@@ -186,7 +211,7 @@ export const handlers = [
   }),
 
   // Explain Evidence
-  http.put(apiUrl('/api/profiles/me/evidences/:guid/explain'), async ({ request, params }) => {
+  http.put(apiUrl('/api/evidences/:guid/explain/'), async ({ request, params }) => {
     await delay(400);
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
@@ -211,7 +236,7 @@ export const handlers = [
   }),
 
   // Explain Field
-  http.put(apiUrl('/api/profiles/me/fields/:key/explain'), async ({ request, params }) => {
+  http.put(apiUrl('/api/students/me/fields/:key/explain/'), async ({ request, params }) => {
     await delay(400);
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
@@ -237,7 +262,7 @@ export const handlers = [
   }),
 
   // Submit Profile
-  http.post(apiUrl('/api/profiles/me/submit/'), async ({ request }) => {
+  http.post(apiUrl('/api/students/me/submit/'), async ({ request }) => {
     await delay(600);
     const userId = getAuthUserId(request);
     if (!userId) return new HttpResponse(null, { status: 401 });
@@ -248,6 +273,23 @@ export const handlers = [
     if (!currentStudent) return new HttpResponse(null, { status: 404 });
 
     const updated = { ...currentStudent, status: 'Submitted' as const };
+    updateMockStudent(updated);
+
+    return HttpResponse.json(updated);
+  }),
+
+  // Unsubmit Profile
+  http.post(apiUrl('/api/students/me/unsubmit/'), async ({ request }) => {
+    await delay(500);
+    const userId = getAuthUserId(request);
+    if (!userId) return new HttpResponse(null, { status: 401 });
+
+    const url = new URL(request.url);
+    const mockStudentId = url.searchParams.get('studentId') || 'SV001';
+    const currentStudent = mockStudents.find(s => s.studentId === mockStudentId) || mockStudents.find(s => s.id === mockStudentId);
+    if (!currentStudent) return new HttpResponse(null, { status: 404 });
+
+    const updated = { ...currentStudent, status: 'Draft' as const };
     updateMockStudent(updated);
 
     return HttpResponse.json(updated);

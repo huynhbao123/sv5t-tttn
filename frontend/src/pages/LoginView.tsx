@@ -55,8 +55,12 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
 
         <div className="bg-white rounded-2xl shadow-2xl p-8 border">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-600">
-              <i className="fas fa-fingerprint text-3xl"></i>
+            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-6">
+              <img 
+                src="https://tse3.mm.bing.net/th/id/OIP.Odk0Vk_H8Tfz70lpKj4FQAHaG8?pid=Api&P=0&h=180" 
+                alt="DUE Logo" 
+                className="w-full h-auto"
+              />
             </div>
             <h2 className="text-2xl font-black text-[#002b5c] uppercase font-formal tracking-tight">
               {isLoginState ? 'Đăng nhập hệ thống' : 'Đăng ký tài khoản'}

@@ -39,6 +39,7 @@ export interface Evidence {
   decisionNumber?: string; 
   qty?: number; // Số lượng (ví dụ: số ngày tình nguyện, số lần hiến máu)
   fileUrl: string;
+  file?: File;
   fileName: string;
   date: string;
   points: number; 

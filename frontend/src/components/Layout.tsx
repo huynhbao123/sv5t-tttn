@@ -59,45 +59,47 @@ const Layout: React.FC<LayoutProps> = ({ children, userType, onNavigate }) => {
         {children}
       </main>
 
-      <footer className="bg-blue-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
-            <div className="col-span-1 md:col-span-1">
-              <img src={logoUrl} alt="DUE Logo White" className="h-20 w-auto mb-10 brightness-0 invert" />
-              <p className="text-gray-300 text-xs leading-relaxed font-medium">
-                Hệ thống xét duyệt danh hiệu dành cho sinh viên tiêu biểu Trường Đại học Kinh tế - Đại học Đà Nẵng.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-[10px] font-bold mb-8 uppercase tracking-[0.2em] text-orange-500">Liên kết ngoài</h3>
-              <ul className="space-y-4 text-gray-200 text-[10px] font-bold uppercase tracking-wider">
-                <li><a href="#" className="hover:text-orange-500 transition-colors">Trang chủ DUE</a></li>
-                <li><a href="#" className="hover:text-orange-500 transition-colors">Hội Sinh viên DUE</a></li>
-                <li><a href="#" className="hover:text-orange-500 transition-colors">Phòng Công tác SV</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-[10px] font-bold mb-8 uppercase tracking-[0.2em] text-orange-500">Hỗ trợ</h3>
-              <ul className="space-y-4 text-gray-200 text-[10px] font-bold uppercase tracking-wider">
-                <li><a href="#" className="hover:text-orange-500 transition-colors">Hướng dẫn nộp hồ sơ</a></li>
-                <li><a href="#" className="hover:text-orange-500 transition-colors">Tiêu chí xét duyệt 2024</a></li>
-                <li><a href="#" className="hover:text-orange-500 transition-colors">Câu hỏi thường gặp</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-[10px] font-bold mb-8 uppercase tracking-[0.2em] text-orange-500">Liên hệ</h3>
-              <div className="space-y-5 text-gray-200 text-xs font-medium">
-                <p>71 Ngũ Hành Sơn, Đà Nẵng</p>
-                <p>hoisinhvien@due.udn.vn</p>
-                <p>(0236) 3950110</p>
+      {userType !== 'admin' && (
+        <footer className="bg-blue-900 text-white py-20">
+          <div className="max-w-7xl mx-auto px-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
+              <div className="col-span-1 md:col-span-1">
+                <img src={logoUrl} alt="DUE Logo White" className="h-20 w-auto mb-10 brightness-0 invert" />
+                <p className="text-gray-300 text-xs leading-relaxed font-medium">
+                  Hệ thống xét duyệt danh hiệu dành cho sinh viên tiêu biểu Trường Đại học Kinh tế - Đại học Đà Nẵng.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-[10px] font-bold mb-8 uppercase tracking-[0.2em] text-orange-500">Liên kết ngoài</h3>
+                <ul className="space-y-4 text-gray-200 text-[10px] font-bold uppercase tracking-wider">
+                  <li><a href="#" className="hover:text-orange-500 transition-colors">Trang chủ DUE</a></li>
+                  <li><a href="#" className="hover:text-orange-500 transition-colors">Hội Sinh viên DUE</a></li>
+                  <li><a href="#" className="hover:text-orange-500 transition-colors">Phòng Công tác SV</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-[10px] font-bold mb-8 uppercase tracking-[0.2em] text-orange-500">Hỗ trợ</h3>
+                <ul className="space-y-4 text-gray-200 text-[10px] font-bold uppercase tracking-wider">
+                  <li><a href="#" className="hover:text-orange-500 transition-colors">Hướng dẫn nộp hồ sơ</a></li>
+                  <li><a href="#" className="hover:text-orange-500 transition-colors">Tiêu chí xét duyệt 2024</a></li>
+                  <li><a href="#" className="hover:text-orange-500 transition-colors">Câu hỏi thường gặp</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-[10px] font-bold mb-8 uppercase tracking-[0.2em] text-orange-500">Liên hệ</h3>
+                <div className="space-y-5 text-gray-200 text-xs font-medium">
+                  <p>71 Ngũ Hành Sơn, Đà Nẵng</p>
+                  <p>hoisinhvien@due.udn.vn</p>
+                  <p>(0236) 3950110</p>
+                </div>
               </div>
             </div>
+            <div className="mt-20 pt-10 border-t border-white/10 text-center text-gray-400 text-[9px] font-bold uppercase tracking-[0.3em]">
+              &copy; {new Date().getFullYear()} University of Economics - University of Da Nang
+            </div>
           </div>
-          <div className="mt-20 pt-10 border-t border-white/10 text-center text-gray-400 text-[9px] font-bold uppercase tracking-[0.3em]">
-            &copy; {new Date().getFullYear()} University of Economics - University of Da Nang
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 };

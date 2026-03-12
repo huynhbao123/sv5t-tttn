@@ -85,6 +85,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
       decisionNumber: showDecisionInput ? decisionNumber.trim() : undefined,
       qty: showQtyInput && typeof qty === 'number' ? qty : undefined,
       fileUrl: URL.createObjectURL(file),
+      file,
       fileName: file.name,
       date: new Date().toISOString().split('T')[0],
       points: 0, 

@@ -189,6 +189,15 @@ const App: React.FC = () => {
     }
   };
 
+  const handleUnsubmit = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn hủy nộp hồ sơ để chỉnh sửa lại không?")) {
+      const currentUser = authService.getCurrentUser();
+      const updatedProfile = await studentService.unsubmitProfile(currentUser?.studentId);
+      setStudents([updatedProfile]);
+      alert("Đã hủy nộp hồ sơ! Bạn có thể chỉnh sửa ngay bây giờ.");
+    }
+  };
+
   // ================= ADMIN ACTIONS =================
   const updateStudentInAdminList = (updated: StudentProfile) => {
     setStudents(prev => prev.map(s => s.id === updated.id ? updated : s));
@@ -209,9 +218,19 @@ const App: React.FC = () => {
     updateStudentInAdminList(updated);
   };
 
-  const handleSetFaces = async (newFaces: FeaturedFace[]) => {
-    const updated = await adminService.updateFaces(newFaces);
-    setFaces(updated);
+  const handleAddFace = async (face: Omit<FeaturedFace, 'id'>) => {
+    const newFace = await adminService.addFace(face);
+    setFaces(prev => [...prev, newFace]);
+  };
+
+  const handleUpdateFace = async (id: string, face: Partial<FeaturedFace>) => {
+    const updatedFace = await adminService.updateFace(id, face);
+    setFaces(prev => prev.map(f => f.id === id ? updatedFace : f));
+  };
+
+  const handleDeleteFace = async (id: string) => {
+    await adminService.deleteFace(id);
+    setFaces(prev => prev.filter(f => f.id !== id));
   };
 
 
@@ -257,11 +276,14 @@ const App: React.FC = () => {
         updateFieldExplanation={updateFieldExplanation}
         onSubmit={handleSubmit}
         onResubmit={handleResubmitExplanation}
+        onUnsubmit={handleUnsubmit}
         setActiveStudentId={setActiveStudentId}
         handleAdminUpdateStatus={handleAdminUpdateStatus}
         handleAdminUpdateEvidenceStatus={handleAdminUpdateEvidenceStatus}
         handleUpdateFieldVerification={handleUpdateFieldVerification}
-        setFaces={handleSetFaces}
+        handleAddFace={handleAddFace}
+        handleUpdateFace={handleUpdateFace}
+        handleDeleteFace={handleDeleteFace}
       />
     </Layout>
   );
