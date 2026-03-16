@@ -120,9 +120,9 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
       </div>
     </div>
 
-    {/* Featured Faces Carousel (Simplified) */}
+    {/* Featured Faces Carousel */}
     {faces.length > 0 && (
-      <div className="bg-[#002b5c] py-24 text-white">
+      <div className="bg-[#002b5c] py-24 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -130,13 +130,37 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
               <h2 className="text-3xl md:text-5xl font-black uppercase font-formal tracking-tight text-white">Vinh danh sinh viên</h2>
             </div>
             <div className="hidden md:flex gap-4">
-              <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all"><i className="fas fa-chevron-left"></i></button>
-              <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all"><i className="fas fa-chevron-right"></i></button>
+              <button 
+                onClick={() => {
+                  const container = document.getElementById('faces-carousel');
+                  if (container) container.scrollBy({ left: -400, behavior: 'smooth' });
+                }}
+                className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all"
+              >
+                <i className="fas fa-chevron-left"></i>
+              </button>
+              <button 
+                onClick={() => {
+                  const container = document.getElementById('faces-carousel');
+                  if (container) container.scrollBy({ left: 400, behavior: 'smooth' });
+                }}
+                className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all"
+              >
+                <i className="fas fa-chevron-right"></i>
+              </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <div 
+            id="faces-carousel"
+            className="flex gap-8 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {faces.map((f, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all group backdrop-blur-sm">
+              <div 
+                key={i} 
+                className="min-w-full md:min-w-[45%] lg:min-w-[31%] snap-start bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all group backdrop-blur-sm"
+              >
                 <div className="flex items-center gap-5 mb-6">
                   <img src={f.image || 'https://via.placeholder.com/300x400?text=Sinh+Vien+5+Tot'} className="w-20 h-20 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all" alt={f.name} />
                   <div>

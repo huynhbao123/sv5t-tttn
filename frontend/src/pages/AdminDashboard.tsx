@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { CriterionType, Evidence, StudentProfile, FeaturedFace, FieldVerification, Post } from '../types';
 import { SUB_CRITERIA } from '../constants';
 import { adminService } from '../services/adminService';
@@ -113,8 +114,6 @@ const AdminDashboard: React.FC<{
     if (status === 'Rejected') { fb = window.prompt('Lý do hồ sơ KHÔNG ĐẠT:') || ''; if (!fb) return; }
     else if (status === 'Processing') { fb = window.prompt(`Nhập lời nhắn giải trình gửi đến SV ${selectedStudent.fullName}:`) || 'Vui lòng kiểm tra và giải trình các mục Admin đã đánh dấu.'; }
     onUpdateStatus(status, fb);
-    if (status === 'Processing') window.alert(`✅ Đã gửi yêu cầu giải trình đến sinh viên ${selectedStudent.fullName} thành công!`);
-    else if (status === 'Approved') window.alert(`🌟 Đã công nhận danh hiệu cho SV ${selectedStudent.fullName}.`);
     setIsReviewing(false);
   };
 
@@ -536,13 +535,13 @@ const AdminDashboard: React.FC<{
 
     try {
       await adminService.addUser(data);
-      window.alert('✅ Đã thêm người dùng thành công!');
       setUserForm({ ...userForm, show: false });
       refreshUsers();
+      toast.success('Đã thêm người dùng thành công');
     } catch (e: any) {
       console.error(e);
-      const msg = e.response?.data?.detail || JSON.stringify(e.response?.data);
-      alert("Lỗi khi thêm người dùng: " + (msg || "Lỗi không xác định"));
+      const msg = e.response?.data?.detail || "Lỗi không xác định";
+      toast.error("Lỗi khi thêm người dùng: " + msg);
     }
   };
 
@@ -560,7 +559,7 @@ const AdminDashboard: React.FC<{
     setArticleForm({ mode: 'add', title: '', content: '', status: 'published', image: '' });
   };
   const handleEditPost = (post: any) => {
-    setArticleForm({ mode: 'edit', id: post.id, title: post.title, content: post.NoiDung, status: post.status, image: post.HinhAnh || '' });
+    setArticleForm({ mode: 'edit', id: post.id, title: post.title, content: post.content, status: post.status, image: post.image || '' });
   };
   const handleSaveArticle = async () => {
     if (!articleForm) return;
@@ -571,9 +570,8 @@ const AdminDashboard: React.FC<{
         await onUpdatePost(articleForm.id, { title: articleForm.title, content: articleForm.content, status: articleForm.status, imageFile: articleForm.imageFile });
       }
       setArticleForm(null);
-      window.alert('✅ Lưu bài viết thành công!');
     } catch (e) {
-      alert("Lưu thất bại!");
+      // Errors handled by hook toasts
     }
   };
   const handleTogglePostStatus = async (id: string, currentStatus: string) => {

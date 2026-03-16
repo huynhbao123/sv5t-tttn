@@ -55,7 +55,7 @@ export const adminService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     const d = response.data;
-    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: formatUrl(d.HinhAnh) };
+    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: d.HinhAnh || '' };
   },
 
   updateFace: async (id: string, face: Partial<FeaturedFace>): Promise<FeaturedFace> => {
@@ -69,7 +69,7 @@ export const adminService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     const d = response.data;
-    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: formatUrl(d.HinhAnh) };
+    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: d.HinhAnh || '' };
   },
 
   deleteFace: async (id: string): Promise<void> => {
@@ -79,9 +79,9 @@ export const adminService = {
   getPosts: async (): Promise<any[]> => {
     const response = await apiClient.get('/api/admin/posts/');
     return response.data.map((p: any) => ({
-      ...p,
       id: String(p.id),
       title: p.TieuDe,
+      content: p.NoiDung,
       date: p.NgayDang,
       status: p.TrangThai,
       image: formatUrl(p.HinhAnh)
@@ -101,7 +101,7 @@ export const adminService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     const p = response.data;
-    return { ...p, id: String(p.id), title: p.TieuDe, date: p.NgayDang, status: p.TrangThai, image: formatUrl(p.HinhAnh) };
+    return { ...p, id: String(p.id), title: p.TieuDe, content: p.NoiDung, date: p.NgayDang, status: p.TrangThai, image: formatUrl(p.HinhAnh) };
   },
 
   updatePost: async (id: string, post: { title?: string, content?: string, status?: string, imageFile?: File }): Promise<any> => {
@@ -115,7 +115,7 @@ export const adminService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     const p = response.data;
-    return { ...p, id: String(p.id), title: p.TieuDe, date: p.NgayDang, status: p.TrangThai, image: formatUrl(p.HinhAnh) };
+    return { ...p, id: String(p.id), title: p.TieuDe, content: p.NoiDung, date: p.NgayDang, status: p.TrangThai, image: formatUrl(p.HinhAnh) };
   },
 
   deletePost: async (id: string): Promise<void> => {
@@ -184,7 +184,7 @@ export const publicService = {
       name: d.TenSinhVien,
       achievement: d.ThanhTich,
       content: d.NoiDung,
-      image: formatUrl(d.HinhAnh)
+      image: d.HinhAnh || ''
     }));
   },
 
@@ -196,9 +196,9 @@ export const publicService = {
   getPosts: async (): Promise<any[]> => {
     const response = await apiClient.get('/api/posts/');
     return response.data.map((p: any) => ({
-      ...p,
       id: String(p.id),
       title: p.TieuDe,
+      content: p.NoiDung,
       date: p.NgayDang,
       status: p.TrangThai,
       image: formatUrl(p.HinhAnh)

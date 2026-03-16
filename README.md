@@ -1,20 +1,28 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Hệ thống Quản lý Sinh Viên 5 Tốt (SV5T)
 
-# Run and deploy your AI Studio app
+Hệ thống hỗ trợ nộp minh chứng, xét duyệt và vinh danh Sinh viên 5 Tốt hướng tới sự chuyên nghiệp và minh bạch.
 
-This contains everything you need to run your app locally.
+## ✨ Tính năng nổi bật
+*   **Xác thực bảo mật**: Sử dụng JWT với cơ chế Token Rotation và Refresh tự động.
+*   **Xét duyệt đa cấp**: Admin có thể duyệt từng minh chứng hoặc duyệt nhanh (Batch actions).
+*   **Audit Trail**: Mọi thay đổi trạng thái hồ sơ đều được lưu vết (LichSuHoSo) để đối soát.
+*   **Điểm số linh hoạt**: Logic tính điểm hoàn toàn dựa trên cấu hình Database (DiemTheoCapDo).
+*   **Giao diện hiện đại**: Responsive UI với các thông báo Toast chuyên nghiệp.
 
-View your app in AI Studio: https://ai.studio/apps/6e0c2dd2-22a5-46f7-991b-ac2c1fc89c67
+## 🚀 Hướng dẫn cài đặt
 
-## Run Locally
+### Backend (Django)
+1. Cài đặt Python 3.9+
+2. Tạo venv: `python -m venv venv`
+3. Cài đặt thư viện: `pip install -r requirements.txt`
+4. Tạo file `.env` từ mẫu `.env.example`
+5. Migrate DB: `python manage.py migrate`
+6. Chạy server: `python manage.py runserver`
 
-**Prerequisites:**  Node.js
+### Frontend (React + Vite)
+1. Cài đặt Node.js
+2. Cài đặt thư viện: `npm install`
+3. Chạy dev: `npm run dev`
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+*Dự án được phát triển phục vụ đồ án tốt nghiệp với tiêu chuẩn mã nguồn sạch và kiến trúc mở rộng.*

@@ -143,10 +143,22 @@ class AdminSinhVienApproveView(APIView):
         except SinhVien.DoesNotExist:
             return Response({'detail': 'Không tìm thấy.'}, status=status.HTTP_404_NOT_FOUND)
 
+        old_status = sv.TrangThaiHoSo
         sv.TrangThaiHoSo = 'Approved'
         sv.PhanHoiChung = request.data.get('phanHoi', '')
         sv.tinh_tong_diem()
         sv.save()
+        
+        # Log audit trail
+        from .models import LichSuHoSo
+        LichSuHoSo.objects.create(
+            SinhVien=sv,
+            TrangThaiTruoc=old_status,
+            TrangThaiSau='Approved',
+            NguoiThucHien=request.user,
+            NoiDung=f"Duyệt hồ sơ. Điểm: {sv.TongDiem}"
+        )
+        
         return Response({'detail': 'Đã duyệt hồ sơ.', 'TongDiem': sv.TongDiem})
 
 
@@ -159,9 +171,21 @@ class AdminSinhVienRejectView(APIView):
         except SinhVien.DoesNotExist:
             return Response({'detail': 'Không tìm thấy.'}, status=status.HTTP_404_NOT_FOUND)
 
+        old_status = sv.TrangThaiHoSo
         sv.TrangThaiHoSo = 'Rejected'
         sv.PhanHoiChung = request.data.get('phanHoi', '')
         sv.save()
+        
+        # Log audit trail
+        from .models import LichSuHoSo
+        LichSuHoSo.objects.create(
+            SinhVien=sv,
+            TrangThaiTruoc=old_status,
+            TrangThaiSau='Rejected',
+            NguoiThucHien=request.user,
+            NoiDung=f"Từ chối hồ sơ. Phản hồi: {sv.PhanHoiChung}"
+        )
+        
         return Response({'detail': 'Đã từ chối hồ sơ.'})
 
 
@@ -174,9 +198,21 @@ class AdminSinhVienFeedbackView(APIView):
         except SinhVien.DoesNotExist:
             return Response({'detail': 'Không tìm thấy.'}, status=status.HTTP_404_NOT_FOUND)
 
+        old_status = sv.TrangThaiHoSo
         sv.TrangThaiHoSo = 'Processing'
         sv.PhanHoiChung = request.data.get('phanHoi', sv.PhanHoiChung)
         sv.save()
+        
+        # Log audit trail
+        from .models import LichSuHoSo
+        LichSuHoSo.objects.create(
+            SinhVien=sv,
+            TrangThaiTruoc=old_status,
+            TrangThaiSau='Processing',
+            NguoiThucHien=request.user,
+            NoiDung=f"Yêu cầu bổ sung/Giải trình. Phản hồi: {sv.PhanHoiChung[:200]}"
+        )
+        
         return Response({'detail': 'Đã gửi phản hồi.', 'PhanHoiChung': sv.PhanHoiChung})
 
 

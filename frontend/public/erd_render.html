@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; padding: 40px; }
+        .container { background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 50px; display: inline-block; min-width: 1200px; }
+        h1 { color: #1e293b; text-align: center; margin-bottom: 40px; font-size: 2.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sơ đồ Quan hệ Thực thể (ERD) - SV5T-DUE</h1>
+        <pre class="mermaid">
+erDiagram
+    %% --- ACCOUNT MODULE ---
+    TaiKhoan ||--|| NguoiDung : "1-1 (Profile Admin)"
+    TaiKhoan ||--|| SinhVien : "1-1 (Profile Sinh Vien)"
+
+    %% --- STUDENT MODULE ---
+    SinhVien ||--o| XacMinh : "1-N (Xác minh trường dữ liệu)"
+
+    %% --- CRITERIA MODULE ---
+    NhomTieuChi ||--o{ TieuChi : "1-N (Nhóm chứa nhiều tiêu chí)"
+    TieuChi ||--o{ DiemTheoCapDo : "1-N (Thang điểm theo cấp)"
+
+    %% --- EVIDENCE MODULE ---
+    SinhVien ||--o{ MinhChung : "1-N (Sinh viên nộp minh chứng)"
+    TieuChi ||--o{ MinhChung : "1-N (Minh chứng thuộc tiêu chí)"
+    MinhChung ||--o{ MinhChungFile : "1-N (Minh chứng có nhiều tệp tin)"
+
+    %% --- ENTITY DEFINITIONS ---
+    TaiKhoan {
+        bigint id
+        varchar TenDangNhap
+        varchar password
+        varchar VaiTro
+    }
+
+    NguoiDung {
+        int id
+        int TaiKhoan_id
+        varchar HoTen
+        varchar Email
+    }
+
+    SinhVien {
+        int id
+        int TaiKhoan_id
+        varchar MaSV
+        varchar HoTen
+        float DiemTBC
+        int DiemRenLuyen
+        varchar TrangThaiHoSo
+    }
+
+    XacMinh {
+        int id
+        int SinhVien_id
+        varchar TruongDuLieu
+        varchar TrangThai
+    }
+
+    NhomTieuChi {
+        int id
+        varchar TenNhom
+        int ThuTu
+    }
+
+    TieuChi {
+        int id
+        int NhomTieuChi_id
+        varchar MaTieuChi
+        varchar LoaiTieuChi
+        float Diem
+    }
+
+    DiemTheoCapDo {
+        int id
+        int TieuChi_id
+        varchar CapDo
+        float Diem
+    }
+
+    MinhChung {
+        int id
+        int SinhVien_id
+        int TieuChi_id
+        varchar TenMinhChung
+        float Diem
+        varchar TrangThai
+    }
+
+    MinhChungFile {
+        int id
+        int MinhChung_id
+        varchar TenFile
+    }
+        </pre>
+    </div>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</body>
+</html>

@@ -19,22 +19,12 @@ export const studentService = {
     
     // Multipart/form-data payload
     const formData = new FormData();
-    formData.append('TieuChi', evidence.subCriterionId);
+    formData.append('TieuChi', evidence.subCriterionId); // Backend expects integer ID or string if it handles conversion
     formData.append('TenMinhChung', evidence.name);
     formData.append('CapDo', evidence.level);
     formData.append('LoaiMinhChung', evidence.type);
     if (evidence.decisionNumber) formData.append('SoQuyetDinh', evidence.decisionNumber);
-    if (evidence.qty) formData.append('SoLuong', String(evidence.qty));
-    
-    // Append multiple files with the same key
-    if (evidence.files && evidence.files.length > 0) {
-      evidence.files.forEach(f => {
-        formData.append('DuongDanFile', f);
-      });
-    } else if (evidence.file) {
-      formData.append('DuongDanFile', evidence.file);
-    }
-
+    if (evidence.file) formData.append('DuongDanFile', evidence.file);
     formData.append('TenFile', evidence.fileName);
     formData.append('category', type);
 
@@ -59,17 +49,7 @@ export const studentService = {
     formData.append('CapDo', evidence.level);
     formData.append('LoaiMinhChung', evidence.type);
     if (evidence.decisionNumber) formData.append('SoQuyetDinh', evidence.decisionNumber);
-    if (evidence.qty) formData.append('SoLuong', String(evidence.qty));
-    
-    // Append multiple files
-    if (evidence.files && evidence.files.length > 0) {
-      evidence.files.forEach(f => {
-        formData.append('DuongDanFile', f);
-      });
-    } else if (evidence.file) {
-      formData.append('DuongDanFile', evidence.file);
-    }
-
+    if (evidence.file) formData.append('DuongDanFile', evidence.file);
     formData.append('TenFile', evidence.fileName);
     formData.append('category', type);
 

@@ -49,25 +49,47 @@ class SinhVien(models.Model):
     def tinh_tong_diem(self):
         """Tính lại TongDiem từ các MinhChung (Approved + Pending cho hồ sơ chưa chốt) + Điểm thưởng"""
         from evidences.models import MinhChung
+        from criteria.models import TieuChi, DiemTheoCapDo
         
-        # Lấy điểm từ minh chứng (Duyệt hoặc đang chờ - để khớp 'dự kiến' của SV)
-        # Nếu hồ sơ đã Approved/Rejected thì chỉ tính Approved
+        # Trạng thái minh chứng được tính điểm
         allowed_statuses = ['Approved']
         if self.TrangThaiHoSo in ['Draft', 'Submitted', 'Processing']:
             allowed_statuses.append('Pending')
             allowed_statuses.append('NeedsExplanation')
 
-        total = MinhChung.objects.filter(
+        qs = MinhChung.objects.filter(
             SinhVien=self, TrangThai__in=allowed_statuses
-        ).aggregate(total=models.Sum('Diem'))['total'] or 0
+        )
         
-        # Cộng điểm thưởng
-        if self.LaDangVien:
-            total += 0.4
-        if self.DiemTBC >= 3.4:
-            total += 0.1
-        if self.DiemRenLuyen >= 90:
-            total += 0.1
+        total = 0
+        for mc in qs:
+            # Lấy điểm từ DB thay vì hardcode trong code
+            try:
+                score_obj = DiemTheoCapDo.objects.get(TieuChi=mc.TieuChi, CapDo=mc.CapDo)
+                mc_diem = score_obj.Diem
+            except DiemTheoCapDo.DoesNotExist:
+                mc_diem = mc.Diem or mc.TieuChi.Diem or 0
+            
+            total += mc_diem
+        
+        # Cộng điểm thưởng dựa trên tiêu chí mềm đặc thù
+        # VD: Đảng viên, GPA cao, Điểm rèn luyện cao
+        # Tìm các tiêu chí có MaTieuChi tương ứng để lấy điểm động từ DB
+        bonus_config = {
+            'dang_vien': {'MaTieuChi': 'eth_point_5', 'active': self.LaDangVien},
+            'gpa_cao': {'MaTieuChi': 'aca_point_7', 'active': self.DiemTBC >= 3.4},
+            'drl_cao': {'MaTieuChi': 'eth_point_1', 'active': self.DiemRenLuyen >= 90},
+        }
+        
+        for key, cfg in bonus_config.items():
+            if cfg['active']:
+                try:
+                    tc_bonus = TieuChi.objects.get(MaTieuChi=cfg['MaTieuChi'])
+                    total += tc_bonus.Diem or 0
+                except TieuChi.DoesNotExist:
+                    # Fallback values if seeds are missing
+                    fallback = {'dang_vien': 0.4, 'gpa_cao': 0.1, 'drl_cao': 0.1}
+                    total += fallback[key]
             
         self.TongDiem = round(total, 1)
         self.save(update_fields=['TongDiem'])
@@ -108,3 +130,21 @@ class XacMinh(models.Model):
 
     def __str__(self):
         return f"XacMinh({self.SinhVien.MaSV}, {self.TruongDuLieu}) - {self.TrangThai}"
+
+
+class LichSuHoSo(models.Model):
+    """Lưu vết thay đổi trạng thái hồ sơ (Audit Trail)"""
+    SinhVien = models.ForeignKey(SinhVien, on_delete=models.CASCADE, related_name='lich_su')
+    TrangThaiTruoc = models.CharField(max_length=20)
+    TrangThaiSau = models.CharField(max_length=20)
+    NguoiThucHien = models.ForeignKey(TaiKhoan, on_delete=models.SET_NULL, null=True)
+    NoiDung = models.CharField(max_length=500, blank=True)
+    NgayTao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'LichSuHoSo'
+        verbose_name = 'Lịch sử hồ sơ'
+        ordering = ['-NgayTao']
+
+    def __str__(self):
+        return f"{self.SinhVien.MaSV}: {self.TrangThaiTruoc} -> {self.TrangThaiSau}"

@@ -1,6 +1,10 @@
 # Hướng dẫn khởi chạy dự án SV5T_TTTN
 
-Sau khi bật máy tính, bạn cần mở **2 cửa sổ Terminal** (Terminal trong VS Code hoặc PowerShell) để chạy đồng thời cả Backend và Frontend:
+Sau khi bật máy tính, bạn cần mở **2 cửa sổ Terminal** (Terminal trong VS Code hoặc PowerShell) để chạy đồng thời cả Backend và Frontend.
+
+> [!IMPORTANT]
+> **Cấu hình môi trường (.env):**
+> Trước khi chạy lần đầu, hãy sao chép file `backend/.env.example` thành `backend/.env`. File này lưu trữ các biến bảo mật không được đưa lên Git.
 
 ## 1. Khởi chạy Backend (Django)
 Tại thư mục gốc của dự án (`SV5T_TTTN`):
