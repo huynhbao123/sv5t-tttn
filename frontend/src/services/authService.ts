@@ -66,9 +66,31 @@ export const authService = {
   },
 
   logout: () => {
+    authService.handleUnauthorized();
+  },
+
+  handleUnauthorized: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('refresh');
     localStorage.removeItem('user');
+  },
+
+  refreshToken: async (): Promise<string> => {
+    const refresh = localStorage.getItem('refresh');
+    if (!refresh) {
+      authService.handleUnauthorized();
+      throw new Error('No refresh token available');
+    }
+
+    try {
+      const response = await apiClient.post('/api/auth/refresh/', { refresh });
+      const { access } = response.data;
+      localStorage.setItem('token', access);
+      return access;
+    } catch (error) {
+      authService.handleUnauthorized();
+      throw error;
+    }
   },
 
   getCurrentUser: (): UserPayload | null => {
