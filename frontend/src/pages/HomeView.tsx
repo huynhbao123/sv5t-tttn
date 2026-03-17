@@ -20,7 +20,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
         </div>
         <div className="flex flex-col sm:flex-row justify-center gap-6 pt-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <button onClick={() => onNavigate(userRole === 'admin' ? 'admin' : userRole === 'student' ? 'profile' : 'login')} className="px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-1">
-            {userRole === 'guest' ? 'Đăng nhập / Đăng ký ngay' : 'Vào hệ thống quản lý'}
+            {userRole === 'guest' ? 'Đăng nhập ngay' : 'Vào hệ thống quản lý'}
           </button>
           <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-full hover:bg-white/20 transition-all">
             Tìm hiểu thêm
@@ -102,7 +102,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
         <div className="hidden md:block absolute top-12 left-10 right-10 h-0.5 bg-gray-200 z-0"></div>
         {[
-          { icon: 'fa-user-edit', title: '01. Đăng ký & Nộp hồ sơ', desc: 'Sinh viên cập nhật thông tin và minh chứng lên hệ thống.' },
+          { icon: 'fa-user-edit', title: '01. Đăng nhập & Nộp hồ sơ', desc: 'Sinh viên đăng nhập bằng tài khoản được cấp và nộp minh chứng.' },
           { icon: 'fa-search', title: '02. Thẩm định Cấp Khoa', desc: 'Ban thư ký Liên Chi Hội các khoa kiểm tra tính hợp lệ.' },
           { icon: 'fa-users-cog', title: '03. Xét duyệt Cấp Trường', desc: 'Hội đồng xét duyệt đánh giá tổng hợp mức độ đạt.' },
           { icon: 'fa-award', title: '04. Công nhận & Vinh danh', desc: 'Ban hành Quyết định và tổ chức Lễ tuyên dương.' }
@@ -227,7 +227,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
       <h2 className="text-3xl md:text-4xl font-black text-[#002b5c] uppercase font-formal tracking-tight">Bạn đã sẵn sàng?</h2>
       <p className="text-gray-500 font-medium">Bắt đầu hành trình chinh phục danh hiệu "Sinh viên 5 tốt" ngay hôm nay.</p>
       <button onClick={() => onNavigate(userRole === 'admin' ? 'admin' : userRole === 'student' ? 'profile' : 'login')} className="px-12 py-5 bg-orange-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-full hover:bg-orange-700 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
-        {userRole === 'guest' ? 'Đăng nhập hệ thống' : 'Vào hệ thống quản lý'}
+        {userRole === 'guest' ? 'Đăng nhập ngay' : 'Vào hệ thống quản lý'}
       </button>
     </div>
   </div>

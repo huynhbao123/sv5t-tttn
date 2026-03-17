@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { authService } from '../services/authService';
 
 const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: string) => void, onNavigate: (page: string) => void }> = ({ onLogin, onNavigate }) => {
-  const [isLoginState, setIsLoginState] = useState(true);
   const [role, setRole] = useState<'student' | 'admin'>('student');
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,23 +14,9 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
     setIsLoading(true);
 
     try {
-      if (isLoginState) {
-        // Đăng nhập
-        const { user } = await authService.login(studentId, password, role);
-        onLogin(user.role as 'student' | 'admin', user.studentId);
-      } else {
-        // Đăng ký
-        if (!fullName.trim() || !studentId.trim() || !password.trim()) {
-          throw new Error('Vui lòng điền đầy đủ thông tin!');
-        }
-        if (password.length < 6) {
-          throw new Error('Mật khẩu phải từ 6 ký tự trở lên!');
-        }
-
-        const { user } = await authService.register(studentId, password, fullName, role);
-        alert('Đăng ký thành công!');
-        onLogin(role, role === 'student' ? user.studentId : undefined);
-      }
+      // Đăng nhập
+      const { user } = await authService.login(studentId, password, role);
+      onLogin(user.role as 'student' | 'admin', user.studentId);
     } catch (err: any) {
       setErrorMsg(err.message || 'Đã có lỗi xảy ra!');
     } finally {
@@ -40,10 +24,6 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
     }
   };
 
-  const toggleMode = () => {
-    setIsLoginState(!isLoginState);
-    setErrorMsg('');
-  };
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center bg-gray-50 py-12 px-4 animate-fade-in font-sans">
@@ -63,7 +43,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
               />
             </div>
             <h2 className="text-2xl font-black text-[#002b5c] uppercase font-formal tracking-tight">
-              {isLoginState ? 'Đăng nhập hệ thống' : 'Đăng ký tài khoản'}
+              Đăng nhập hệ thống
             </h2>
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Cổng thông tin Sinh viên 5 Tốt</p>
           </div>
@@ -93,22 +73,6 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {!isLoginState && (
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Họ và tên</label>
-                <div className="relative">
-                  <i className="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                  <input
-                    type="text"
-                    required={!isLoginState}
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-[#0054a6] outline-none transition-all placeholder:text-gray-300 placeholder:font-medium"
-                    placeholder="VD: Nguyễn Văn A"
-                  />
-                </div>
-              </div>
-            )}
 
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center justify-between">
@@ -130,7 +94,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mật khẩu</label>
-                {isLoginState && <a href="#" className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:text-orange-500 transition-colors">Quên mật khẩu?</a>}
+                <a href="#" className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:text-orange-500 transition-colors">Quên mật khẩu?</a>
               </div>
               <div className="relative">
                 <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
@@ -151,22 +115,8 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
               className={`w-full py-4 bg-[#002b5c] text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 flex justify-center items-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isLoading && <i className="fas fa-spinner fa-spin"></i>}
-              {isLoginState ? 'Đăng nhập ngay' : 'Tạo tài khoản'}
+              Đăng nhập ngay
             </button>
-
-            <div className="text-center pt-2">
-              <button 
-                type="button" 
-                onClick={toggleMode}
-                className="text-xs font-bold text-gray-500"
-              >
-                {isLoginState ? (
-                  <>Chưa có tài khoản? <span className="text-orange-500 hover:text-orange-600 uppercase tracking-widest text-[10px] ml-1">Đăng ký ngay</span></>
-                ) : (
-                  <>Đã có tài khoản? <span className="text-[#0054a6] hover:text-[#002b5c] uppercase tracking-widest text-[10px] ml-1">Đăng nhập</span></>
-                )}
-              </button>
-            </div>
           </form>
         </div>
 

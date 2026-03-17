@@ -122,7 +122,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
           <div className="pt-10 border-t border-gray-100 text-center">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-              Chưa có tài khoản? <a href="#" className="text-blue-900 hover:text-orange-600 transition-colors">Đăng ký ngay</a>
+              Liên hệ Ban Thư ký để được cấp tài khoản
             </p>
           </div>
         </div>
