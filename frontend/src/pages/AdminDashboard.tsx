@@ -50,7 +50,7 @@ const AdminDashboard: React.FC<{
   // State for CRUD
   const LEVELS = ['Cấp Khoa/CLB', 'Cấp Trường/Phường/Xã', 'Cấp ĐHĐN', 'Cấp Tỉnh/Thành phố', 'Cấp Trung ương'];
   const LEVEL_KEYS = ['khoa', 'truong', 'dhdn', 'tinh', 'tw'];
-  type CriterionItem = { id: string; description: string; isHard: boolean; points?: number; levelPoints: Record<string, number>; hasDecisionNumber: boolean };
+  type CriterionItem = { id: string; description: string; isHard: boolean; points?: number; levelPoints: Record<string, number>; hasDecisionNumber: boolean; minQty?: number };
   const [managedCriteria, setManagedCriteria] = useState<Record<string, CriterionItem[]>>({});
 
   useEffect(() => {
@@ -75,7 +75,8 @@ const AdminDashboard: React.FC<{
           isHard: tc.LoaiTieuChi === 'Cung',
           points: Number(tc.Diem || 0),
           levelPoints: lp,
-          hasDecisionNumber: tc.CoSoQuyetDinh
+          hasDecisionNumber: tc.CoSoQuyetDinh,
+          minQty: tc.SoLuongToiThieu
         };
       });
     });
@@ -1387,7 +1388,8 @@ const AdminDashboard: React.FC<{
                           // Hide level for simple point-based criteria. Show it if explicitly it has points or user provided a decision
                           const showLevel = !isSimpleEvidence && (hasLevelPoints || (ev.type && ev.type !== EvidenceType.NO_DECISION));
                           const showDecisionNumber = !!ev.decisionNumber;
-                          const showQty = ev.qty !== undefined && ev.qty > 0;
+                           // Only show quantity if it's explicitly more than 1 OR if it's a criterion that REQUIRES quantity input (like volunteer days)
+                           const showQty = (ev.qty !== undefined && ev.qty > 1) || (criterion?.minQty !== undefined && criterion.minQty > 0) || ev.subCriterionId === 'vol_hard_2';
 
                           return (
                             <div key={ev.id} className={`group bg-white p-5 border-2 rounded-2xl flex gap-6 items-center transition-all hover:border-blue-500/30 ${ev.status === 'Approved' ? 'border-green-500/20 bg-green-50/20' : ev.status === 'Rejected' ? 'border-red-500/20 bg-red-50/20' : ev.status === 'NeedsExplanation' ? 'border-orange-500/30 bg-orange-50/30' : 'border-gray-100'}`}>
