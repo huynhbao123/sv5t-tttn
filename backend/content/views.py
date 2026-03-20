@@ -16,10 +16,10 @@ class BaiVietListView(APIView):
 
     def get(self, request):
         qs = BaiViet.objects.filter(TrangThai='published').order_by('-NgayDang')
-        return Response(BaiVietSerializer(qs, many=True).data)
+        return Response(BaiVietSerializer(qs, many=True, context={'request': request}).data)
 
     def post(self, request):
-        serializer = BaiVietSerializer(data=request.data)
+        serializer = BaiVietSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -41,13 +41,13 @@ class BaiVietDetailView(APIView):
         obj = self.get_object(pk)
         if not obj:
             return Response({'detail': 'Không tìm thấy.'}, status=status.HTTP_404_NOT_FOUND)
-        return Response(BaiVietSerializer(obj).data)
+        return Response(BaiVietSerializer(obj, context={'request': request}).data)
 
     def put(self, request, pk):
         obj = self.get_object(pk)
         if not obj:
             return Response({'detail': 'Không tìm thấy.'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = BaiVietSerializer(obj, data=request.data, partial=True)
+        serializer = BaiVietSerializer(obj, data=request.data, partial=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
@@ -66,7 +66,7 @@ class AdminBaiVietListView(APIView):
 
     def get(self, request):
         qs = BaiViet.objects.all().order_by('-NgayDang')
-        return Response(BaiVietSerializer(qs, many=True).data)
+        return Response(BaiVietSerializer(qs, many=True, context={'request': request}).data)
 
 
 class VinhDanhListView(APIView):
