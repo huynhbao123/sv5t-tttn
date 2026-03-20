@@ -33,10 +33,22 @@ class Command(BaseCommand):
             email = u.pop('Email')
             password = u.pop('password')
 
-            if not TaiKhoan.objects.filter(TenDangNhap=u['TenDangNhap']).exists():
-                with transaction.atomic():
-                    acc = TaiKhoan.objects.create_user(password=password, **u)
-                    NguoiDung.objects.create(TaiKhoan=acc, HoTen=ho_ten, Email=email)
+            acc, created = TaiKhoan.objects.get_or_create(
+                TenDangNhap=u['TenDangNhap'],
+                defaults={
+                    'VaiTro': u['VaiTro'],
+                    'is_staff': u['is_staff'],
+                    'is_superuser': u['is_superuser'],
+                    'TrangThai': 'Active'
+                }
+            )
+            
+            if created:
+                acc.set_password(password)
+                acc.save()
+                NguoiDung.objects.create(TaiKhoan=acc, HoTen=ho_ten, Email=email)
                 self.stdout.write(self.style.SUCCESS(f"Created user: {u['TenDangNhap']}"))
             else:
-                self.stdout.write(f"User already exists: {u['TenDangNhap']}")
+                acc.TrangThai = 'Active'
+                acc.save()
+                self.stdout.write(f"User already exists, set to Active: {u['TenDangNhap']}")
