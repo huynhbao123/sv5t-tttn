@@ -13,24 +13,24 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
       <div className="text-center space-y-10 z-10 px-4 max-w-5xl mx-auto mt-12">
         <p className="text-orange-400 font-black text-xs md:text-sm tracking-[0.4em] uppercase font-sans animate-fade-in" style={{ animationDelay: '0.1s' }}>Hội Sinh viên Việt Nam trường Đại học Kinh tế, ĐHĐN</p>
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none font-formal drop-shadow-2xl">
+          <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none font-formal">
             Sinh Viên<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300">5 Tốt</span>
           </h1>
           <p className="text-blue-100/80 text-lg md:text-xl font-medium max-w-2xl mx-auto font-sans">Hệ thống xét duyệt và quản lý hồ sơ trực tuyến dành cho sinh viên trường Đại học Kinh tế (DUE).</p>
         </div>
         <div className="flex flex-col sm:flex-row justify-center gap-6 pt-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <button onClick={() => onNavigate(userRole === 'admin' ? 'admin' : userRole === 'student' ? 'profile' : 'login')} className="px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-1">
+          <button onClick={() => onNavigate(userRole === 'admin' ? 'admin' : userRole === 'student' ? 'profile' : 'login')} className="px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-full border border-orange-400/50 transition-all active:scale-95 shadow-none pb-5">
             {userRole === 'guest' ? 'Đăng nhập ngay' : 'Vào hệ thống quản lý'}
           </button>
-          <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-full hover:bg-white/20 transition-all">
+          <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-full active:scale-95 transition-all cursor-pointer">
             Tìm hiểu thêm
           </button>
         </div>
       </div>
       {/* Decorative scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 animate-bounce">
-        <span className="text-[9px] font-bold text-white uppercase tracking-widest">Cuộn xuống</span>
-        <i className="fas fa-chevron-down text-white text-xs"></i>
+      <div onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 animate-bounce cursor-pointer group">
+        <span className="text-[9px] font-bold text-white uppercase tracking-widest group-hover:text-orange-400 transition-colors">Cuộn xuống</span>
+        <i className="fas fa-chevron-down text-white text-xs group-hover:text-orange-400 transition-colors"></i>
       </div>
     </div>
 
@@ -55,12 +55,12 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4 mt-12">
-            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=400&h=500" alt="Students" className="rounded-2xl shadow-xl w-full object-cover h-64 grayscale hover:grayscale-0 transition-all duration-500" />
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400&h=400" alt="Study" className="rounded-2xl shadow-xl w-full object-cover h-48 grayscale hover:grayscale-0 transition-all duration-500" />
+            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=400&h=500" alt="Students" className="rounded-2xl border-2 border-white/10 w-full object-cover h-64" />
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400&h=400" alt="Study" className="rounded-2xl border-2 border-white/10 w-full object-cover h-48" />
           </div>
           <div className="space-y-4">
-            <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=400&h=400" alt="Team" className="rounded-2xl shadow-xl w-full object-cover h-48 grayscale hover:grayscale-0 transition-all duration-500" />
-            <img src="https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=400&h=500" alt="Success" className="rounded-2xl shadow-xl w-full object-cover h-64 grayscale hover:grayscale-0 transition-all duration-500" />
+            <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=400&h=400" alt="Team" className="rounded-2xl border-2 border-white/10 w-full object-cover h-48" />
+            <img src="https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=400&h=500" alt="Success" className="rounded-2xl border-2 border-white/10 w-full object-cover h-64" />
           </div>
         </div>
       </div>
@@ -81,8 +81,8 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
             { icon: 'fa-hands-helping', title: 'Tình nguyện tốt', color: 'amber', desc: 'Tích cực tham gia các hoạt động vì cộng đồng.' },
             { icon: 'fa-globe-asia', title: 'Hội nhập tốt', color: 'violet', desc: 'Kỹ năng ngoại ngữ, tin học và phong trào hội nhập.' }
           ].map((c, i) => (
-            <div key={i} className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border">
-              <div className={`w-14 h-14 bg-${c.color}-50 rounded-2xl flex items-center justify-center mb-6 text-${c.color}-500 text-2xl group-hover:scale-110 transition-transform`}>
+            <div key={i} className="bg-white p-8 rounded-2xl border border-gray-100 group">
+              <div className={`w-14 h-14 bg-${c.color}-50 rounded-2xl flex items-center justify-center mb-6 text-${c.color}-500 text-2xl`}>
                 <i className={`fas ${c.icon}`}></i>
               </div>
               <h3 className="text-base font-black text-gray-900 uppercase tracking-tight mb-3">{c.title}</h3>
@@ -108,7 +108,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
           { icon: 'fa-award', title: '04. Công nhận & Vinh danh', desc: 'Ban hành Quyết định và tổ chức Lễ tuyên dương.' }
         ].map((s, i) => (
           <div key={i} className="relative z-10 bg-white md:bg-transparent p-6 md:p-0 rounded-xl border md:border-0 text-center space-y-6">
-            <div className="w-24 h-24 mx-auto bg-white border-4 border-[#002b5c] rounded-full flex items-center justify-center shadow-lg text-[#002b5c] text-3xl">
+            <div className="w-24 h-24 mx-auto bg-white border-4 border-[#002b5c] rounded-full flex items-center justify-center text-[#002b5c] text-3xl">
               <i className={`fas ${s.icon}`}></i>
             </div>
             <div>
@@ -162,7 +162,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
                 className="min-w-full md:min-w-[45%] lg:min-w-[31%] snap-start bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all group backdrop-blur-sm"
               >
                 <div className="flex items-center gap-5 mb-6">
-                  <img src={f.image || 'https://via.placeholder.com/300x400?text=Sinh+Vien+5+Tot'} className="w-20 h-20 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all" alt={f.name} />
+                  <img src={f.image || 'https://via.placeholder.com/300x400?text=Sinh+Vien+5+Tot'} className="w-20 h-20 rounded-xl object-cover" alt={f.name} />
                   <div>
                     <h3 className="text-lg font-black uppercase tracking-tight">{f.name}</h3>
                     <p className="text-orange-400 text-[9px] font-black uppercase tracking-widest mt-1">{f.achievement}</p>
@@ -187,10 +187,10 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.filter(p => p.status === 'published').slice(0, 6).map((post, i) => (
-            <div key={i} className="bg-white border rounded-2xl overflow-hidden hover:shadow-2xl transition-all group flex flex-col">
+            <div key={i} className="bg-white border rounded-2xl overflow-hidden transition-all group flex flex-col cursor-pointer hover:border-orange-500/50" onClick={() => onNavigate(`/posts/${post.id}`)}>
               <div className="aspect-video bg-gray-100 overflow-hidden relative">
                 {post.image ? (
-                  <img src={post.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={post.title} />
+                  <img src={post.image} className="w-full h-full object-cover  transition-transform duration-500" alt={post.title} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">
                     <i className="fas fa-image text-4xl"></i>
@@ -201,7 +201,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col justify-between">
-                <div onClick={() => onNavigate(`/posts/${post.id}`)} className="cursor-pointer">
+                <div className="cursor-pointer">
                   <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4">
                     <i className="far fa-calendar"></i>
                     <span>{post.date}</span>
@@ -226,7 +226,7 @@ const HomeView: React.FC<{ faces: FeaturedFace[], posts: any[], userRole: 'stude
     <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
       <h2 className="text-3xl md:text-4xl font-black text-[#002b5c] uppercase font-formal tracking-tight">Bạn đã sẵn sàng?</h2>
       <p className="text-gray-500 font-medium">Bắt đầu hành trình chinh phục danh hiệu "Sinh viên 5 tốt" ngay hôm nay.</p>
-      <button onClick={() => onNavigate(userRole === 'admin' ? 'admin' : userRole === 'student' ? 'profile' : 'login')} className="px-12 py-5 bg-orange-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-full hover:bg-orange-700 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
+      <button onClick={() => onNavigate(userRole === 'admin' ? 'admin' : userRole === 'student' ? 'profile' : 'login')} className="px-12 py-5 bg-orange-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-full hover:bg-orange-700 transition-all transform  border border-orange-500">
         {userRole === 'guest' ? 'Đăng nhập ngay' : 'Vào hệ thống quản lý'}
       </button>
     </div>

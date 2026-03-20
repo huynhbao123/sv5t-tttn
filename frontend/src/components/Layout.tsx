@@ -15,7 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children, userType, onNavigate, onLogou
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-orange-500 selection:text-white">
       {/* Nâng z-index lên 1000 để luôn nằm trên cùng */}
-      <nav className="bg-white border-b sticky top-0 z-[1000] shadow-md h-24">
+      <nav className="bg-white border-b sticky top-0 z-[1000] h-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-full">
           <div className="flex justify-between items-center h-full">
             <div className="flex items-center cursor-pointer" onClick={() => onNavigate('home')}>

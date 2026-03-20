@@ -38,6 +38,7 @@ const AdminDashboard: React.FC<{
   const isSelected = !!selectedStudent && (selectedStudent.status !== 'Draft');
   const [isReviewing, setIsReviewing] = useState(false);
   const [activeReviewTab, setActiveReviewTab] = useState<CriterionType>(CriterionType.ETHICS);
+  const [isTopExpanded, setIsTopExpanded] = useState(false);
 
   // Lock body scroll for dashboard
   useEffect(() => {
@@ -250,7 +251,7 @@ const AdminDashboard: React.FC<{
 
     return (
       <div className="fixed inset-0 z-[2000] bg-blue-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-        <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-up">
+        <div className="bg-white rounded-3xl w-full max-w-md border border-gray-100 overflow-hidden animate-fade-up">
           <div className={`px-8 py-6 text-white flex justify-between items-center ${feedbackModal.type === 'Approved' ? 'bg-green-600' : feedbackModal.type === 'Rejected' ? 'bg-red-600' : 'bg-orange-500'}`}>
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight">{feedbackModal.title}</h3>
@@ -284,7 +285,7 @@ const AdminDashboard: React.FC<{
               </button>
               <button 
                 onClick={() => feedbackModal.onSubmit(modalFeedback)}
-                className={`px-10 py-3 text-white font-black text-[9px] uppercase tracking-widest rounded-xl transition-all shadow-xl ${feedbackModal.type === 'Approved' ? 'bg-green-600 hover:bg-green-700 shadow-green-600/10' : feedbackModal.type === 'Rejected' ? 'bg-red-600 hover:bg-red-700 shadow-red-600/10' : 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/10'}`}
+                className={`px-10 py-3 text-white font-black text-[9px] uppercase tracking-widest rounded-xl transition-all ${feedbackModal.type === 'Approved' ? 'bg-green-600 hover:bg-green-700' : feedbackModal.type === 'Rejected' ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-500 hover:bg-orange-600'}`}
               >
                 Xác nhận
               </button>
@@ -299,13 +300,13 @@ const AdminDashboard: React.FC<{
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-black text-blue-900 uppercase">Quản lý Gương mặt tiêu biểu</h2>
-        <button onClick={openAddFace} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-md">
+        <button onClick={openAddFace} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
           <i className="fas fa-plus mr-2"></i>Thêm gương mặt
         </button>
       </div>
 
       {faceForm && (
-        <div className="bg-white border-2 border-blue-900/10 rounded-xl p-8 shadow-xl animate-fade-in">
+        <div className="bg-white border-2 border-blue-900/10 rounded-xl p-8 animate-fade-in">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><i className="fas fa-user-edit"></i></div>
             <h3 className="text-sm font-black text-blue-900 uppercase tracking-widest">{faceForm.mode === 'add' ? 'Thêm gương mặt mới' : 'Chỉnh sửa thông tin'}</h3>
@@ -328,7 +329,7 @@ const AdminDashboard: React.FC<{
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Hình ảnh vinh danh</label>
               <div className="flex gap-4 items-center">
                 <label className="flex-1 cursor-pointer">
-                  <div className="px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-900 hover:bg-white transition-all flex items-center justify-center gap-3">
+                  <div className="px-4 py-3 bg-gray-50 border border-dashed border-gray-200 rounded-xl hover:border-blue-900 hover:bg-white transition-all flex items-center justify-center gap-3">
                     <i className="fas fa-cloud-upload-alt text-gray-400"></i>
                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{faceForm.imageFile ? faceForm.imageFile.name : 'Chọn ảnh từ máy tính'}</span>
                   </div>
@@ -359,19 +360,19 @@ const AdminDashboard: React.FC<{
 
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
             <button onClick={() => setFaceForm(null)} className="px-6 py-3 border text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Hủy bỏ</button>
-            <button onClick={handleSaveFace} disabled={!faceForm.name || !faceForm.achievement} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 shadow-md disabled:opacity-50">Lưu thông tin</button>
+            <button onClick={handleSaveFace} disabled={!faceForm.name || !faceForm.achievement} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all border border-blue-950">Lưu thông tin</button>
           </div>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {faces.map(face => (
-          <div key={face.id} className="bg-white border rounded-xl overflow-hidden group hover:shadow-xl transition-all relative">
+          <div key={face.id} className="bg-white border border-gray-100 rounded-xl overflow-hidden group transition-all relative">
             <div className="aspect-[4/3] bg-gray-100 overflow-hidden relative">
-              <img src={face.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt={face.name} />
-              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                <button onClick={() => openEditFace(face)} className="w-8 h-8 bg-white/90 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-lg"><i className="fas fa-pen text-[10px]"></i></button>
-                <button onClick={() => handleDeleteFace(face.id)} className="w-8 h-8 bg-white/90 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-lg"><i className="fas fa-trash text-[10px]"></i></button>
+              <img src={face.image} className="w-full h-full object-cover" alt={face.name} />
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                <button onClick={() => openEditFace(face)} className="w-8 h-8 bg-white/90 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-gray-100"><i className="fas fa-pen text-[10px]"></i></button>
+                <button onClick={() => handleDeleteFace(face.id)} className="w-8 h-8 bg-white/90 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-gray-100"><i className="fas fa-trash text-[10px]"></i></button>
               </div>
             </div>
             <div className="p-6">
@@ -416,16 +417,10 @@ const AdminDashboard: React.FC<{
 
     return (
       <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
-        <div className="bg-white border-2 border-dashed border-blue-200 rounded-3xl p-10 text-center space-y-4">
-           <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto text-blue-500 text-2xl shadow-inner animate-pulse"><i className="fas fa-clock"></i></div>
-           <h3 className="text-xl font-black text-blue-900 uppercase font-formal italic">Cấu hình thời gian nộp hồ sơ</h3>
-           <p className="text-gray-400 text-xs font-bold uppercase tracking-widest max-w-md mx-auto leading-relaxed">Kiểm soát thời điểm sinh viên có thể nộp và chỉnh sửa hồ sơ. Hệ thống sẽ tự động khóa các tính năng nộp và sửa khi ngoài khung giờ quy định.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-           <div className="bg-white p-8 border rounded-2xl shadow-sm space-y-6 hover:shadow-md transition-all">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+           <div className="bg-white p-8 border border-gray-200 rounded-2xl space-y-6 transition-all hover:bg-gray-50/50">
               <div className="flex items-center gap-4 mb-4">
-                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600 shadow-sm"><i className="fas fa-calendar-alt"></i></div>
+                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600"><i className="fas fa-calendar-alt"></i></div>
                  <div>
                     <h4 className="text-[11px] font-black text-blue-900 uppercase tracking-widest">Khung thời gian nộp</h4>
                     <p className="text-[8px] text-gray-400 font-bold uppercase tracking-tighter">Thời gian tự động áp dụng</p>
@@ -456,16 +451,16 @@ const AdminDashboard: React.FC<{
               </div>
            </div>
 
-           <div className="bg-white p-8 border rounded-2xl shadow-sm space-y-6 hover:shadow-md transition-all">
+           <div className="bg-white p-8 border border-gray-200 rounded-2xl space-y-6 transition-all hover:bg-gray-50/50">
               <div className="flex items-center gap-4 mb-4">
-                 <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 shadow-sm"><i className="fas fa-power-off"></i></div>
+                 <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600"><i className="fas fa-power-off"></i></div>
                  <div>
                     <h4 className="text-[11px] font-black text-blue-900 uppercase tracking-widest">Trạng thái cổng</h4>
                     <p className="text-[8px] text-gray-400 font-bold uppercase tracking-tighter">Bật/tắt thủ công ngay lập tức</p>
                  </div>
               </div>
 
-              <div className={`p-6 rounded-2xl flex items-center justify-between border-2 shadow-inner transition-all ${systemSettings.TrangThaiMo ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+              <div className={`p-6 rounded-2xl flex items-center justify-between border-2 transition-all ${systemSettings.TrangThaiMo ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
                  <div>
                     <p className={`text-[13px] font-black uppercase tracking-tight ${systemSettings.TrangThaiMo ? 'text-green-600' : 'text-red-500'}`}>
                        {systemSettings.TrangThaiMo ? 'Cổng đang MỞ' : 'Cổng đang ĐÓNG'}
@@ -474,9 +469,9 @@ const AdminDashboard: React.FC<{
                  </div>
                  <button 
                    onClick={() => handleSaveSettings({ TrangThaiMo: !systemSettings.TrangThaiMo })}
-                   className={`w-14 h-8 rounded-full p-1 transition-all duration-500 shadow-inner group ${systemSettings.TrangThaiMo ? 'bg-green-500' : 'bg-gray-300'}`}
+                   className={`w-14 h-8 rounded-full p-1 transition-all duration-500 group ${systemSettings.TrangThaiMo ? 'bg-green-500' : 'bg-gray-300'}`}
                  >
-                    <div className={`w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-500 transform ${systemSettings.TrangThaiMo ? 'translate-x-6 rotate-180' : 'translate-x-0'}`}></div>
+                    <div className={`w-6 h-6 bg-white rounded-full transition-all duration-500 transform border border-gray-200 ${systemSettings.TrangThaiMo ? 'translate-x-6 rotate-180' : 'translate-x-0'}`}></div>
                  </button>
               </div>
 
@@ -487,10 +482,10 @@ const AdminDashboard: React.FC<{
            </div>
         </div>
 
-        <div className="bg-white p-10 border rounded-3xl shadow-sm space-y-8 relative overflow-hidden group hover:shadow-xl transition-all">
+        <div className="bg-white p-10 border border-gray-200 rounded-3xl space-y-8 relative overflow-hidden group transition-all">
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10 opacity-50 group-hover:scale-110 transition-transform"></div>
            <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
-              <div className="w-12 h-12 bg-blue-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-900/10"><i className="fas fa-bullhorn animate-bounce"></i></div>
+              <div className="w-12 h-12 bg-blue-900 rounded-2xl flex items-center justify-center text-white"><i className="fas fa-bullhorn animate-bounce"></i></div>
               <div>
                  <h4 className="text-sm font-black text-blue-900 uppercase tracking-[0.2em]">Thông tin thông báo</h4>
                  <p className="text-[10px] font-bold text-gray-400 uppercase mt-1 tracking-widest">Nội dung sẽ hiển thị trên Dashboard sinh viên</p>
@@ -507,7 +502,7 @@ const AdminDashboard: React.FC<{
                     value={systemSettings.ThongBaoHieuLuc} 
                     onChange={e => setSystemSettings({ ...systemSettings, ThongBaoHieuLuc: e.target.value })}
                     onBlur={() => handleSaveSettings({ ThongBaoHieuLuc: systemSettings.ThongBaoHieuLuc })}
-                    className="w-full px-6 py-5 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold focus:border-blue-900 transition-all outline-none min-h-[120px] shadow-inner" 
+                    className="w-full px-6 py-5 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold focus:border-blue-600 transition-all outline-none min-h-[120px]" 
                     placeholder="VD: Cổng nộp hồ sơ đang mở. Hạn chót đến 23:59 ngày..."
                  />
               </div>
@@ -520,7 +515,7 @@ const AdminDashboard: React.FC<{
                     value={systemSettings.ThongBaoHetHan} 
                     onChange={e => setSystemSettings({ ...systemSettings, ThongBaoHetHan: e.target.value })}
                     onBlur={() => handleSaveSettings({ ThongBaoHetHan: systemSettings.ThongBaoHetHan })}
-                    className="w-full px-6 py-5 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold focus:border-red-500 transition-all outline-none min-h-[120px] shadow-inner" 
+                    className="w-full px-6 py-5 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold focus:border-red-500 transition-all outline-none min-h-[120px]" 
                     placeholder="VD: Cổng nộp hồ sơ hiện đã đóng. Vui lòng liên hệ Admin nếu có thắc mắc."
                  />
               </div>
@@ -565,14 +560,14 @@ const AdminDashboard: React.FC<{
           </select>
         </div>
         {/* Table */}
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <table className="w-full text-left">
             <thead className="bg-gray-50 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
               <tr><th className="px-6 py-4">Sinh viên</th><th className="px-6 py-4">Lớp</th><th className="px-6 py-4 text-center">Trạng thái</th><th className="px-6 py-4 text-center">Điểm</th><th className="px-6 py-4"></th></tr>
             </thead>
             <tbody className="divide-y">
               {filtered.map(s => (
-                <tr key={s.id} className="hover:bg-blue-50/50 transition-colors">
+                <tr key={s.id} className="hover:bg-blue-50/50 transition-colors cursor-pointer" onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }}>
                   <td className="px-6 py-5">
                     <span className="block font-black text-blue-900 uppercase text-sm">{s.fullName}</span>
                     <span className="block text-[9px] text-gray-400 font-bold uppercase mt-0.5">{s.studentId}</span>
@@ -590,7 +585,7 @@ const AdminDashboard: React.FC<{
                         <i className="fas fa-comment-dots"></i> Đã giải trình
                       </span>
                     ) : null}
-                    <button onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-sm">
+                    <button onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
                       <i className="fas fa-eye mr-1.5"></i>Thẩm định
                     </button>
                   </td>
@@ -636,7 +631,7 @@ const AdminDashboard: React.FC<{
             { label: 'Từ chối', val: rejected, icon: 'fa-times-circle', color: 'bg-red-500', bg: 'bg-red-50' },
           ].map((stat, i) => (
             <div key={i} className={`${stat.bg} p-6 rounded-xl border flex items-center gap-5`}>
-              <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-white text-lg shadow-md`}><i className={`fas ${stat.icon}`}></i></div>
+              <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-white text-lg border border-white/20`}><i className={`fas ${stat.icon}`}></i></div>
               <div>
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
                 <p className="text-2xl font-black text-blue-900 font-formal">{stat.val}</p>
@@ -680,13 +675,18 @@ const AdminDashboard: React.FC<{
           <div className="bg-white border rounded-xl overflow-hidden">
             <div className="px-6 py-5 border-b bg-gray-50/50 flex justify-between items-center">
               <h3 className="text-xs font-black text-blue-900 uppercase tracking-[0.2em]">Top hồ sơ xuất sắc</h3>
-              <i className="fas fa-trophy text-orange-400"></i>
+              <button 
+                onClick={() => setIsTopExpanded(true)}
+                className="text-[9px] font-black text-blue-600 uppercase hover:text-orange-600 transition-colors flex items-center gap-1.5"
+              >
+                Xem tất cả <i className="fas fa-external-link-alt text-[8px]"></i>
+              </button>
             </div>
             <div className="p-0">
               {topStudents.map((s, i) => (
                 <div key={s.id} className="px-6 py-4 flex items-center justify-between hover:bg-orange-50/30 border-b last:border-0">
                   <div className="flex items-center gap-4">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${i === 0 ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-400'}`}>{i + 1}</span>
+                    <span className={`text-xs font-black ${i === 0 ? 'text-orange-500' : 'text-gray-400'}`}>{i + 1}.</span>
                     <div>
                       <p className="text-[10px] font-black text-blue-900 uppercase">{s.fullName}</p>
                       <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{s.class}</p>
@@ -1000,7 +1000,7 @@ const AdminDashboard: React.FC<{
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-black text-blue-900 uppercase">Quản lý người dùng</h2>
-        <button onClick={handleAddUser} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-sm">
+        <button onClick={handleAddUser} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
           <i className="fas fa-user-plus mr-1.5"></i>Thêm người dùng
         </button>
       </div>
@@ -1038,13 +1038,13 @@ const AdminDashboard: React.FC<{
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-black text-blue-900 uppercase">Quản lý bài viết</h2>
-        <button onClick={handleAddPost} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-sm">
+        <button onClick={handleAddPost} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
           <i className="fas fa-plus mr-1.5"></i>Thêm bài viết
         </button>
       </div>
 
       {articleForm && (
-        <div className="bg-white border-2 border-blue-900/10 rounded-xl p-8 shadow-xl animate-fade-in">
+        <div className="bg-white border-2 border-blue-900/10 rounded-xl p-8 animate-fade-in">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><i className="fas fa-file-edit"></i></div>
             <h3 className="text-sm font-black text-blue-900 uppercase tracking-widest">{articleForm.mode === 'add' ? 'Thêm bài viết mới' : 'Chỉnh sửa bài viết'}</h3>
@@ -1094,14 +1094,14 @@ const AdminDashboard: React.FC<{
 
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
             <button onClick={() => setArticleForm(null)} className="px-6 py-3 border text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Hủy bỏ</button>
-            <button onClick={handleSaveArticle} disabled={!articleForm.title} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 shadow-md disabled:opacity-50">Lưu bài viết</button>
+            <button onClick={handleSaveArticle} disabled={!articleForm.title} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all border border-blue-950">Lưu bài viết</button>
           </div>
         </div>
       )}
 
       <div className="space-y-4">
         {posts.map(p => (
-          <div key={p.id} className="bg-white border rounded-lg p-5 flex items-center justify-between hover:shadow-md transition-all">
+          <div key={p.id} className="bg-white border border-gray-100 rounded-lg p-5 flex items-center justify-between transition-all">
             <div className="flex items-center gap-4 flex-1">
               <div className="w-16 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border">
                 {p.image ? (
@@ -1133,6 +1133,70 @@ const AdminDashboard: React.FC<{
       </div>
     </div>
   );
+
+  const renderTopExpandedModal = () => {
+    if (!isTopExpanded) return null;
+    const topStudentsFull = [...students]
+      .filter(s => s.status !== 'Rejected')
+      .sort((a, b) => b.totalScore - a.totalScore)
+      .slice(0, 100);
+
+    return (
+      <div className="fixed inset-0 z-[1200] bg-blue-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl w-full max-w-4xl border border-gray-100 overflow-hidden animate-fade-up flex flex-col max-h-[90vh]">
+          <div className="px-8 py-6 bg-blue-900 text-white flex justify-between items-center flex-shrink-0">
+            <div>
+              <h3 className="text-lg font-black uppercase tracking-tight">Top 100 Hồ sơ xuất sắc</h3>
+              <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mt-1">Sắp xếp theo tổng điểm xét duyệt cao nhất</p>
+            </div>
+            <button onClick={() => setIsTopExpanded(false)} className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"><i className="fas fa-times"></i></button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            <table className="w-full text-left">
+              <thead className="sticky top-0 bg-white z-10 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b">
+                <tr>
+                  <th className="px-6 py-4 w-16">Hạng</th>
+                  <th className="px-6 py-4">Sinh viên</th>
+                  <th className="px-6 py-4 text-center">Lớp</th>
+                  <th className="px-6 py-4 text-center">Tổng điểm</th>
+                  <th className="px-6 py-4"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {topStudentsFull.map((s, i) => (
+                  <tr key={s.id} className="hover:bg-blue-50/50 transition-colors group">
+                    <td className="px-6 py-5">
+                      <span className={`text-sm font-black ${i < 3 ? 'text-orange-500' : 'text-gray-400'}`}>{i + 1}.</span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="block font-black text-blue-900 uppercase text-xs">{s.fullName}</span>
+                      <span className="block text-[9px] text-gray-400 font-bold uppercase mt-0.5">{s.studentId}</span>
+                    </td>
+                    <td className="px-6 py-5 text-center text-[11px] font-bold text-gray-500 uppercase">{s.class}</td>
+                    <td className="px-6 py-5 text-center">
+                      <span className="text-lg font-black text-blue-900 font-formal">{s.totalScore}</span>
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <button 
+                        onClick={() => { onSelectStudent(s.id); setIsReviewing(true); setIsTopExpanded(false); }}
+                        className="px-4 py-2 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-600 hover:text-white transition-all border border-blue-100 group-hover:border-blue-200"
+                      >
+                        <i className="fas fa-eye mr-1.5"></i>Xem hồ sơ
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-6 bg-gray-50 border-t flex justify-end flex-shrink-0">
+             <button onClick={() => setIsTopExpanded(false)} className="px-10 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all">Đóng</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -1167,7 +1231,7 @@ const AdminDashboard: React.FC<{
               onClick={() => navigate(`/admin/${item.key}`)}
               className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-left transition-all text-[11px] font-bold
                 ${activeTab === item.key
-                  ? 'bg-blue-600/20 text-white shadow-sm'
+                  ? 'bg-blue-600/20 text-white border border-blue-500/20'
                   : 'text-blue-200/50 hover:bg-white/5 hover:text-blue-200'
                 }`}
             >
@@ -1202,7 +1266,7 @@ const AdminDashboard: React.FC<{
       {isReviewing && selectedStudent && (
         <div className="fixed inset-0 z-[1100] bg-[#0a1628]/95 backdrop-blur-md animate-fade-in flex flex-col">
           {/* Header Area */}
-          <div className="px-8 py-4 bg-[#0a1628] flex justify-between items-center border-b border-white/5 shadow-2xl">
+          <div className="px-8 py-4 bg-[#0a1628] flex justify-between items-center border-b border-white/5">
             <div className="flex items-center gap-6">
               <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white text-lg font-black">{selectedStudent.fullName.charAt(0)}</div>
               <div>
@@ -1221,7 +1285,7 @@ const AdminDashboard: React.FC<{
                 onClick={() => handleAction('Approved')} 
                 disabled={hasRejectedHardCriteria()}
                 title={hasRejectedHardCriteria() ? "Không thể duyệt hồ sơ vì có tiêu chí cứng bị từ chối" : "Phê duyệt hồ sơ"}
-                className={`px-5 py-2 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all shadow-lg ${hasRejectedHardCriteria() ? 'bg-gray-600 text-gray-400 cursor-not-allowed grayscale' : 'bg-green-500 text-white hover:bg-green-600'}`}
+                className={`px-5 py-2 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all ${hasRejectedHardCriteria() ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
               >
                 Duyệt hồ sơ
               </button>
@@ -1286,9 +1350,9 @@ const AdminDashboard: React.FC<{
                           }
                           return null;
                         })()}
-                        {pendingCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span>}
-                        {explainCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></span>}
-                        {rejectCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>}
+                        {pendingCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 border border-blue-400/50"></span>}
+                        {explainCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 border border-orange-400/50"></span>}
+                        {rejectCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-red-500 border border-red-400/50"></span>}
                         {evs.length > 0 && pendingCount === 0 && explainCount === 0 && rejectCount === 0 && <i className="fas fa-check-circle text-green-500 text-[10px]"></i>}
                       </div>
                     </button>
@@ -1344,7 +1408,7 @@ const AdminDashboard: React.FC<{
                         const renderFieldExplanation = (fKey: keyof StudentProfile['verifications'], cName: string, dVal: string, ver: any) => {
                           if (!ver?.explanation && !ver?.fileUrl) return null;
                           return (
-                            <div className="mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-2xl shadow-sm animate-fade-in relative overflow-hidden">
+                            <div className="mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-2xl animate-fade-in relative overflow-hidden">
                               <div className="absolute top-0 right-0 px-3 py-1 bg-blue-600 text-white text-[7px] font-black uppercase rounded-bl-xl">Giải trình của SV</div>
                               <div className="flex justify-between items-start mb-4">
                                 <div className="flex-1">
@@ -1357,7 +1421,7 @@ const AdminDashboard: React.FC<{
                                 {ver.fileUrl && (
                                   <button 
                                     onClick={() => window.open(formatUrl(ver.fileUrl), '_blank')}
-                                    className="px-4 py-2 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all shadow-md flex items-center gap-2"
+                                    className="px-4 py-2 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950 flex items-center gap-2"
                                   >
                                     <i className="fas fa-file-download"></i> Xem file
                                   </button>
@@ -1392,14 +1456,14 @@ const AdminDashboard: React.FC<{
                            const showQty = (ev.qty !== undefined && ev.qty > 1) || (criterion?.minQty !== undefined && criterion.minQty > 0) || ev.subCriterionId === 'vol_hard_2';
 
                           return (
-                            <div key={ev.id} className={`group bg-white p-5 border-2 rounded-2xl flex gap-6 items-center transition-all hover:border-blue-500/30 ${ev.status === 'Approved' ? 'border-green-500/20 bg-green-50/20' : ev.status === 'Rejected' ? 'border-red-500/20 bg-red-50/20' : ev.status === 'NeedsExplanation' ? 'border-orange-500/30 bg-orange-50/30' : 'border-gray-100'}`}>
+                            <div key={ev.id} className={`group bg-white p-5 border rounded-2xl flex gap-6 items-center transition-all ${ev.status === 'Approved' ? 'border-green-500/30 bg-green-50/20' : ev.status === 'Rejected' ? 'border-red-500/30 bg-red-50/20' : ev.status === 'NeedsExplanation' ? 'border-orange-500/40 bg-orange-50/30' : 'border-gray-200'}`}>
                               {/* Image Preview */}
                               {ev.fileUrl && (ev.fileUrl.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/) || ev.fileName.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/)) ? (
-                                <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden border shadow-inner">
-                                  <img src={ev.fileUrl} alt={ev.name} className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform" onClick={() => window.open(ev.fileUrl, '_blank')} />
+                                <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden border cursor-pointer">
+                                  <img src={ev.fileUrl} alt={ev.name} className="w-full h-full object-cover hover:scale-105 transition-transform" onClick={() => window.open(ev.fileUrl, '_blank')} />
                                 </div>
                               ) : (
-                                <div className="w-20 h-20 flex-shrink-0 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 shadow-inner text-blue-400">
+                                <div className="w-20 h-20 flex-shrink-0 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 text-blue-400">
                                   <i className="fas fa-file-pdf text-2xl"></i>
                                 </div>
                               )}
@@ -1451,7 +1515,7 @@ const AdminDashboard: React.FC<{
                                    <button onClick={() => window.open(ev.fileUrl, '_blank')} className="text-blue-500 hover:text-orange-500 transition-colors flex items-center gap-1"><i className="fas fa-eye"></i> Xem file</button>
                                  </div>
                                {ev.studentExplanation && (
-                                 <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl relative overflow-hidden animate-fade-in shadow-sm">
+                                 <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl relative overflow-hidden animate-fade-in ">
                                    <div className="absolute top-0 right-0 px-2 py-0.5 bg-blue-600 text-white text-[6px] font-black uppercase rounded-bl-lg">Giải trình SV</div>
                                    <p className="text-[11px] font-bold text-gray-800 leading-relaxed italic"><i className="fas fa-comment-dots mr-2 text-blue-500"></i>"{ev.studentExplanation}"</p>
                                  </div>
@@ -1460,14 +1524,14 @@ const AdminDashboard: React.FC<{
                             </div>
 
                             <div className="flex flex-col gap-1">
-                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Approved')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Approved' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-gray-50 text-green-600 hover:bg-green-100'}`} title="Đạt"><i className="fas fa-check text-[10px]"></i></button>
-                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'NeedsExplanation')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'NeedsExplanation' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'bg-gray-50 text-orange-500 hover:bg-orange-100'}`} title="Yêu cầu giải trình"><i className="fas fa-comment-dots text-[10px]"></i></button>
-                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Rejected')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Rejected' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-gray-50 text-red-600 hover:bg-red-100'}`} title="Không đạt"><i className="fas fa-times text-[10px]"></i></button>
+                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Approved')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Approved' ? 'bg-green-600 text-white border border-green-500' : 'bg-gray-50 text-green-600 hover:bg-green-100'}`} title="Đạt"><i className="fas fa-check text-[10px]"></i></button>
+                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'NeedsExplanation')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'NeedsExplanation' ? 'bg-orange-500 text-white border border-orange-400' : 'bg-gray-50 text-orange-500 hover:bg-orange-100'}`} title="Yêu cầu giải trình"><i className="fas fa-comment-dots text-[10px]"></i></button>
+                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Rejected')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Rejected' ? 'bg-red-600 text-white border border-red-500' : 'bg-gray-50 text-red-600 hover:bg-red-100'}`} title="Không đạt"><i className="fas fa-times text-[10px]"></i></button>
                             </div>
                           </div>
                         );
                       })) : (
-                          <div className="py-20 text-center space-y-4 bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                          <div className="py-20 text-center space-y-4 bg-white rounded-3xl border border-dashed border-gray-200">
                              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-200 text-2xl"><i className="fas fa-folder-open"></i></div>
                              <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest">Không có minh chứng bổ sung</p>
                           </div>
@@ -1484,7 +1548,7 @@ const AdminDashboard: React.FC<{
       {/* User Management Modal */}
       {userForm.show && (
         <div className="fixed inset-0 z-[1200] bg-blue-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-fade-up">
+          <div className="bg-white rounded-3xl w-full max-w-xl border border-gray-100 overflow-hidden animate-fade-up">
             <div className="px-8 py-6 bg-blue-900 text-white flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-black uppercase tracking-tight">Thêm người dùng mới</h3>
@@ -1503,7 +1567,7 @@ const AdminDashboard: React.FC<{
                   <button
                     key={r.key}
                     onClick={() => setUserForm({ ...userForm, data: { ...userForm.data, VaiTro: r.key } })}
-                    className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${userForm.data.VaiTro === r.key ? 'bg-white text-blue-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                    className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${userForm.data.VaiTro === r.key ? 'bg-white text-blue-900 border border-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
                   >
                     {r.label}
                   </button>
@@ -1517,7 +1581,7 @@ const AdminDashboard: React.FC<{
                     type="text"
                     value={userForm.data.TenDangNhap}
                     onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, TenDangNhap: e.target.value } })}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-900 outline-none transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                     placeholder="VD: 20123456"
                   />
                 </div>
@@ -1527,7 +1591,7 @@ const AdminDashboard: React.FC<{
                     type="password"
                     value={userForm.data.MatKhau}
                     onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, MatKhau: e.target.value } })}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-900 outline-none transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                     placeholder="••••••••"
                   />
                 </div>
@@ -1563,7 +1627,7 @@ const AdminDashboard: React.FC<{
                       type="text"
                       value={userForm.data.Lop}
                       onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, Lop: e.target.value } })}
-                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-900 outline-none transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                       placeholder="VD: 47K12.1"
                     />
                   </div>
@@ -1573,7 +1637,7 @@ const AdminDashboard: React.FC<{
                       type="text"
                       value={userForm.data.Khoa}
                       onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, Khoa: e.target.value } })}
-                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-900 outline-none transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                       placeholder="VD: Khoa Công nghệ thông tin"
                     />
                   </div>
@@ -1590,7 +1654,7 @@ const AdminDashboard: React.FC<{
               </button>
               <button 
                 onClick={handleSaveUser}
-                className="px-10 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all shadow-xl shadow-blue-900/10"
+                className="px-10 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all"
               >
                 Tạo tài khoản
               </button>
@@ -1599,6 +1663,7 @@ const AdminDashboard: React.FC<{
         </div>
       )}
       {renderFeedbackModal()}
+      {renderTopExpandedModal()}
     </div>
   );
 };

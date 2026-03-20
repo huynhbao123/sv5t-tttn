@@ -33,7 +33,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
           <i className="fas fa-arrow-left"></i> Quay lại trang chủ
         </button>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border">
+        <div className="bg-white rounded-2xl p-8 border border-gray-200">
           <div className="text-center mb-8">
             <div className="w-20 h-20 flex items-center justify-center mx-auto mb-6">
               <img 
@@ -52,14 +52,14 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
             <button
               type="button"
               onClick={() => { setRole('student'); setErrorMsg(''); }}
-              className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${role === 'student' ? 'bg-white text-blue-900 shadow-md' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${role === 'student' ? 'bg-white text-blue-900 border border-blue-900/10' : 'text-gray-400 hover:bg-gray-100'}`}
             >
               Sinh viên
             </button>
             <button
               type="button"
               onClick={() => { setRole('admin'); setErrorMsg(''); }}
-              className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${role === 'admin' ? 'bg-[#002b5c] text-white shadow-md' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${role === 'admin' ? 'bg-[#002b5c] text-white' : 'text-gray-400 hover:bg-gray-100'}`}
             >
               Cán bộ / Admin
             </button>
@@ -85,7 +85,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
                   required
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-[#0054a6] outline-none transition-all placeholder:text-gray-300 placeholder:font-medium"
+                  className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-sm font-bold focus:border-[#0054a6] outline-none transition-all placeholder:text-gray-300 placeholder:font-medium bg-gray-50/10"
                   placeholder={role === 'student' ? 'VD: 201111000' : 'admin'}
                 />
               </div>
@@ -103,7 +103,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-[#0054a6] outline-none transition-all placeholder:text-gray-300 placeholder:font-medium"
+                  className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-sm font-bold focus:border-[#0054a6] outline-none transition-all placeholder:text-gray-300 placeholder:font-medium bg-gray-50/10"
                   placeholder="••••••••"
                 />
               </div>
@@ -112,7 +112,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-4 bg-[#002b5c] text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 flex justify-center items-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`w-full py-4 bg-[#002b5c] text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-orange-600 transition-all hover:-translate-y-0.5 flex justify-center items-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isLoading && <i className="fas fa-spinner fa-spin"></i>}
               Đăng nhập ngay

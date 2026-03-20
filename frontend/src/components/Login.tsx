@@ -69,13 +69,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="flex p-1 bg-gray-100 rounded-sm">
             <button 
               onClick={() => setRole('student')}
-              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${role === 'student' ? 'bg-white text-blue-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all rounded-md ${role === 'student' ? 'bg-white text-blue-900 border border-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
             >
               Sinh viên
             </button>
             <button 
               onClick={() => setRole('admin')}
-              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${role === 'admin' ? 'bg-white text-blue-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all rounded-md ${role === 'admin' ? 'bg-white text-blue-900 border border-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
             >
               Ban Thư ký
             </button>
@@ -88,7 +88,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 type="text" 
                 required
                 placeholder={role === 'student' ? "Mã số sinh viên" : "Tên đăng nhập"}
-                className="w-full px-6 py-4 bg-white border-2 border-gray-100 focus:border-blue-900 outline-none transition-all font-bold text-sm"
+                className="w-full px-6 py-4 bg-white border border-gray-200 focus:border-blue-600 outline-none transition-all font-bold text-sm rounded-xl"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -103,7 +103,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 type="password" 
                 required
                 placeholder="••••••••"
-                className="w-full px-6 py-4 bg-white border-2 border-gray-100 focus:border-blue-900 outline-none transition-all font-bold text-sm"
+                className="w-full px-6 py-4 bg-white border border-gray-200 focus:border-blue-600 outline-none transition-all font-bold text-sm rounded-xl"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -113,7 +113,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-5 bg-blue-900 text-white font-black text-[10px] uppercase tracking-[0.4em] hover:bg-orange-600 transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-5 bg-blue-900 text-white font-black text-[10px] uppercase tracking-[0.4em] hover:bg-orange-600 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
               >
                 {isLoading ? 'Đang xác thực...' : 'Đăng nhập hệ thống'}
               </button>

@@ -9,6 +9,9 @@
   body {
     @apply font-sans bg-[#fcfcfc] text-gray-900;
   }
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 @layer components {

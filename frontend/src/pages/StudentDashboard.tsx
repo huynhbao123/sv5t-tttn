@@ -135,7 +135,7 @@ const StudentDashboard: React.FC<{
 
     return (
       <div className="fixed inset-0 z-[2000] bg-blue-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-        <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-up">
+        <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden animate-fade-up border border-gray-100">
           <div className="px-8 py-6 bg-orange-500 text-white flex justify-between items-center">
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight">Xác nhận hủy nộp</h3>
@@ -169,7 +169,7 @@ const StudentDashboard: React.FC<{
                     setIsUnsubmittingAction(false);
                   }
                 }}
-                className={`px-10 py-3 bg-orange-500 text-white font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/10 ${isUnsubmittingAction ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`px-10 py-3 bg-orange-500 text-white font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all ${isUnsubmittingAction ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isUnsubmittingAction ? <i className="fas fa-spinner fa-spin mr-2"></i> : null}
                 Xác nhận hủy
@@ -401,7 +401,7 @@ const StudentDashboard: React.FC<{
         )}
 
         <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in space-y-10 font-sans">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-10 text-white shadow-2xl rounded-lg">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-10 text-white border border-white/10 rounded-lg">
           <div className="flex items-center gap-6 mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
               <i className="fas fa-paper-plane animate-pulse"></i>
@@ -418,7 +418,7 @@ const StudentDashboard: React.FC<{
             {flaggedEvidences.length === 0 && flaggedFields.length === 0 && canEdit && (
               <button 
                 onClick={() => setShowUnsubmitModal(true)} 
-                className="px-8 py-3 bg-white text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-orange-500 hover:text-white transition-all shadow-lg active:scale-95"
+                className="px-8 py-3 bg-white text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-orange-500 hover:text-white transition-all active:scale-95 border border-gray-100"
               >
                 Hủy nộp để chỉnh sửa
               </button>
@@ -444,7 +444,7 @@ const StudentDashboard: React.FC<{
             { label: 'Tiêu chí đạt', val: Object.values(CriterionType).filter(c => checkHardMet(c as CriterionType, student, criteriaGroups)).length + '/5', icon: 'fa-check-circle', color: 'text-green-500' },
             { label: 'Minh chứng đính kèm', val: Object.values(student.evidences).flat().length, icon: 'fa-file-alt', color: 'text-blue-500' },
           ].map((item, i) => (
-            <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+            <div key={i} className="bg-white p-6 rounded-2xl border border-gray-200 flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-lg ${item.color}`}><i className={`fas ${item.icon}`}></i></div>
               <div>
                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{item.label}</p>
@@ -463,7 +463,7 @@ const StudentDashboard: React.FC<{
   if (isApproved) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in space-y-10 font-sans">
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-10 text-white shadow-2xl rounded-lg">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-10 text-white border border-white/10 rounded-lg">
           <div className="flex items-center gap-6 mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl"><i className="fas fa-award"></i></div>
             <div>
@@ -491,7 +491,7 @@ const StudentDashboard: React.FC<{
   if (isRejected) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in space-y-10 font-sans">
-        <div className="bg-gradient-to-r from-red-600 to-rose-600 p-10 text-white shadow-2xl rounded-lg">
+        <div className="bg-gradient-to-r from-red-600 to-rose-600 p-10 text-white border border-white/10 rounded-lg">
           <div className="flex items-center gap-6 mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl"><i className="fas fa-times-circle"></i></div>
             <div>
@@ -524,11 +524,11 @@ const StudentDashboard: React.FC<{
   if (isProcessing) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in space-y-10 font-sans">
-        <div className="bg-[#f26522] p-10 text-white shadow-2xl rounded-sm relative overflow-hidden">
+        <div className="bg-[#f26522] p-10 text-white rounded-sm relative overflow-hidden border border-orange-600">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="flex items-center gap-6">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl shadow-inner"><i className="fas fa-exclamation-triangle animate-bounce-slow"></i></div>
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl"><i className="fas fa-exclamation-triangle animate-bounce-slow"></i></div>
               <div>
                 <h2 className="text-3xl font-black uppercase tracking-tight">Chế độ Giải trình Hồ sơ</h2>
                 <p className="text-orange-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Hội đồng đang chờ phản hồi từ bạn</p>
@@ -550,7 +550,7 @@ const StudentDashboard: React.FC<{
 
           {/* Loop qua các trường thông tin chung bị lỗi */}
           {flaggedFields.map(field => (
-            <div key={field.key} className="bg-white border-2 border-orange-200 p-8 shadow-lg rounded-sm space-y-6">
+            <div key={field.key} className="bg-white border border-orange-200 p-8 rounded-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-100 pb-4">
                 <h4 className="text-base font-black text-blue-900 uppercase">{field.label}: <span className="text-orange-600 font-formal text-xl">{field.val}</span></h4>
                 <span className="bg-orange-100 text-orange-700 text-[9px] font-black px-3 py-1 uppercase tracking-widest">Dữ liệu chung</span>
@@ -596,7 +596,7 @@ const StudentDashboard: React.FC<{
 
           {/* Loop qua các minh chứng bị lỗi */}
           {flaggedEvidences.map(({ cat, ev }) => (
-            <div key={ev.id} className="bg-white border-2 border-orange-200 p-8 shadow-lg rounded-sm space-y-6">
+            <div key={ev.id} className="bg-white border border-orange-200 p-8 rounded-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-100 pb-4">
                 <div>
                   <span className="text-[9px] font-black text-orange-600 uppercase tracking-[0.2em] mb-1 block">{cat}</span>
@@ -611,7 +611,7 @@ const StudentDashboard: React.FC<{
                      const url = formatUrl(ev.fileUrl);
                      window.open(url, '_blank');
                   }} 
-                  className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all shadow-md"
+                  className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all border border-blue-950"
                 >
                    Mở Minh chứng
                 </button>
@@ -667,7 +667,7 @@ const StudentDashboard: React.FC<{
           <button
             onClick={handleFinalSubmitExplanation}
             disabled={isResubmitting || !canEdit}
-            className={`px-20 py-6 font-black text-xs uppercase tracking-[0.5em] transition-all shadow-2xl active:scale-95 flex items-center gap-4 mx-auto
+            className={`px-20 py-6 font-black text-xs uppercase tracking-[0.5em] transition-all border border-orange-500 active:scale-95 flex items-center gap-4 mx-auto
               ${(isResubmitting || !canEdit) ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-900 text-white hover:bg-[#f26522]'}`}
           >
             {isResubmitting && <i className="fas fa-spinner fa-spin"></i>}
@@ -749,7 +749,7 @@ const StudentDashboard: React.FC<{
     return (
       <div className="animate-fade-in space-y-8">
         {/* Category Header */}
-        <div className="bg-white border-2 border-gray-100 rounded-lg p-6 flex items-center justify-between shadow-sm">
+        <div className="bg-white border-2 border-gray-100 rounded-lg p-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
               <i className={`fas ${catIcons[cat]} text-blue-600 text-lg`}></i>
@@ -759,7 +759,7 @@ const StudentDashboard: React.FC<{
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Tiêu chí {currentStepIdx + 1}/{STEPS.length - 1}</p>
             </div>
           </div>
-          <span className={`px-4 py-2 text-[9px] font-black uppercase tracking-widest rounded-full ${isHardMet ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+          <span className={`px-4 py-2 text-[9px] font-black uppercase tracking-widest rounded-full cursor-help ${isHardMet ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
             {isHardMet ? '✓ Đạt tiêu chí cứng' : '✗ Chưa đạt tiêu chí cứng'}
           </span>
         </div>
@@ -831,7 +831,7 @@ const StudentDashboard: React.FC<{
                {hardUploads.map((sub: any) => {
                   const subEvs = student.evidences[cat].filter(e => e.subCriterionId === sub.MaTieuChi);
                   return (
-                    <div key={sub.MaTieuChi} className={`p-4 bg-white border-2 rounded-lg shadow-sm transition-all ${subEvs.length > 0 ? 'border-blue-100' : 'border-gray-100'}`}>
+                    <div key={sub.MaTieuChi} className={`p-4 bg-white border rounded-lg transition-all ${subEvs.length > 0 ? 'border-blue-200 bg-blue-50/10' : 'border-gray-200'}`}>
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex-1">
                           <span className="text-[8px] font-black uppercase px-2 py-0.5 text-white bg-blue-600 rounded inline-block mb-1">Bắt buộc</span>
@@ -918,7 +918,7 @@ const StudentDashboard: React.FC<{
               softSubsRaw.filter((sub: any) => !['eth_point_5', 'aca_point_7'].includes(sub.MaTieuChi)).map((sub: any) => {
               const subEvs = (student.evidences[cat] || []).filter(e => e.subCriterionId === sub.MaTieuChi);
                 return (
-                  <div key={sub.MaTieuChi} className={`p-4 border-2 transition-all bg-white rounded-lg shadow-sm ${subEvs.length > 0 ? 'border-orange-100' : 'border-gray-100'}`}>
+                  <div key={sub.MaTieuChi} className={`p-4 border transition-all bg-white rounded-lg ${subEvs.length > 0 ? 'border-orange-200 bg-orange-50/10' : 'border-gray-200'}`}>
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
                         <span className="text-[8px] font-black uppercase px-2 py-0.5 text-white bg-orange-500 rounded inline-block mb-1">Cộng</span>
@@ -996,7 +996,7 @@ const StudentDashboard: React.FC<{
           </div>
           <h2 className="text-2xl font-black text-[#0054a6] uppercase font-formal">{allHardMet ? 'Sẵn sàng nộp hồ sơ' : 'Chưa đủ điều kiện'}</h2>
         </div>
-        <div className="bg-[#002b5c] p-12 text-white border-4 border-white shadow-xl rounded-lg">
+        <div className="bg-[#002b5c] p-12 text-white border border-white/20 rounded-lg">
           <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-2 text-orange-400">Tổng điểm tích lũy dự kiến</p>
           <h3 className="text-6xl font-bold mb-10 font-formal">{student.totalScore}</h3>
 
@@ -1039,7 +1039,7 @@ const StudentDashboard: React.FC<{
                     onClick={() => setCurrentStepIdx(idx)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap
                       ${isActive
-                        ? (isMet ? 'bg-green-600 text-white shadow-lg scale-105' : 'bg-red-600 text-white shadow-lg scale-105')
+                        ? (isMet ? 'bg-green-600 text-white' : 'bg-red-600 text-white')
                         : (isMet ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-50 text-red-500 hover:bg-red-100')
                       }`}
                   >
@@ -1066,7 +1066,7 @@ const StudentDashboard: React.FC<{
           <button
             onClick={() => { if (currentStepIdx < STEPS.length - 1) setCurrentStepIdx(currentStepIdx + 1); }}
             disabled={currentStepIdx === STEPS.length - 1}
-            className={`px-6 py-3 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 ${currentStepIdx === STEPS.length - 1 ? 'bg-gray-100 text-gray-300' : 'bg-blue-900 text-white hover:bg-orange-600 shadow-md'}`}
+            className={`px-6 py-3 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 ${currentStepIdx === STEPS.length - 1 ? 'bg-gray-100 text-gray-300' : 'bg-blue-900 text-white hover:bg-orange-600'}`}
           >
             Tiếp theo <i className="fas fa-arrow-right text-[8px]"></i>
           </button>
@@ -1094,8 +1094,8 @@ const StudentDashboard: React.FC<{
       {/* Success Modal Overlay */}
       {showSuccess && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-blue-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white p-12 rounded-3xl shadow-2xl border-2 border-green-500 scale-110 animate-scale-up text-center space-y-6">
-            <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner">
+          <div className="bg-white p-12 rounded-3xl border border-green-500/30 scale-110 animate-scale-up text-center space-y-6">
+            <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-4xl">
               <i className="fas fa-check"></i>
             </div>
             <div>

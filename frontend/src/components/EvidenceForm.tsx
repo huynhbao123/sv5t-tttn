@@ -141,9 +141,9 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
   };
 
   return (
-    <div className="bg-white p-12 shadow-2xl animate-scale-in max-h-[90vh] overflow-y-auto w-full max-w-xl font-sans border border-blue-100">
-      <div className="mb-8 border-b-2 border-orange-500 pb-4">
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Cập nhật minh chứng cho:</p>
+    <div className="bg-white p-12 animate-scale-in max-h-[90vh] overflow-y-auto w-full max-w-xl font-sans border border-gray-200 rounded-3xl">
+      <div className="mb-8 border-b border-gray-100 pb-5">
+        <p className="text-[10px] font-black text-blue-900/40 uppercase tracking-[0.2em] mb-2">Cập nhật minh chứng cho:</p>
         <h3 className="text-xl font-bold text-blue-900 uppercase tracking-tight leading-tight">
           {subCriterionName}
         </h3>
@@ -171,7 +171,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
               type="text" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
-              className="flex-1 px-5 py-4 border-2 border-gray-100 font-bold outline-none focus:border-blue-900 text-xs bg-white text-gray-900 shadow-sm" 
+              className="flex-1 px-5 py-4 border border-gray-200 font-bold outline-none focus:border-blue-600 text-xs bg-white text-gray-900 rounded-xl transition-all" 
               placeholder="VD: GCN Hiến máu lần 2..." 
             />
           </div>
@@ -184,7 +184,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
               <select 
                 value={level} 
                 onChange={(e) => setLevel(e.target.value as EvidenceLevel)} 
-                className="w-full px-5 py-4 border-2 border-gray-100 font-bold bg-white text-xs outline-none text-gray-900 shadow-sm"
+                className="w-full px-5 py-4 border border-gray-200 font-bold bg-white text-xs outline-none text-gray-900 rounded-xl transition-all"
               >
                 {Object.values(EvidenceLevel).map(l => <option key={l} value={l}>{l}</option>)}
               </select>
@@ -194,7 +194,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
               <select 
                 value={type} 
                 onChange={(e) => setType(e.target.value as EvidenceType)} 
-                className="w-full px-5 py-4 border-2 border-gray-100 font-bold bg-white text-xs outline-none text-gray-900 shadow-sm"
+                className="w-full px-5 py-4 border border-gray-200 font-bold bg-white text-xs outline-none text-gray-900 rounded-xl transition-all"
               >
                 {Object.values(EvidenceType).map(t => (
                   <option 
@@ -216,7 +216,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
               type="text" 
               value={decisionNumber} 
               onChange={(e) => setDecisionNumber(e.target.value)} 
-              className="w-full px-5 py-4 border-2 border-gray-100 font-bold outline-none focus:border-blue-900 bg-white text-xs text-gray-900 shadow-sm" 
+              className="w-full px-5 py-4 border border-gray-200 font-bold outline-none focus:border-blue-600 bg-white text-xs text-gray-900 rounded-xl transition-all" 
               placeholder="VD: 123/QĐ-ĐHKT" 
             />
           </div>
@@ -232,7 +232,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
               min="1"
               value={qty} 
               onChange={(e) => setQty(e.target.value ? parseInt(e.target.value, 10) : '')} 
-              className="w-full px-5 py-4 border-2 border-gray-100 font-bold outline-none focus:border-blue-900 bg-white text-xs text-gray-900 shadow-sm" 
+              className="w-full px-5 py-4 border border-gray-200 font-bold outline-none focus:border-blue-600 bg-white text-xs text-gray-900 rounded-xl transition-all" 
               placeholder={`Yêu cầu tối thiểu: ${selectedSubCriterion?.minQty}`} 
             />
           </div>
@@ -240,7 +240,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
 
         <div>
           <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Đính kèm tập tin (PDF/Ảnh)</label>
-          <div className="border-2 border-dashed border-gray-100 p-10 text-center hover:border-blue-900 hover:bg-blue-50/30 transition-all relative bg-gray-50/50 group">
+          <div className="border border-dashed border-gray-300 p-10 text-center hover:border-blue-900 hover:bg-blue-50/30 transition-all relative bg-gray-50/50 group rounded-2xl">
             <i className="fas fa-cloud-upload-alt text-gray-300 group-hover:text-blue-900 text-2xl mb-4"></i>
             <div className="block">
               {files.length > 0 ? (
@@ -302,7 +302,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
           </button>
           <button 
             type="submit" 
-            className="px-12 py-5 bg-[#0054a6] text-white font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-[#f26522] transition-all shadow-xl active:scale-95"
+            className="px-12 py-5 bg-blue-900 text-white font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-orange-600 transition-all rounded-xl active:scale-95 border border-blue-950"
           >
             Lưu minh chứng
           </button>
