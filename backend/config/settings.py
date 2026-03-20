@@ -124,9 +124,23 @@ SIMPLE_JWT = {
 }
 
 # ── CORS ─────────────────────────────────────────
-_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173')
-if _cors_origins == '*':
+_cors_origins_raw = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173')
+_cors_origins_list = [o.strip() for o in _cors_origins_raw.split(',') if o.strip()]
+
+if '*' in _cors_origins_list:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]
+    CORS_ALLOWED_ORIGINS = _cors_origins_list
+
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
