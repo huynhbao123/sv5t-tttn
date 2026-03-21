@@ -40,6 +40,9 @@ dist-ssr
 *.txt
 *.md
 !README.md
+!frontend/public/images/*.png
+!frontend/public/images/*.jpg
+!frontend/public/images/*.jpeg
 !backend/requirements.txt
 !frontend/package.json
 metadata.json
