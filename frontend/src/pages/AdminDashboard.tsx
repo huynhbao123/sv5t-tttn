@@ -1477,7 +1477,7 @@ const AdminDashboard: React.FC<{
                                   </div>
                                   <p className="text-sm text-gray-700 font-bold leading-relaxed italic">"{ver.explanation || '(Không có nội dung văn bản)'}"</p>
                                   {ver.explanationDate && (
-                                    <p className="text-[9px] font-black text-blue-500 uppercase mt-2">
+                                    <p className="text-[9px] font-black text-blue-300 uppercase mt-2">
                                       <i className="far fa-clock mr-1.5"></i>
                                       Giải trình lúc: {new Date(ver.explanationDate).toLocaleString('vi-VN')}
                                     </p>
@@ -1586,6 +1586,12 @@ const AdminDashboard: React.FC<{
                                  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl relative overflow-hidden animate-fade-in ">
                                    <div className="absolute top-0 right-0 px-2 py-0.5 bg-blue-600 text-white text-[6px] font-black uppercase rounded-bl-lg">Giải trình SV</div>
                                    <p className="text-[11px] font-bold text-gray-800 leading-relaxed italic"><i className="fas fa-comment-dots mr-2 text-blue-500"></i>"{ev.studentExplanation}"</p>
+                                   {ev.explanationDate && (
+                                     <p className="text-[9px] font-black text-blue-400 uppercase mt-2">
+                                       <i className="far fa-clock mr-1.5"></i>
+                                       Nộp giải trình lúc: {new Date(ev.explanationDate).toLocaleString('vi-VN')}
+                                     </p>
+                                   )}
                                  </div>
                                )}
                                {ev.adminFeedback && <p className="text-[10px] italic text-orange-700 mt-2 font-medium">Lưu ý: {ev.adminFeedback}</p>}
