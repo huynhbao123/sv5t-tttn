@@ -59,15 +59,17 @@ class SinhVien(models.Model):
 
         qs = MinhChung.objects.filter(
             SinhVien=self, TrangThai__in=allowed_statuses
-        )
+        ).select_related('TieuChi')
         
         total = 0
+        tieu_chi_ids = [mc.TieuChi_id for mc in qs]
+        diem_theo_cap_do_list = DiemTheoCapDo.objects.filter(TieuChi_id__in=tieu_chi_ids)
+        diem_map = {(d.TieuChi_id, d.CapDo): d.Diem for d in diem_theo_cap_do_list}
+        
         for mc in qs:
             # Lấy điểm từ DB thay vì hardcode trong code
-            try:
-                score_obj = DiemTheoCapDo.objects.get(TieuChi=mc.TieuChi, CapDo=mc.CapDo)
-                mc_diem = score_obj.Diem
-            except DiemTheoCapDo.DoesNotExist:
+            mc_diem = diem_map.get((mc.TieuChi_id, mc.CapDo))
+            if mc_diem is None:
                 mc_diem = mc.Diem or mc.TieuChi.Diem or 0
             
             total += mc_diem
@@ -81,20 +83,25 @@ class SinhVien(models.Model):
             'drl_cao': {'MaTieuChi': 'eth_point_5', 'active': self.DiemRenLuyen >= 90},
         }
         
+        active_bonus_ma = [cfg['MaTieuChi'] for cfg in bonus_config.values() if cfg['active']]
+        if active_bonus_ma:
+            tc_bonus_list = TieuChi.objects.filter(MaTieuChi__in=active_bonus_ma)
+            bonus_diem_map = {tc.MaTieuChi: tc.Diem for tc in tc_bonus_list}
+        else:
+            bonus_diem_map = {}
+            
+        fallback = {'dang_vien': 0.4, 'gpa_cao': 0.1, 'drl_cao': 0.1}
         for key, cfg in bonus_config.items():
             if cfg['active']:
-                try:
-                    tc_bonus = TieuChi.objects.get(MaTieuChi=cfg['MaTieuChi'])
-                    total += tc_bonus.Diem or 0
-                except TieuChi.DoesNotExist:
-                    # Fallback values if seeds are missing
-                    fallback = {'dang_vien': 0.4, 'gpa_cao': 0.1, 'drl_cao': 0.1}
+                bonus_val = bonus_diem_map.get(cfg['MaTieuChi'])
+                if bonus_val is not None:
+                    total += bonus_val
+                else:
                     total += fallback[key]
             
         self.TongDiem = round(total, 1)
         self.save(update_fields=['TongDiem'])
         return self.TongDiem
-
 
 class XacMinh(models.Model):
     """Admin xác minh từng trường dữ liệu của sinh viên"""
