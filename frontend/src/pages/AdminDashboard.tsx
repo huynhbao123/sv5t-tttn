@@ -912,15 +912,48 @@ const AdminDashboard: React.FC<{
       return;
     }
 
+    // Đảm bảo các trường không bắt buộc có giá trị mặc định
+    const payload = {
+      ...data,
+      Lop: data.Lop.trim() || 'Chưa cập nhật',
+      Khoa: data.Khoa.trim() || 'Chưa cập nhật',
+      Email: data.Email.trim() || '',
+    };
+
     try {
-      await adminService.addUser(data);
+      await adminService.addUser(payload);
       setUserForm({ ...userForm, show: false });
       refreshUsers();
-      toast.success('Đã thêm người dùng thành công');
+      toast.success('Đã thêm người dùng thành công!');
     } catch (e: any) {
-      console.error(e);
-      const msg = e.response?.data?.detail || "Lỗi không xác định";
-      toast.error("Lỗi khi thêm người dùng: " + msg);
+      console.error('Add user error:', e.response?.data);
+      const errData = e.response?.data;
+      let msg = 'Lỗi không xác định';
+      if (errData) {
+        if (typeof errData === 'string') {
+          msg = errData;
+        } else if (errData.detail) {
+          msg = errData.detail;
+        } else {
+          // DRF trả về lỗi dạng { TenDangNhap: ["Tài khoản với Tên đăng nhập này đã tồn tại."] }
+          msg = Object.entries(errData)
+            .map(([field, errors]) => {
+              const fieldName: Record<string, string> = {
+                TenDangNhap: 'Tên đăng nhập',
+                MatKhau: 'Mật khẩu',
+                HoTen: 'Họ tên',
+                Email: 'Email',
+                VaiTro: 'Vai trò',
+                non_field_errors: 'Dữ liệu',
+              };
+              const label = fieldName[field] || field;
+              const detail = Array.isArray(errors) ? errors.join(', ') : String(errors);
+              return `${label}: ${detail}`;
+            })
+            .join(' | ');
+        }
+      }
+      toast.error('Lỗi tạo tài khoản — ' + msg);
     }
   };
 

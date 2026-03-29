@@ -60,35 +60,44 @@ class TaiKhoanCreateSerializer(serializers.ModelSerializer):
         fields = ['TenDangNhap', 'MatKhau', 'VaiTro', 'HoTen', 'Email', 'Lop', 'Khoa']
 
     def create(self, validated_data):
+        from django.db import transaction
+        
         password = validated_data.pop('MatKhau')
         ho_ten = validated_data.pop('HoTen')
         email = validated_data.pop('Email', '')
-        lop = validated_data.pop('Lop', '')
-        khoa = validated_data.pop('Khoa', '')
+        lop = validated_data.pop('Lop', 'Chưa cập nhật')
+        khoa = validated_data.pop('Khoa', 'Chưa cập nhật')
         
         vai_tro = validated_data.get('VaiTro', 'SinhVien')
         
-        user = TaiKhoan(**validated_data)
-        user.set_password(password)
-        user.save()
+        # Validate email unique for non-student roles
+        if vai_tro != 'SinhVien' and email:
+            from .models import NguoiDung
+            if NguoiDung.objects.filter(Email=email).exists():
+                raise serializers.ValidationError({'Email': ['Email này đã được sử dụng bởi một tài khoản khác.']})
         
-        if vai_tro == 'SinhVien':
-            from students.models import SinhVien
-            SinhVien.objects.create(
-                TaiKhoan=user,
-                HoTen=ho_ten,
-                MaSV=user.TenDangNhap,
-                Lop=lop,
-                Khoa=khoa
-            )
-        else:
-            if not email:
-                email = f"{user.TenDangNhap}@due.udn.vn"
-            NguoiDung.objects.create(
-                TaiKhoan=user,
-                HoTen=ho_ten,
-                Email=email
-            )
+        with transaction.atomic():
+            user = TaiKhoan(**validated_data)
+            user.set_password(password)
+            user.save()
+            
+            if vai_tro == 'SinhVien':
+                from students.models import SinhVien
+                SinhVien.objects.create(
+                    TaiKhoan=user,
+                    HoTen=ho_ten,
+                    MaSV=user.TenDangNhap,
+                    Lop=lop or 'Chưa cập nhật',
+                    Khoa=khoa or 'Chưa cập nhật'
+                )
+            else:
+                if not email:
+                    email = f"{user.TenDangNhap}@due.udn.vn"
+                NguoiDung.objects.create(
+                    TaiKhoan=user,
+                    HoTen=ho_ten,
+                    Email=email
+                )
         return user
 
 
