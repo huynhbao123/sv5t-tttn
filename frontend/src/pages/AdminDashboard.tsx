@@ -154,8 +154,11 @@ const AdminDashboard: React.FC<{
       message: `Bạn đang thực hiện hành động: ${actionTxt} cho sinh viên ${selectedStudent.fullName}.`,
       requireFeedback: status === 'Rejected' || status === 'Processing',
       onSubmit: (feedback) => {
-        if (status === 'Approved' && hasRejectedHardCriteria()) {
-          toast.error("Không thể duyệt hồ sơ vì có tiêu chí cứng bị từ chối.");
+        if (status === 'Approved' && (hasRejectedHardCriteria() || hasPendingEvidences())) {
+          const message = hasPendingEvidences() 
+            ? "Vui lòng thẩm định tất cả các minh chứng trước khi duyệt hồ sơ."
+            : "Không thể duyệt hồ sơ vì có tiêu chí cứng bị từ chối.";
+          toast.error(message);
           return;
         }
         const needsExplanationCount = getExplanationCount();
@@ -404,6 +407,18 @@ const AdminDashboard: React.FC<{
     // Check evidences for hard criteria
     const rejectedHardEvidences = (Object.values(selectedStudent.evidences) as Evidence[][]).flat().some(e => e.isHardCriterion && e.status === 'Rejected');
     return rejectedHardEvidences;
+  };
+
+  const hasPendingEvidences = () => {
+    if (!selectedStudent) return false;
+    
+    // Check general verifications
+    const pendingVerifications = (Object.values(selectedStudent.verifications) as FieldVerification[]).some(v => v.status === 'Pending');
+    if (pendingVerifications) return true;
+
+    // Check all evidences
+    const pendingEvidences = (Object.values(selectedStudent.evidences) as Evidence[][]).flat().some(e => e.status === 'Pending');
+    return pendingEvidences;
   };
 
   const renderSettings = () => {
@@ -1283,9 +1298,9 @@ const AdminDashboard: React.FC<{
               {getExplanationCount() > 0 && <button onClick={() => handleAction('Processing')} className="px-4 py-2 bg-orange-500/80 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-500 transition-all">YC Giải trình ({getExplanationCount()})</button>}
                <button 
                 onClick={() => handleAction('Approved')} 
-                disabled={hasRejectedHardCriteria()}
-                title={hasRejectedHardCriteria() ? "Không thể duyệt hồ sơ vì có tiêu chí cứng bị từ chối" : "Phê duyệt hồ sơ"}
-                className={`px-5 py-2 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all ${hasRejectedHardCriteria() ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
+                disabled={hasRejectedHardCriteria() || hasPendingEvidences()}
+                title={hasRejectedHardCriteria() ? "Không thể duyệt hồ sơ vì có tiêu chí cứng bị từ chối" : hasPendingEvidences() ? "Vui lòng thẩm định tất cả các minh chứng" : "Phê duyệt hồ sơ"}
+                className={`px-5 py-2 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all ${hasRejectedHardCriteria() || hasPendingEvidences() ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
               >
                 Duyệt hồ sơ
               </button>
@@ -1394,10 +1409,15 @@ const AdminDashboard: React.FC<{
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-col gap-2 items-end">
+                        <div className="flex gap-3 items-center">
                           {fieldKey && (
                             <div className={`px-4 py-2 rounded-xl flex items-center gap-3 border-2 transition-all ${verification?.status === 'Approved' ? 'bg-green-50 border-green-200' : verification?.status === 'NeedsExplanation' ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-100'}`}>
                               <span className="text-[9px] font-black text-gray-400 uppercase">{contextName}: <span className="text-orange-600 text-sm ml-2">{dataValue}</span></span>
+                            </div>
+                          )}
+                          {cat === CriterionType.ETHICS && selectedStudent.isPartyMember && (
+                            <div className={`px-4 py-2 rounded-xl flex items-center gap-3 border-2 transition-all ${selectedStudent.verifications.partyMember?.status === 'Approved' ? 'bg-green-50 border-green-200' : selectedStudent.verifications.partyMember?.status === 'NeedsExplanation' ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-100'}`}>
+                              <span className="text-[9px] font-black text-gray-400 uppercase">Đối tượng: <span className="text-blue-600 text-[10px] ml-2 font-black">ĐẢNG VIÊN</span></span>
                             </div>
                           )}
                         </div>
@@ -1438,6 +1458,9 @@ const AdminDashboard: React.FC<{
                         return (
                           <>
                             {fieldKey && renderFieldExplanation(fieldKey, contextName, dataValue, verification)}
+                            {cat === CriterionType.ETHICS && selectedStudent.isPartyMember && 
+                              renderFieldExplanation('partyMember', 'Xác nhận Đảng viên', 'Hồ sơ Đảng', selectedStudent.verifications.partyMember)
+                            }
                           </>
                         );
                       })()}
