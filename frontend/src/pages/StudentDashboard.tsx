@@ -192,6 +192,13 @@ const StudentDashboard: React.FC<{
   const isApproved = student.status === 'Approved';
   const isRejected = student.status === 'Rejected';
 
+  // Xác định hồ sơ đã được xem xét bởi Admin chưa:
+  // - Đã từng chuyển sang các trạng thái thẩm định
+  // - Hoặc có ít nhất một mục minh chứng/xác minh ĐÃ được xử lý (khác Pending)
+  const isReviewed = ['Processing', 'Approved', 'Rejected'].includes(student.status) || 
+                    Object.values(student.verifications).some((v: any) => v.status && v.status !== 'Pending') ||
+                    Object.values(student.evidences).flat().some((e: any) => e.status !== 'Pending');
+
   // Submission Window Logic
   const isSubmissionOpen = React.useMemo(() => {
     if (!systemSettings) return true; // Default to open if no settings found
@@ -489,13 +496,20 @@ const StudentDashboard: React.FC<{
             Hồ sơ của bạn đã được gửi lên hệ thống và đang chờ Ban thư ký Hội Sinh viên thẩm định. Trong thời gian này, các tính năng chỉnh sửa sẽ tạm khóa để đảm bảo tính toàn vẹn của dữ liệu.
           </p>
           <div className="mt-8 pt-8 border-t border-white/10 flex flex-wrap gap-4">
-            {flaggedEvidences.length === 0 && flaggedFields.length === 0 && canEdit && (
+            {/* GIẢNG VIÊN YÊU CẦU: Nếu đã được Admin xem (isReviewed) thì không cho Hủy nộp nữa để đảm bảo tính toàn vẹn */}
+            {flaggedEvidences.length === 0 && flaggedFields.length === 0 && canEdit && !isReviewed && (
               <button 
                 onClick={() => setShowUnsubmitModal(true)} 
                 className="px-8 py-3 bg-white text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-orange-500 hover:text-white transition-all active:scale-95 border border-gray-100"
               >
                 Hủy nộp để chỉnh sửa
               </button>
+            )}
+            {/* Nếu đã được xem nhưng vẫn trong hạn nộp -> Thông báo lý do không được hủy */}
+            {isReviewed && canEdit && student.status === 'Submitted' && (
+               <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
+                  <i className="fas fa-info-circle text-orange-400"></i> Admin đã thẩm định hồ sơ, bạn không thể tự ý hủy nộp
+               </div>
             )}
             {!canEdit && student.status === 'Submitted' && (
                <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
@@ -853,12 +867,16 @@ const StudentDashboard: React.FC<{
                     {hardProfileSlugs.some((tc: any) => tc.MaTieuChi === 'eth_hard_1') && (
                       <div className="space-y-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Điểm rèn luyện <span className="text-red-400">*</span></label>
-                        <input disabled={isLocked} type="number" max="100" value={localData.trainingPoints === 0 ? '' : localData.trainingPoints} onChange={(e) => handleLocalChange('trainingPoints', e.target.value)} onBlur={() => handleBlur('trainingPoints', false, 100)} className="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:border-blue-600 outline-none font-bold text-sm transition-all" />
+                        <input 
+                           disabled={isLocked && (!isProcessing || student.verifications.trainingPoints?.status !== 'NeedsExplanation')} 
+                           type="number" max="100" value={localData.trainingPoints === 0 ? '' : localData.trainingPoints} onChange={(e) => handleLocalChange('trainingPoints', e.target.value)} onBlur={() => handleBlur('trainingPoints', false, 100)} className="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:border-blue-600 outline-none font-bold text-sm transition-all" />
                       </div>
                     )}
                     {hardProfileSlugs.some((tc: any) => tc.MaTieuChi === 'eth_hard_2') && (
                       <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-100 bg-white hover:bg-gray-50 transition-all">
-                        <input disabled={isLocked} type="checkbox" checked={!!localData.noViolation} onChange={(e) => handleLocalChange('noViolation', e.target.checked)} className="w-4 h-4 accent-blue-600 rounded" />
+                        <input 
+                          disabled={isLocked && (!isProcessing || student.verifications.noViolation?.status !== 'NeedsExplanation')} 
+                          type="checkbox" checked={!!localData.noViolation} onChange={(e) => handleLocalChange('noViolation', e.target.checked)} className="w-4 h-4 accent-blue-600 rounded" />
                         <span className="text-[11px] font-bold text-gray-700">Cam kết không vi phạm nội quy</span>
                       </label>
                     )}
@@ -867,20 +885,26 @@ const StudentDashboard: React.FC<{
                 {cat === CriterionType.ACADEMIC && (
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">GPA Hệ 4.0 <span className="text-red-400">*</span></label>
-                    <input disabled={isLocked} type="number" step="0.01" max="4.0" value={localData.gpa === 0 ? '' : localData.gpa} onChange={(e) => handleLocalChange('gpa', e.target.value)} onBlur={() => handleBlur('gpa', true, 4.0)} className="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:border-blue-600 outline-none font-bold text-sm transition-all" />
+                    <input 
+                      disabled={isLocked && (!isProcessing || student.verifications.gpa?.status !== 'NeedsExplanation')} 
+                      type="number" step="0.01" max="4.0" value={localData.gpa === 0 ? '' : localData.gpa} onChange={(e) => handleLocalChange('gpa', e.target.value)} onBlur={() => handleBlur('gpa', true, 4.0)} className="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:border-blue-600 outline-none font-bold text-sm transition-all" />
                   </div>
                 )}
                 {cat === CriterionType.PHYSICAL && (
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Điểm Thể dục <span className="text-red-400">*</span></label>
-                    <input disabled={isLocked} type="number" step="0.1" max="10" value={localData.peScore === 0 ? '' : localData.peScore} onChange={(e) => handleLocalChange('peScore', e.target.value)} onBlur={() => handleBlur('peScore', true, 10.0)} className="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:border-blue-600 outline-none font-bold text-sm transition-all" />
+                    <input 
+                      disabled={isLocked && (!isProcessing || student.verifications.peScore?.status !== 'NeedsExplanation')} 
+                      type="number" step="0.1" max="10" value={localData.peScore === 0 ? '' : localData.peScore} onChange={(e) => handleLocalChange('peScore', e.target.value)} onBlur={() => handleBlur('peScore', true, 10.0)} className="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:border-blue-600 outline-none font-bold text-sm transition-all" />
                   </div>
                 )}
                 {cat === CriterionType.INTEGRATION && (
                    <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Ngoại ngữ <span className="text-red-400">*</span></label>
-                       <select disabled={isLocked} value={localData.englishLevel} onChange={(e) => handleLocalChange('englishLevel', e.target.value)} className="w-full px-3 py-3 border-2 border-gray-100 rounded-lg font-bold text-[11px] transition-all focus:border-blue-600 outline-none">
+                       <select 
+                        disabled={isLocked && (!isProcessing || student.verifications.english?.status !== 'NeedsExplanation')} 
+                        value={localData.englishLevel} onChange={(e) => handleLocalChange('englishLevel', e.target.value)} className="w-full px-3 py-3 border-2 border-gray-100 rounded-lg font-bold text-[11px] transition-all focus:border-blue-600 outline-none">
                          <option value="None">Chưa có</option>
                          <option value="B1">B1</option>
                          <option value="B2">B2+</option>
@@ -888,7 +912,9 @@ const StudentDashboard: React.FC<{
                      </div>
                      <div className="space-y-2">
                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">GPA NN <span className="text-red-400">*</span></label>
-                       <input disabled={isLocked} type="number" step="0.01" max="4" value={localData.englishGpa === 0 ? '' : localData.englishGpa} onChange={(e) => handleLocalChange('englishGpa', e.target.value)} onBlur={() => handleBlur('englishGpa', true, 4.0)} className="w-full px-3 py-3 border-2 border-gray-100 rounded-lg font-bold text-sm transition-all focus:border-blue-600 outline-none" />
+                       <input 
+                         disabled={isLocked && (!isProcessing || student.verifications.englishGpa?.status !== 'NeedsExplanation')} 
+                         type="number" step="0.01" max="4" value={localData.englishGpa === 0 ? '' : localData.englishGpa} onChange={(e) => handleLocalChange('englishGpa', e.target.value)} onBlur={() => handleBlur('englishGpa', true, 4.0)} className="w-full px-3 py-3 border-2 border-gray-100 rounded-lg font-bold text-sm transition-all focus:border-blue-600 outline-none" />
                      </div>
                    </div>
                 )}
@@ -914,7 +940,12 @@ const StudentDashboard: React.FC<{
                         {!isLocked && canEdit && (
                           <button 
                             onClick={() => setAddingTo({ type: cat, isHard: true, subName: sub.MoTa, subId: sub.MaTieuChi })} 
-                            className={`px-4 py-2 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${subEvs.length > 0 ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}
+                            // GIẢNG VIÊN YÊU CẦU: Trong trạng thái Giải trình, không cho phép nộp MỚI nếu mục này không có yêu cầu giải trình
+                            disabled={isProcessing && !subEvs.some(e => e.status === 'NeedsExplanation')}
+                            className={`px-4 py-2 font-black text-[9px] uppercase tracking-widest rounded-lg transition-all whitespace-nowrap 
+                              ${isProcessing && !subEvs.some(e => e.status === 'NeedsExplanation') 
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' 
+                                : (subEvs.length > 0 ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-blue-50 text-blue-700 hover:bg-blue-100')}`}
                           >
                             {subEvs.length > 0 ? <><i className="fas fa-check-circle mr-1"></i>Đã nộp</> : <><i className="fas fa-upload mr-1"></i>Tải lên</>}
                           </button>
