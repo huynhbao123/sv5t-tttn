@@ -101,7 +101,12 @@ export const checkHardMet = (cat: CriterionType, student: StudentProfile, criter
     return approvedEvs.some(e => e.subCriterionId === tc.MaTieuChi);
   });
 
-  return results.every(res => res === true);
+  // Ethics and Academic require ALL hard criteria to be met
+  // Physical, Volunteer, and Integration only require ONE of the hard criteria to be met
+  if (cat === CriterionType.ETHICS || cat === CriterionType.ACADEMIC) {
+    return results.every(res => res === true);
+  }
+  return results.some(res => res === true);
 };
 
 const DeadlineClosedView = ({ message }: { message?: string }) => {
