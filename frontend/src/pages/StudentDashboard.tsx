@@ -867,21 +867,23 @@ const StudentDashboard: React.FC<{
                                       <button onClick={() => removeEvidence(cat, ev.id)} className="text-gray-400 hover:text-red-500 transition-colors"><i className="fas fa-trash-alt text-[9px]"></i></button>
                                     </>
                                   )}
+                                  
                                   {ev.status === 'Approved' && (
-                                    <span className="flex items-center gap-1 text-[7px] font-black uppercase text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
-                                      <i className="fas fa-check-circle"></i> Đã duyệt
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase text-green-700 bg-green-100 px-2 py-1 rounded-md border border-green-200 shadow-sm" title="Hồ sơ đã được thẩm định, không thể thay đổi">
+                                      <i className="fas fa-lock"></i> Đã duyệt
                                     </span>
                                   )}
                                   {ev.status === 'NeedsExplanation' && (
-                                    <span className="flex items-center gap-1 text-[7px] font-black uppercase text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100">
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase text-orange-700 bg-orange-50 px-2 py-1 rounded-md border border-orange-200 shadow-sm">
                                       <i className="fas fa-exclamation-triangle"></i> Cần giải trình
                                     </span>
                                   )}
                                   {ev.status === 'Rejected' && (
-                                    <span className="flex items-center gap-1 text-[7px] font-black uppercase text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-100">
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase text-red-700 bg-red-50 px-2 py-1 rounded-md border border-red-200 shadow-sm">
                                       <i className="fas fa-times-circle"></i> Từ chối
                                     </span>
                                   )}
+                                  
                                   {!isLocked && !canEdit && (
                                      <i className="fas fa-lock text-[10px] text-gray-300" title="Hết hạn chỉnh sửa"></i>
                                   )}
@@ -962,17 +964,34 @@ const StudentDashboard: React.FC<{
                                 <span className="text-[10px] font-bold text-gray-900">{ev.name} {ev.qty ? <span className="text-orange-600 font-black">({ev.qty})</span> : ''}</span>
                                 <span className="text-[9px] font-black text-orange-600 mt-0.5">+{ev.points}đ</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                {!isLocked && canEdit && ev.status !== 'Approved' && (
-                                  <>
-                                    <button onClick={() => setAddingTo({ type: cat, isHard: false, subName: sub.MoTa, subId: sub.MaTieuChi, editingEvidence: ev })} className="text-gray-300 hover:text-blue-500"><i className="fas fa-edit text-[10px]"></i></button>
-                                    <button onClick={() => removeEvidence(cat, ev.id)} className="text-gray-300 hover:text-red-500"><i className="fas fa-trash-alt text-[10px]"></i></button>
-                                  </>
-                                )}
-                                {!isLocked && !canEdit && (
-                                   <i className="fas fa-lock text-[10px] text-gray-200"></i>
-                                )}
-                              </div>
+                                <div className="flex items-center gap-2">
+                                  {!isLocked && canEdit && ev.status !== 'Approved' && (
+                                    <>
+                                      <button onClick={() => setAddingTo({ type: cat, isHard: false, subName: sub.MoTa, subId: sub.MaTieuChi, editingEvidence: ev })} className="text-gray-300 hover:text-blue-500 transition-colors"><i className="fas fa-edit text-[9px]"></i></button>
+                                      <button onClick={() => removeEvidence(cat, ev.id)} className="text-gray-300 hover:text-red-500 transition-colors"><i className="fas fa-trash-alt text-[9px]"></i></button>
+                                    </>
+                                  )}
+                                  
+                                  {ev.status === 'Approved' && (
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase text-green-700 bg-green-100 px-2 py-1 rounded-md border border-green-200 shadow-sm" title="Hồ sơ đã được thẩm định, không thể thay đổi">
+                                      <i className="fas fa-lock"></i> Đã duyệt
+                                    </span>
+                                  )}
+                                  {ev.status === 'NeedsExplanation' && (
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase text-orange-700 bg-orange-50 px-2 py-1 rounded-md border border-orange-200 shadow-sm">
+                                      <i className="fas fa-exclamation-triangle"></i> Cần giải trình
+                                    </span>
+                                  )}
+                                  {ev.status === 'Rejected' && (
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase text-red-700 bg-red-50 px-2 py-1 rounded-md border border-red-200 shadow-sm">
+                                      <i className="fas fa-times-circle"></i> Từ chối
+                                    </span>
+                                  )}
+
+                                  {!isLocked && !canEdit && (
+                                     <i className="fas fa-lock text-[10px] text-gray-200"></i>
+                                  )}
+                                </div>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {ev.danh_sach_file && ev.danh_sach_file.length > 0 ? (
