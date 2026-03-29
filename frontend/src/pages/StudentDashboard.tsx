@@ -191,8 +191,8 @@ const StudentDashboard: React.FC<{
     );
   }
 
-  // CHECK DEADLINE AND EDIT PERMISSION
-  if (student && !student.can_edit_profile && student.status === 'Draft') {
+  // CHECK DEADLINE AND EDIT PERMISSION - ONLY SHOW IF EXPLICITLY FALSE
+  if (student && student.can_edit_profile === false && student.status === 'Draft') {
     return <DeadlineClosedView message={student.submission_msg} />;
   }
 
