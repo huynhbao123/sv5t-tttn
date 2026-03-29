@@ -49,8 +49,9 @@ export const useStudentActions = (
       const updatedProfile = await studentService.removeEvidence(type, id);
       setStudents(prev => prev.map(s => s.id === updatedProfile.id ? updatedProfile : s));
       toast.success('Đã xóa minh chứng');
-    } catch (err) {
-      toast.error('Lỗi khi xóa minh chứng');
+    } catch (err: any) {
+      const msg = err.response?.data?.detail || 'Lỗi khi xóa minh chứng. Kiểm tra lại trạng thái minh chứng.';
+      toast.error(msg);
     }
   }, [setStudents]);
 
