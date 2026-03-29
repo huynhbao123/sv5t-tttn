@@ -28,7 +28,8 @@ export const mapBackendStudentToFrontend = (d: any): StudentProfile => {
           adminFeedback: xm.PhanHoiAdmin || '',
           explanation: xm.GiaiTrinhSV || '',
           fileUrl: formatUrl(xm.FileUrl || ''),
-          fileName: xm.TenFile || ''
+          fileName: xm.TenFile || '',
+          explanationDate: xm.NgayGiaiTrinh || ''
         };
       }
     });
@@ -75,7 +76,8 @@ export const mapBackendStudentToFrontend = (d: any): StudentProfile => {
           isHardCriterion: Boolean(mc.is_tieu_chi_cung),
           status: mc.TrangThai,
           adminFeedback: mc.PhanHoiAdmin || '',
-          studentExplanation: mc.GiaiTrinhSV || ''
+          studentExplanation: mc.GiaiTrinhSV || '',
+          explanationDate: mc.NgayGiaiTrinh || ''
         });
       }
     });

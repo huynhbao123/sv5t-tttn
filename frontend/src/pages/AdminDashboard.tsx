@@ -1476,6 +1476,12 @@ const AdminDashboard: React.FC<{
                                     <span className="px-1.5 py-0.5 bg-red-50 text-red-500 text-[6px] font-black uppercase rounded border border-red-100 shrink-0">Bắt buộc</span>
                                   </div>
                                   <p className="text-sm text-gray-700 font-bold leading-relaxed italic">"{ver.explanation || '(Không có nội dung văn bản)'}"</p>
+                                  {ver.explanationDate && (
+                                    <p className="text-[9px] font-black text-blue-300 uppercase mt-2">
+                                      <i className="far fa-clock mr-1.5"></i>
+                                      Giải trình lúc: {new Date(ver.explanationDate).toLocaleString('vi-VN')}
+                                    </p>
+                                  )}
                                 </div>
                                 {ver.fileUrl && (
                                   <button 

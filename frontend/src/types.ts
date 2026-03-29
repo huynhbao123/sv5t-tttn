@@ -55,6 +55,7 @@ export interface Evidence {
   status?: 'Pending' | 'Approved' | 'Rejected' | 'NeedsExplanation';
   adminFeedback?: string;
   studentExplanation?: string;
+  explanationDate?: string;
 }
 
 export interface FieldVerification {
@@ -64,6 +65,7 @@ export interface FieldVerification {
   explanation?: string;
   fileUrl?: string;
   fileName?: string;
+  explanationDate?: string;
 }
 
 export interface StudentProfile {

@@ -13,7 +13,7 @@ class XacMinhSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'TruongDuLieu', 'TruongDuLieuDisplay',
             'TrangThai', 'TrangThaiDisplay', 
-            'PhanHoiAdmin', 'GiaiTrinhSV', 
+            'PhanHoiAdmin', 'GiaiTrinhSV', 'NgayGiaiTrinh',
             'NgayCapNhat',
             'DuongDanFile', 'FileUrl', 'TenFile'
         ]

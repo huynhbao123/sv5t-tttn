@@ -128,6 +128,8 @@ class MinhChungExplainView(APIView):
             if hasattr(new_file, 'name'):
                 mc.TenFile = new_file.name.split('/')[-1]
 
+        from django.utils import timezone
+        mc.NgayGiaiTrinh = timezone.now()
         mc.TrangThai = 'Pending'
         mc.save()
         return Response(SinhVienProfileSerializer(mc.SinhVien).data)

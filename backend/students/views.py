@@ -312,6 +312,8 @@ class XacMinhExplainView(APIView):
             if hasattr(new_file, 'name'):
                 xm.TenFile = new_file.name.split('/')[-1]
 
+        from django.utils import timezone
+        xm.NgayGiaiTrinh = timezone.now()
         xm.TrangThai = 'Pending'
         xm.save()
         return Response(SinhVienProfileSerializer(sv).data)
