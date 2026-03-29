@@ -3,119 +3,84 @@ import { StudentProfile, CriterionType, Evidence, FieldVerification } from '../t
 import { mapBackendStudentToFrontend } from '../utils/mapper';
 
 export const studentService = {
-  getProfile: async (): Promise<StudentProfile> => {
-    const response = await apiClient.get('/api/students/me/');
+  getProfile: async (studentId?: string): Promise<StudentProfile> => {
+    // We pass studentId as a query param just for mocking ease in the MSW setup right now
+    const url = studentId ? `/api/students/me/?studentId=${studentId}` : '/api/students/me/';
+    const response = await apiClient.get(url);
     return mapBackendStudentToFrontend(response.data);
   },
 
-  updateProfile: async (data: Partial<StudentProfile>): Promise<StudentProfile> => {
-    // Map frontend fields back to backend fields
-    const backendData: any = {};
-    if (data.fullName !== undefined) backendData.HoTen = data.fullName;
-    if (data.class !== undefined) backendData.Lop = data.class;
-    if (data.faculty !== undefined) backendData.Khoa = data.faculty;
-    if (data.gpa !== undefined) backendData.DiemTBC = data.gpa;
-    if (data.trainingPoints !== undefined) backendData.DiemRenLuyen = data.trainingPoints;
-    if (data.peScore !== undefined) backendData.DiemTheDuc = data.peScore;
-    if (data.englishLevel !== undefined) backendData.TrinhDoNgoaiNgu = data.englishLevel;
-    if (data.englishGpa !== undefined) backendData.GPANgoaiNgu = data.englishGpa;
-    if (data.isPartyMember !== undefined) backendData.LaDangVien = data.isPartyMember;
-    if (data.noViolation !== undefined) backendData.KhongViPham = data.noViolation;
+  updateProfile: async (data: Partial<StudentProfile>, studentId?: string): Promise<StudentProfile> => {
+    const url = studentId ? `/api/students/me/?studentId=${studentId}` : '/api/students/me/';
+    
+    // Map frontend fields to backend names
+    const payload: any = {};
+    if (data.fullName !== undefined) payload.HoTen = data.fullName;
+    if (data.class !== undefined) payload.Lop = data.class;
+    if (data.faculty !== undefined) payload.Khoa = data.faculty;
+    if (data.gpa !== undefined) payload.DiemTBC = data.gpa;
+    if (data.trainingPoints !== undefined) payload.DiemRenLuyen = data.trainingPoints;
+    if (data.peScore !== undefined) payload.DiemTheDuc = data.peScore;
+    if (data.englishLevel !== undefined) payload.TrinhDoNgoaiNgu = data.englishLevel;
+    if (data.englishGpa !== undefined) payload.GPANgoaiNgu = data.englishGpa;
+    if (data.isPartyMember !== undefined) payload.LaDangVien = data.isPartyMember;
+    if (data.noViolation !== undefined) payload.KhongViPham = data.noViolation;
 
-    const response = await apiClient.put('/api/students/me/', backendData);
+    const response = await apiClient.put(url, payload);
     return mapBackendStudentToFrontend(response.data);
   },
 
   addEvidence: async (type: CriterionType, evidence: Evidence, studentId?: string): Promise<StudentProfile> => {
-    // Correct URL for evidences is /api/evidences/ based on backend routing
+    // Backend evidences endpoint
     const url = '/api/evidences/';
     
     // Multipart/form-data payload
     const formData = new FormData();
-    formData.append('TieuChi', evidence.subCriterionId); // Backend expects integer ID or string if it handles conversion
-    formData.append('TenMinhChung', evidence.name);
-    formData.append('CapDo', evidence.level);
-    formData.append('LoaiMinhChung', evidence.type);
-    if (evidence.decisionNumber) formData.append('SoQuyetDinh', evidence.decisionNumber);
-    formData.append('SoLuong', evidence.qty?.toString() || '1');
-    const fileToUpload = evidence.files && evidence.files.length > 0 ? evidence.files[0] : null;
-    if (fileToUpload) {
-      formData.append('DuongDanFile', fileToUpload);
-    }
-    formData.append('TenFile', evidence.fileName || (fileToUpload ? fileToUpload.name : ''));
-    formData.append('category', type);
-
-    const response = await apiClient.post(url, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    return mapBackendStudentToFrontend(response.data);
-  },
-
-  removeEvidence: async (type: CriterionType, guid: string): Promise<StudentProfile> => {
-    // Backend now returns updated profile in response body (200 OK)
-    const response = await apiClient.delete(`/api/evidences/${guid}/`);
-    return mapBackendStudentToFrontend(response.data);
-  },
-
-  updateEvidence: async (type: CriterionType, guid: string, evidence: Evidence): Promise<StudentProfile> => {
-    const url = `/api/evidences/${guid}/`;
-    const formData = new FormData();
+    // Backend expects slug MaTieuChi, FE đang dùng subCriterionId (eth_hard_1, vol_hard_2, ...)
     formData.append('TieuChi', evidence.subCriterionId);
     formData.append('TenMinhChung', evidence.name);
     formData.append('CapDo', evidence.level);
     formData.append('LoaiMinhChung', evidence.type);
     if (evidence.decisionNumber) formData.append('SoQuyetDinh', evidence.decisionNumber);
-    formData.append('SoLuong', evidence.qty?.toString() || '1');
-    const fileToUpload = evidence.files && evidence.files.length > 0 ? evidence.files[0] : null;
-    if (fileToUpload) {
-      formData.append('DuongDanFile', fileToUpload);
-      formData.append('TenFile', evidence.fileName || fileToUpload.name);
-    }
-    formData.append('category', type);
+    if (evidence.qty !== undefined) formData.append('SoLuong', String(evidence.qty));
+    if (evidence.file) formData.append('DuongDanFile', evidence.file);
+    formData.append('TenFile', evidence.fileName);
+    // category chỉ dùng phía FE, backend không cần
 
-    // Some backends have trouble with PUT + MultiPart. If it fails, consider using POST with a method override.
-    // However, we'll try to keep PUT first and fix the backend if needed.
-    const response = await apiClient.put(url, formData, {
+    await apiClient.post(url, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    return mapBackendStudentToFrontend(response.data);
+    // Sau khi thêm minh chứng, lấy lại hồ sơ đầy đủ
+    return studentService.getProfile(studentId);
   },
 
-  explainEvidence: async (type: CriterionType, guid: string, explanation: string, file?: File): Promise<StudentProfile> => {
+  removeEvidence: async (type: CriterionType, guid: string, studentId?: string): Promise<StudentProfile> => {
+    const url = `/api/evidences/${guid}/`;
+    await apiClient.delete(url);
+    return studentService.getProfile(studentId);
+  },
+
+  explainEvidence: async (type: CriterionType, guid: string, explanation: string, studentId?: string): Promise<StudentProfile> => {
     const url = `/api/evidences/${guid}/explain/`;
-    const formData = new FormData();
-    formData.append('GiaiTrinhSV', explanation);
-    if (file) {
-      formData.append('DuongDanFile', file);
-    }
-    const response = await apiClient.post(url, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    return mapBackendStudentToFrontend(response.data);
+    await apiClient.post(url, { GiaiTrinhSV: explanation });
+    return studentService.getProfile(studentId);
   },
 
-  explainField: async (key: string, explanation: string, file?: File): Promise<StudentProfile> => {
+  explainField: async (key: string, explanation: string, studentId?: string): Promise<StudentProfile> => {
     const url = `/api/students/me/fields/${key}/explain/`;
-    const formData = new FormData();
-    formData.append('GiaiTrinhSV', explanation);
-    if (file) {
-      formData.append('DuongDanFile', file);
-    }
-    const response = await apiClient.post(url, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    return mapBackendStudentToFrontend(response.data);
+    await apiClient.post(url, { GiaiTrinhSV: explanation });
+    return studentService.getProfile(studentId);
   },
 
-  submitProfile: async (): Promise<StudentProfile> => {
-    const response = await apiClient.post('/api/students/me/submit/');
-    return mapBackendStudentToFrontend(response.data);
+  submitProfile: async (studentId?: string): Promise<StudentProfile> => {
+    const url = studentId ? `/api/students/me/submit/?studentId=${studentId}` : '/api/students/me/submit/';
+    await apiClient.post(url);
+    return studentService.getProfile(studentId);
   },
 
-  unsubmitProfile: async (): Promise<StudentProfile> => {
-    // Backend returns {detail, TrangThai}, so we refetch the full profile
-    await apiClient.post('/api/students/me/unsubmit/');
-    const response = await apiClient.get('/api/students/me/');
-    return mapBackendStudentToFrontend(response.data);
+  unsubmitProfile: async (studentId?: string): Promise<StudentProfile> => {
+    const url = studentId ? `/api/students/me/unsubmit/?studentId=${studentId}` : '/api/students/me/unsubmit/';
+    await apiClient.post(url);
+    return studentService.getProfile(studentId);
   }
 };

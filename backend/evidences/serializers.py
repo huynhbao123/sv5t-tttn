@@ -9,7 +9,6 @@ class MinhChungSerializer(serializers.ModelSerializer):
     is_tieu_chi_cung = serializers.BooleanField(read_only=True)
     NhomTieuChiTen = serializers.CharField(source='TieuChi.NhomTieuChi.TenNhom', read_only=True)
     TieuChiMoTa = serializers.CharField(source='TieuChi.MoTa', read_only=True)
-    TieuChi = serializers.SlugRelatedField(read_only=True, slug_field='MaTieuChi')
     FileUrl = serializers.SerializerMethodField()
 
     class Meta:
@@ -20,7 +19,6 @@ class MinhChungSerializer(serializers.ModelSerializer):
             'TenMinhChung', 'CapDo', 'CapDoDisplay',
             'LoaiMinhChung', 'SoQuyetDinh', 'SoLuong',
             'DuongDanFile', 'FileUrl', 'TenFile', 'NgayNop',
-            'NgayMinhChung', 'NgayGiaiTrinh',
             'Diem', 'is_tieu_chi_cung',
             'TrangThai', 'TrangThaiDisplay',
             'PhanHoiAdmin', 'GiaiTrinhSV',
@@ -50,19 +48,22 @@ class MinhChungSubmitSerializer(serializers.ModelSerializer):
         fields = [
             'TieuChi', 'TenMinhChung', 'CapDo',
             'LoaiMinhChung', 'SoQuyetDinh', 'SoLuong',
-            'DuongDanFile', 'TenFile', 'NgayMinhChung',
+            'DuongDanFile', 'TenFile',
         ]
 
     def validate(self, data):
         tieu_chi = data.get('TieuChi')
         loai = data.get('LoaiMinhChung')
 
-        # Rule: Nếu chọn "Có Sqđ" hoặc "Giấy khen" mà tiêu chí yêu cầu số quyết định -> Bắt buộc nhập SoQuyetDinh
-        # Nếu chọn "Không Sqđ/GCN thường" -> Cho phép nộp kể cả khi tiêu chí yêu cầu số quyết định (để linh hoạt cho SV)
+        # Nếu tiêu chí yêu cầu số quyết định
         if tieu_chi and tieu_chi.CoSoQuyetDinh:
-            if loai != 'Không Sqđ/GCN thường' and not data.get('SoQuyetDinh'):
+            if loai == 'Không Sqđ/GCN thường':
                 raise serializers.ValidationError(
-                    {'SoQuyetDinh': 'Hình thức này yêu cầu số quyết định.'}
+                    {'LoaiMinhChung': 'Tiêu chí này yêu cầu phải có số quyết định/GCN.'}
+                )
+            if not data.get('SoQuyetDinh'):
+                raise serializers.ValidationError(
+                    {'SoQuyetDinh': 'Tiêu chí này yêu cầu số quyết định.'}
                 )
         return data
 

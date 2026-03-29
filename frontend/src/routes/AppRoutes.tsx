@@ -32,6 +32,7 @@ interface AppRoutesProps {
   criteriaGroups: any[];
   setCriteriaGroups: React.Dispatch<React.SetStateAction<any[]>>;
   handleAdminUpdateStatus: (status: StudentProfile['status'], feedback?: string) => void;
+  setStudents: React.Dispatch<React.SetStateAction<StudentProfile[]>>;
   handleAdminUpdateEvidenceStatus: (cat: CriterionType, id: string, status: Evidence['status'], feedback?: string) => void;
   handleUpdateFieldVerification: (field: keyof StudentProfile['verifications'], action: FieldVerification['status'], feedback?: string) => void;
   handleAddFace: (face: Omit<FeaturedFace, 'id'>) => void;
@@ -74,7 +75,8 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
   onUpdatePost,
   onDeletePost,
   systemSettings,
-  setSystemSettings
+  setSystemSettings,
+  setStudents
 }) => {
   return (
     <Routes>
@@ -104,6 +106,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
         <ProtectedRoute allowedRoles={['admin']}>
           <AdminDashboard
             students={students}
+            setStudents={setStudents}
             selectedStudent={student}
             onSelectStudent={setActiveStudentId}
             onUpdateStatus={handleAdminUpdateStatus}

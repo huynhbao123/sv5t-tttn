@@ -167,6 +167,7 @@ const App: React.FC = () => {
           onDeletePost={onDeletePost}
           systemSettings={systemSettings}
           setSystemSettings={setSystemSettings}
+          setStudents={setStudents}
         />
       </Layout>
     </>

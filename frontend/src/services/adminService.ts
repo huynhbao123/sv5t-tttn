@@ -1,6 +1,6 @@
 import { apiClient } from './apiClient';
 import { StudentProfile, CriterionType, Evidence, FieldVerification, FeaturedFace } from '../types';
-import { mapBackendStudentToFrontend, formatUrl } from '../utils/mapper';
+import { mapBackendStudentToFrontend } from '../utils/mapper';
 
 export const adminService = {
   getProfiles: async (): Promise<StudentProfile[]> => {
@@ -9,72 +9,87 @@ export const adminService = {
   },
 
   updateProfileStatus: async (studentId: string, status: StudentProfile['status'], feedback?: string): Promise<StudentProfile> => {
-    let action = '';
-    if (status === 'Approved') action = 'approve/';
-    else if (status === 'Rejected') action = 'reject/';
-    else if (status === 'Processing') action = 'feedback/';
-    else throw new Error("Invalid status update");
-    
-    const response = await apiClient.post(`/api/admin/students/${studentId}/${action}`, { phanHoi: feedback });
-    
-    // Refresh student data completely to get new status & total score from backend
-    const returnResponse = await apiClient.get(`/api/admin/students/${studentId}/`);
-    return mapBackendStudentToFrontend(returnResponse.data);
+    // Map status FE -> các endpoint backend hiện có
+    let url: string | null = null;
+    let payload: any = {};
+
+    if (status === 'Approved') {
+      url = `/api/admin/students/${studentId}/approve/`;
+      payload = { phanHoi: feedback || '' };
+    } else if (status === 'Rejected') {
+      url = `/api/admin/students/${studentId}/reject/`;
+      payload = { phanHoi: feedback || '' };
+    } else if (status === 'Processing') {
+      // Gửi yêu cầu giải trình
+      url = `/api/admin/students/${studentId}/feedback/`;
+      payload = { phanHoi: feedback || '' };
+    } else {
+      // Các trạng thái khác không có endpoint riêng, trả về hồ sơ hiện tại
+      const detail = await apiClient.get(`/api/admin/students/${studentId}/`);
+      return mapBackendStudentToFrontend(detail.data);
+    }
+
+    await apiClient.post(url, payload);
+    const detail = await apiClient.get(`/api/admin/students/${studentId}/`);
+    return mapBackendStudentToFrontend(detail.data);
   },
 
   updateEvidenceStatus: async (studentId: string, evidenceId: string, type: CriterionType, status: Evidence['status'], feedback?: string): Promise<StudentProfile> => {
-    let action = '';
-    if (status === 'Approved') action = 'approve';
-    else if (status === 'Rejected') action = 'reject';
-    else if (status === 'NeedsExplanation') action = 'request-explain';
-    else if (status === 'Pending') action = 'pending';
-    else throw new Error("Invalid evidence status update");
+    // Backend dùng endpoint /api/admin/evidences/<id>/<action>/
+    let action: string;
+    const payload: any = {};
 
-    await apiClient.post(`/api/admin/evidences/${evidenceId}/${action}/`, { PhanHoiAdmin: feedback });
-    
-    const returnResponse = await apiClient.get(`/api/admin/students/${studentId}/`);
-    return mapBackendStudentToFrontend(returnResponse.data);
+    if (status === 'Approved') {
+      action = 'approve';
+      if (feedback) payload.PhanHoiAdmin = feedback;
+      // Diem có thể gửi kèm nếu admin chỉnh tay, còn không backend tự tính
+    } else if (status === 'Rejected') {
+      action = 'reject';
+      if (feedback) payload.PhanHoiAdmin = feedback;
+    } else if (status === 'NeedsExplanation') {
+      action = 'request-explain';
+      if (feedback) payload.PhanHoiAdmin = feedback;
+    } else {
+      // Không hỗ trợ các trạng thái khác ở backend
+      const detail = await apiClient.get(`/api/admin/students/${studentId}/`);
+      return mapBackendStudentToFrontend(detail.data);
+    }
+
+    await apiClient.post(`/api/admin/evidences/${evidenceId}/${action}/`, payload);
+    const detail = await apiClient.get(`/api/admin/students/${studentId}/`);
+    return mapBackendStudentToFrontend(detail.data);
   },
 
   updateFieldStatus: async (studentId: string, fieldId: keyof StudentProfile['verifications'], status: FieldVerification['status'], feedback?: string): Promise<StudentProfile> => {
-    await apiClient.put(`/api/admin/students/${studentId}/verifications/${fieldId}/`, { TrangThai: status, PhanHoi: feedback });
-    
-    const returnResponse = await apiClient.get(`/api/admin/students/${studentId}/`);
-    return mapBackendStudentToFrontend(returnResponse.data);
-  },
-
-  deleteStudent: async (studentId: string): Promise<void> => {
-    await apiClient.delete(`/api/admin/students/${studentId}/delete/`);
+    // Đúng URL backend: /api/admin/students/<pk>/verifications/<field>/
+    await apiClient.put(`/api/admin/students/${studentId}/verifications/${fieldId}/`, {
+      TrangThai: status,
+      PhanHoi: feedback || ''
+    });
+    const detail = await apiClient.get(`/api/admin/students/${studentId}/`);
+    return mapBackendStudentToFrontend(detail.data);
   },
 
   addFace: async (face: Omit<FeaturedFace, 'id'>): Promise<FeaturedFace> => {
-    const formData = new FormData();
-    formData.append('TenSinhVien', face.name);
-    formData.append('ThanhTich', face.achievement);
-    formData.append('NoiDung', face.content);
-    if (face.imageFile) {
-      formData.append('HinhAnh', face.imageFile);
-    }
-
-    const response = await apiClient.post('/api/featured/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const payload = {
+      TenSinhVien: face.name,
+      ThanhTich: face.achievement,
+      NoiDung: face.content,
+      // If we support actual image files, we would use FormData here
+    };
+    const response = await apiClient.post('/api/featured/', payload);
     const d = response.data;
-    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: d.HinhAnh || '' };
+    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: d.HinhAnhUrl || d.HinhAnh || '' };
   },
 
   updateFace: async (id: string, face: Partial<FeaturedFace>): Promise<FeaturedFace> => {
-    const formData = new FormData();
-    if (face.name) formData.append('TenSinhVien', face.name);
-    if (face.achievement) formData.append('ThanhTich', face.achievement);
-    if (face.content) formData.append('NoiDung', face.content);
-    if (face.imageFile) formData.append('HinhAnh', face.imageFile);
-
-    const response = await apiClient.put(`/api/featured/${id}/`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const payload: any = {};
+    if (face.name) payload.TenSinhVien = face.name;
+    if (face.achievement) payload.ThanhTich = face.achievement;
+    if (face.content) payload.NoiDung = face.content;
+    const response = await apiClient.put(`/api/featured/${id}/`, payload);
     const d = response.data;
-    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: d.HinhAnh || '' };
+    return { id: String(d.id), name: d.TenSinhVien, achievement: d.ThanhTich, content: d.NoiDung, image: d.HinhAnhUrl || d.HinhAnh || '' };
   },
 
   deleteFace: async (id: string): Promise<void> => {
@@ -84,43 +99,27 @@ export const adminService = {
   getPosts: async (): Promise<any[]> => {
     const response = await apiClient.get('/api/admin/posts/');
     return response.data.map((p: any) => ({
+      ...p,
       id: String(p.id),
       title: p.TieuDe,
-      content: p.NoiDung,
       date: p.NgayDang,
-      status: p.TrangThai,
-      image: formatUrl(p.HinhAnh)
+      status: p.TrangThai
     }));
   },
 
-  addPost: async (post: { title: string, content: string, status: string, imageFile?: File }): Promise<any> => {
-    const formData = new FormData();
-    formData.append('TieuDe', post.title);
-    formData.append('NoiDung', post.content || '');
-    formData.append('TrangThai', post.status);
-    if (post.imageFile) {
-      formData.append('HinhAnh', post.imageFile);
-    }
-
-    const response = await apiClient.post('/api/posts/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+  addPost: async (post: any): Promise<any> => {
+    const response = await apiClient.post('/api/posts/', { TieuDe: post.title, NoiDung: post.content || '', TrangThai: post.status });
     const p = response.data;
-    return { ...p, id: String(p.id), title: p.TieuDe, content: p.NoiDung, date: p.NgayDang, status: p.TrangThai, image: formatUrl(p.HinhAnh) };
+    return { ...p, id: String(p.id), title: p.TieuDe, date: p.NgayDang, status: p.TrangThai };
   },
 
-  updatePost: async (id: string, post: { title?: string, content?: string, status?: string, imageFile?: File }): Promise<any> => {
-    const formData = new FormData();
-    if (post.title) formData.append('TieuDe', post.title);
-    if (post.content !== undefined) formData.append('NoiDung', post.content);
-    if (post.status) formData.append('TrangThai', post.status);
-    if (post.imageFile) formData.append('HinhAnh', post.imageFile);
-
-    const response = await apiClient.put(`/api/posts/${id}/`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+  updatePost: async (id: string, post: any): Promise<any> => {
+    const payload: any = {};
+    if (post.title) payload.TieuDe = post.title;
+    if (post.status) payload.TrangThai = post.status;
+    const response = await apiClient.put(`/api/posts/${id}/`, payload);
     const p = response.data;
-    return { ...p, id: String(p.id), title: p.TieuDe, content: p.NoiDung, date: p.NgayDang, status: p.TrangThai, image: formatUrl(p.HinhAnh) };
+    return { ...p, id: String(p.id), title: p.TieuDe, date: p.NgayDang, status: p.TrangThai };
   },
 
   deletePost: async (id: string): Promise<void> => {
@@ -135,49 +134,83 @@ export const adminService = {
       email: u.Email,
       role: u.VaiTro === 'SinhVien' ? 'SINH VIÊN' : 
             u.VaiTro === 'Admin' ? 'ADMIN' : 
-            u.VaiTro === 'ThuKy' ? 'THƯ KÝ' : 'THẨM ĐỊNH VIÊN',
-      rawRole: u.VaiTro,
-      username: u.TenDangNhap
+            u.VaiTro === 'ThuKy' ? 'THƯ KÝ' : 'THẨM ĐỊNH VIÊN'
     }));
   },
 
-  addUser: async (payload: any): Promise<any> => {
+  addUser: async (user: { username: string, password?: string, role: string }): Promise<any> => {
+    const payload = {
+      TenDangNhap: user.username,
+      MatKhau: user.password || '123456',
+      VaiTro: user.role
+    };
     const response = await apiClient.post('/api/auth/accounts/', payload);
     return response.data;
   },
 
   deleteUser: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/auth/accounts/${id}/`);
+    // Backend doesn't have hard delete for accounts yet based on views.py (only patch status)
+    // But we'll try if there's an endpoint or just set Inactive
+    await apiClient.patch(`/api/auth/accounts/${id}/`, { TrangThai: 'Inactive' });
   },
 
-  // Criteria Management
-  getCriteriaGroups: async (): Promise<any[]> => {
+  getCriteria: async (): Promise<any[]> => {
     const response = await apiClient.get('/api/criteria/');
     return response.data;
   },
 
-  addCriteriaGroup: async (data: { TenNhom: string, MoTa?: string, ThuTu?: number }): Promise<any> => {
-    const response = await apiClient.post('/api/criteria/', data);
+  addCategory: async (name: string, order: number): Promise<any> => {
+    const response = await apiClient.post('/api/criteria/', { TenNhom: name, ThuTu: order });
     return response.data;
   },
 
-  addTieuChi: async (data: { NhomTieuChi: number, MoTa: string, LoaiTieuChi: string, Diem?: number, CoSoQuyetDinh?: boolean, SoLuongToiThieu?: number, ThuTu?: number }): Promise<any> => {
-    const response = await apiClient.post('/api/admin/criteria/tieuchi/', data);
+  updateCategory: async (id: number, name: string, order: number): Promise<any> => {
+    const response = await apiClient.put(`/api/criteria/${id}/`, { TenNhom: name, ThuTu: order });
     return response.data;
   },
 
-  updateTieuChi: async (id: number, data: any): Promise<any> => {
-    const response = await apiClient.put(`/api/admin/criteria/tieuchi/${id}/`, data);
+  deleteCategory: async (id: number): Promise<void> => {
+    await apiClient.delete(`/api/criteria/${id}/`);
+  },
+
+  addCriterion: async (data: any): Promise<any> => {
+    const payload = {
+      NhomTieuChi: data.nhomId,
+      MoTa: data.description,
+      LoaiTieuChi: data.isHard ? 'Cung' : 'Cong',
+      CoSoQuyetDinh: data.hasDecisionNumber,
+      ThuTu: 0,
+      diem_cap_do: [
+        { CapDo: 'Cấp Khoa/CLB', Diem: data.levelPoints?.khoa || 0 },
+        { CapDo: 'Cấp Trường/Phường/Xã', Diem: data.levelPoints?.truong || 0 },
+        { CapDo: 'Cấp ĐHĐN', Diem: data.levelPoints?.dhdn || 0 },
+        { CapDo: 'Cấp Tỉnh/Thành phố', Diem: data.levelPoints?.tinh || 0 },
+        { CapDo: 'Cấp Trung ương', Diem: data.levelPoints?.tw || 0 },
+      ]
+    };
+    const response = await apiClient.post('/api/admin/criteria/tieuchi/', payload);
     return response.data;
   },
 
-  deleteTieuChi: async (id: number): Promise<void> => {
+  updateCriterion: async (id: string, data: any): Promise<any> => {
+    const payload = {
+      MoTa: data.description,
+      LoaiTieuChi: data.isHard ? 'Cung' : 'Cong',
+      CoSoQuyetDinh: data.hasDecisionNumber,
+      diem_cap_do: [
+        { CapDo: 'Cấp Khoa/CLB', Diem: data.levelPoints?.khoa || 0 },
+        { CapDo: 'Cấp Trường/Phường/Xã', Diem: data.levelPoints?.truong || 0 },
+        { CapDo: 'Cấp ĐHĐN', Diem: data.levelPoints?.dhdn || 0 },
+        { CapDo: 'Cấp Tỉnh/Thành phố', Diem: data.levelPoints?.tinh || 0 },
+        { CapDo: 'Cấp Trung ương', Diem: data.levelPoints?.tw || 0 },
+      ]
+    };
+    const response = await apiClient.put(`/api/admin/criteria/tieuchi/${id}/`, payload);
+    return response.data;
+  },
+
+  deleteCriterion: async (id: string): Promise<void> => {
     await apiClient.delete(`/api/admin/criteria/tieuchi/${id}/`);
-  },
-
-  updateTieuChiScore: async (tc_pk: number, data: { CapDo: string, Diem: number }): Promise<any> => {
-    const response = await apiClient.post(`/api/admin/criteria/tieuchi/${tc_pk}/scores/`, data);
-    return response.data;
   }
 };
 
@@ -190,23 +223,6 @@ export const publicService = {
       achievement: d.ThanhTich,
       content: d.NoiDung,
       image: d.HinhAnh || ''
-    }));
-  },
-
-  getCriteria: async (): Promise<any[]> => {
-    const response = await apiClient.get('/api/criteria/');
-    return response.data;
-  },
-
-  getPosts: async (): Promise<any[]> => {
-    const response = await apiClient.get('/api/posts/');
-    return response.data.map((p: any) => ({
-      id: String(p.id),
-      title: p.TieuDe,
-      content: p.NoiDung,
-      date: p.NgayDang,
-      status: p.TrangThai,
-      image: formatUrl(p.HinhAnh)
     }));
   }
 };

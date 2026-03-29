@@ -10,6 +10,7 @@ import { SystemConfig } from '../types';
 
 const AdminDashboard: React.FC<{
   students: StudentProfile[],
+  setStudents: React.Dispatch<React.SetStateAction<StudentProfile[]>>,
   selectedStudent: StudentProfile,
   onSelectStudent: (id: string) => void,
   onUpdateStatus: (status: StudentProfile['status'], feedback?: string) => void,
@@ -27,7 +28,7 @@ const AdminDashboard: React.FC<{
   onDeletePost: (id: string) => void,
   systemSettings: SystemConfig | null,
   setSystemSettings: React.Dispatch<React.SetStateAction<SystemConfig | null>>
-}> = ({ students, selectedStudent, onSelectStudent, onUpdateStatus, onUpdateEvidenceStatus, onUpdateFieldVerification, faces, onAddFace, onUpdateFace, onDeleteFace, criteriaGroups, setCriteriaGroups, posts, onAddPost, onUpdatePost, onDeletePost, systemSettings, setSystemSettings }) => {
+}> = ({ students, setStudents, selectedStudent, onSelectStudent, onUpdateStatus, onUpdateEvidenceStatus, onUpdateFieldVerification, faces, onAddFace, onUpdateFace, onDeleteFace, criteriaGroups, setCriteriaGroups, posts, onAddPost, onUpdatePost, onDeletePost, systemSettings, setSystemSettings }) => {
   const navigate = useNavigate();
   const { activeTab: urlTab } = useParams<{ activeTab: string }>();
   const activeTab = urlTab || 'profiles';
@@ -622,7 +623,14 @@ const AdminDashboard: React.FC<{
                         <i className="fas fa-comment-dots"></i> Đã giải trình
                       </span>
                     ) : null}
-                    <button onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
+                    <button onClick={async () => {
+                      try {
+                        const fresh = await adminService.getStudentDetail(s.id);
+                        setStudents(prev => prev.map(p => p.id === fresh.id ? fresh : p));
+                      } catch { /* use cached */ }
+                      onSelectStudent(s.id);
+                      setIsReviewing(true);
+                    }} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
                       <i className="fas fa-eye mr-1.5"></i>Thẩm định
                     </button>
                     {s.status === 'Rejected' && (
