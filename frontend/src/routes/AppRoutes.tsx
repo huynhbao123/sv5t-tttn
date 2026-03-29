@@ -5,6 +5,7 @@ import LoginView from '../pages/LoginView';
 import StudentDashboard from '../pages/StudentDashboard';
 import AdminDashboard from '../pages/AdminDashboard';
 import PostDetailView from '../pages/PostDetailView';
+import AuthCallback from '../pages/AuthCallback';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { StudentProfile, FeaturedFace, CriterionType, Evidence, FieldVerification, Post, SystemConfig } from '../types';
 
@@ -80,6 +81,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({
       <Route path="/" element={<HomeView faces={faces} posts={posts} userRole={userRole} onNavigate={onNavigate} />} />
       <Route path="/posts/:id" element={<PostDetailView posts={posts} />} />
       <Route path="/login" element={<LoginView onLogin={onLogin} onNavigate={onNavigate} />} />
+      <Route path="/auth/callback" element={<AuthCallback onLogin={onLogin} onNavigate={onNavigate} />} />
       <Route path="/profile" element={
         <ProtectedRoute allowedRoles={['student']}>
           <StudentDashboard

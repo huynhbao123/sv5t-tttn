@@ -104,6 +104,44 @@ export const authService = {
     } catch {
       return null;
     }
+  },
+
+  getMicrosoftLoginUrl: () => {
+    const clientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID;
+    const tenantId = import.meta.env.VITE_MICROSOFT_TENANT_ID;
+    const redirectUri = window.location.origin + '/auth/callback';
+    const scope = 'openid profile email User.Read';
+    
+    return `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&response_mode=query&scope=${encodeURIComponent(scope)}&prompt=select_account`;
+  },
+
+  microsoftLogin: async (code: string): Promise<AuthResponse> => {
+    const redirectUri = window.location.origin + '/auth/callback';
+    const response = await apiClient.post('/api/auth/microsoft/', { 
+      code,
+      redirect_uri: redirectUri 
+    });
+
+    const data = response.data;
+    localStorage.setItem('token', data.access);
+    if (data.refresh) localStorage.setItem('refresh', data.refresh);
+
+    const backendUser = data.user;
+    let frontendRole: 'student' | 'admin' = 'student';
+    if (['Admin', 'ThuKy', 'ThamDinh'].includes(backendUser.VaiTro)) {
+      frontendRole = 'admin';
+    }
+
+    const payload: UserPayload = {
+      id: backendUser.id,
+      studentId: backendUser.VaiTro === 'SinhVien' ? backendUser.TenDangNhap : undefined,
+      role: frontendRole,
+      fullName: backendUser.profile?.HoTen || '',
+      username: backendUser.TenDangNhap
+    };
+
+    localStorage.setItem('user', JSON.stringify(payload));
+    return { token: data.access, refresh: data.refresh, user: payload };
   }
 };
 

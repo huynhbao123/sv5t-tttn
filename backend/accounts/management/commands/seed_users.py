@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 'is_staff': False,
                 'is_superuser': False,
                 'HoTen': 'Sinh viên mẫu',
-                'Email': 'student@st.due.udn.vn',
+                'Email': 'student@due.udn.vn',
                 'Lop': '22KT01',
                 'Khoa': 'Kinh tế',
             },

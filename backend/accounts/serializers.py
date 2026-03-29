@@ -40,7 +40,7 @@ class TaiKhoanSerializer(serializers.ModelSerializer):
 
     def get_Email(self, obj):
         if obj.VaiTro == 'SinhVien':
-            return f"{obj.TenDangNhap}@st.due.udn.vn" # Giả lập email SV
+            return f"{obj.TenDangNhap}@due.udn.vn" # Giả lập email SV
         else:
             try:
                 return obj.nguoi_dung.Email
