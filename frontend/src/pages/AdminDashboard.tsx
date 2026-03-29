@@ -124,6 +124,19 @@ const AdminDashboard: React.FC<{
   const isSettingsLoading = !systemSettings;
 
   const handleSaveSettings = async (data: Partial<SystemConfig>) => {
+    // Validation: Check dates if they are being updated
+    const newStart = data.ThoiGianBatDau || systemSettings?.ThoiGianBatDau;
+    const newEnd = data.ThoiGianKetThuc || systemSettings?.ThoiGianKetThuc;
+
+    if (newStart && newEnd) {
+      if (new Date(newEnd) < new Date(newStart)) {
+        toast.error("Lỗi: Ngày kết thúc không thể trước ngày bắt đầu!");
+        // Refresh settings from server to revert local change
+        systemService.getSettings().then(setSystemSettings).catch(console.error);
+        return;
+      }
+    }
+
     try {
       const updated = await systemService.updateSettings(data);
       setSystemSettings(updated);
