@@ -79,6 +79,10 @@ export const mapBackendStudentToFrontend = (d: any): StudentProfile => {
           studentExplanation: mc.GiaiTrinhSV || '',
           explanationDate: mc.NgayGiaiTrinh || ''
         });
+        // DEBUG: xóa sau khi kiểm tra xong
+        if (mc.GiaiTrinhSV) {
+          console.log('[DEBUG MinhChung]', { id: mc.id, GiaiTrinhSV: mc.GiaiTrinhSV, NgayGiaiTrinh: mc.NgayGiaiTrinh, TrangThai: mc.TrangThai });
+        }
       }
     });
   }

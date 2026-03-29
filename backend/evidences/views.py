@@ -79,9 +79,21 @@ class MinhChungDetailView(APIView):
 
         if mc.TrangThai not in ['Pending', 'NeedsExplanation']:
             return Response({'detail': 'Không thể sửa minh chứng đã duyệt/từ chối.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        was_needs_explanation = mc.TrangThai == 'NeedsExplanation'
         serializer = MinhChungSubmitSerializer(mc, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        
+        # Nếu đang giải trình thì ghi lại thời gian và nội dung giải trình
+        if was_needs_explanation:
+            from django.utils import timezone
+            giai_trinh = request.data.get('GiaiTrinhSV', '')
+            if giai_trinh:
+                mc.GiaiTrinhSV = giai_trinh
+            mc.NgayGiaiTrinh = timezone.now()
+            mc.save(update_fields=['GiaiTrinhSV', 'NgayGiaiTrinh'])
+        
         mc.SinhVien.tinh_tong_diem() # Cập nhật điểm
         return Response(SinhVienProfileSerializer(mc.SinhVien).data)
 
