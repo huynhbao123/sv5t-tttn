@@ -92,6 +92,9 @@ export interface StudentProfile {
     english: FieldVerification;
     partyMember: FieldVerification;
   };
+  is_submission_open?: boolean;
+  can_edit_profile?: boolean;
+  submission_msg?: string;
 }
 
 export interface FeaturedFace {

@@ -32,6 +32,11 @@ class SinhVienProfileSerializer(serializers.ModelSerializer):
     minh_chung = MinhChungSerializer(many=True, read_only=True)
     TrangThaiDisplay = serializers.CharField(source='get_TrangThaiHoSo_display', read_only=True)
     TaiKhoanId = serializers.IntegerField(source='TaiKhoan.id', read_only=True)
+    
+    # Các trường kiểm tra trạng thái cổng
+    is_submission_open = serializers.SerializerMethodField()
+    can_edit_profile = serializers.SerializerMethodField()
+    submission_msg = serializers.SerializerMethodField()
 
     class Meta:
         model = SinhVien
@@ -42,9 +47,28 @@ class SinhVienProfileSerializer(serializers.ModelSerializer):
             'LaDangVien', 'KhongViPham',
             'TrangThaiHoSo', 'TrangThaiDisplay',
             'TongDiem', 'PhanHoiChung',
-            'xac_minh', 'minh_chung', 'NgayTao', 'NgayCapNhat'
+            'xac_minh', 'minh_chung', 'NgayTao', 'NgayCapNhat',
+            'is_submission_open', 'can_edit_profile', 'submission_msg'
         ]
         read_only_fields = ['id', 'MaSV', 'TongDiem', 'TrangThaiHoSo', 'NgayTao', 'NgayCapNhat']
+
+    def get_is_submission_open(self, obj):
+        from .utils import is_submission_open
+        return is_submission_open()
+
+    def get_can_edit_profile(self, obj):
+        from .utils import can_student_edit
+        return can_student_edit(obj)
+
+    def get_submission_msg(self, obj):
+        from content.models import CauHinhHeThong
+        config = CauHinhHeThong.objects.first()
+        if not config:
+            return ""
+        from .utils import is_submission_open
+        if is_submission_open():
+            return config.ThongBaoHieuLuc
+        return config.ThongBaoHetHan
 
 
 class SinhVienUpdateSerializer(serializers.ModelSerializer):
