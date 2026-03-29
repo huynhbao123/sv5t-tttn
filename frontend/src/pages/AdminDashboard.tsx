@@ -616,32 +616,41 @@ const AdminDashboard: React.FC<{
                     </div>
                   </td>
                   <td className="px-6 py-5 text-center text-xl font-black text-blue-900 font-formal">{s.totalScore}</td>
-                  <td className="px-6 py-5 text-right flex items-center justify-end gap-3">
-                    {(s.status === 'Submitted' || s.status === 'Processing') && (Object.values(s.verifications).some((v: any) => v.explanation) || Object.values(s.evidences).flat().some((e: any) => e.studentExplanation)) ? (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[8px] font-black uppercase rounded flex items-center gap-1">
-                        <i className="fas fa-comment-dots"></i> Đã giải trình
-                      </span>
-                    ) : null}
-                    <button onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
-                      <i className="fas fa-eye mr-1.5"></i>Thẩm định
-                    </button>
-                    {s.status === 'Rejected' && (
-                      <button
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          if (!window.confirm(`Xóa vĩnh viễn hồ sơ của ${s.fullName}? Hành động này không thể hoàn tác.`)) return;
-                          try {
-                            await adminService.deleteStudent(s.id);
-                            toast.success(`Đã xóa hồ sơ ${s.fullName}`);
-                            window.location.reload();
-                          } catch { toast.error('Xóa thất bại'); }
-                        }}
-                        className="w-9 h-9 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-red-200"
-                        title="Xóa hồ sơ bị từ chối"
+                  <td className="px-6 py-5">
+                    <div className="flex items-center justify-end gap-3">
+                      {(s.status === 'Submitted' || s.status === 'Processing') && (Object.values(s.verifications).some((v: any) => v.explanation) || Object.values(s.evidences).flat().some((e: any) => e.studentExplanation)) ? (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[8px] font-black uppercase rounded flex items-center gap-1">
+                          <i className="fas fa-comment-dots"></i> Đã giải trình
+                        </span>
+                      ) : null}
+                      <button 
+                        onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} 
+                        className="w-[110px] flex items-center justify-center py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950 shadow-sm"
                       >
-                        <i className="fas fa-trash text-[10px]"></i>
+                        <i className="fas fa-eye mr-1.5"></i>Thẩm định
                       </button>
-                    )}
+                      
+                      {/* Khung chứa cố định 36px cho nút Thùng rác */}
+                      <div className="w-9 h-9 flex items-center justify-center">
+                        {s.status === 'Rejected' && (
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (!window.confirm(`Xóa vĩnh viễn hồ sơ của ${s.fullName}? Hành động này không thể hoàn tác.`)) return;
+                              try {
+                                await adminService.deleteStudent(s.id);
+                                toast.success(`Đã xóa hồ sơ ${s.fullName}`);
+                                window.location.reload();
+                              } catch { toast.error('Xóa thất bại'); }
+                            }}
+                            className="w-full h-full rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-red-200"
+                            title="Xóa hồ sơ bị từ chối"
+                          >
+                            <i className="fas fa-trash text-[10px]"></i>
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))}
