@@ -18,6 +18,15 @@ class Command(BaseCommand):
                 'Email': 'admin@due.edu.vn',
             },
             {
+                'TenDangNhap': 'admin2',
+                'password': 'Admin@123',
+                'VaiTro': 'Admin',
+                'is_staff': True,
+                'is_superuser': True,
+                'HoTen': 'Quản trị dự phòng',
+                'Email': 'admin2@due.edu.vn',
+            },
+            {
                 'TenDangNhap': 'thuky',
                 'password': 'ThuKy@123',
                 'VaiTro': 'ThuKy',
