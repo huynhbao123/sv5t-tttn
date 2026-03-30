@@ -192,9 +192,13 @@ const StudentDashboard: React.FC<{
   const isApproved = student.status === 'Approved';
   const isRejected = student.status === 'Rejected';
 
-  // GIẢNG VIÊN YÊU CẦU: Một khi đã nộp hồ sơ, không bao giờ được phép Hủy nộp nữa.
-  // Admin có thể đã xem dù chưa bấm bất kỳ nút nào.
-  const isReviewed = student.status !== 'Draft';
+  // isReviewed = true khi Admin đã BẮT ĐẦU xem/tác động hồ sơ:
+  // - Hồ sơ đã qua trạng thái Processing/Approved/Rejected
+  // - Hoặc bất kỳ minh chứng / xác minh nào đã được Admin đổi trạng thái (khác Pending)
+  const isReviewed =
+    ['Processing', 'Approved', 'Rejected'].includes(student.status) ||
+    Object.values(student.verifications).some((v: any) => v?.status && v.status !== 'Pending') ||
+    Object.values(student.evidences).flat().some((e: any) => e?.status && e.status !== 'Pending');
 
   // Submission Window Logic
   const isSubmissionOpen = React.useMemo(() => {
@@ -493,11 +497,20 @@ const StudentDashboard: React.FC<{
             Hồ sơ của bạn đã được gửi lên hệ thống và đang chờ Ban thư ký Hội Sinh viên thẩm định. Trong thời gian này, các tính năng chỉnh sửa sẽ tạm khóa để đảm bảo tính toàn vẹn của dữ liệu.
           </p>
           <div className="mt-8 pt-8 border-t border-white/10 flex flex-wrap gap-4">
-            {/* GIẢNG VIÊN YÊU CẦU: Một khi đã nộp (Submitted), ẩn hoàn toàn nút Hủy nộp */}
-            {canEdit && student.status === 'Submitted' && (
-               <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
-                  <i className="fas fa-lock text-orange-400"></i> Hồ sơ đã được nộp — Không thể chỉnh sửa hoặc hủy nộp
-               </div>
+            {/* Chỉ cho Hủy nộp khi: cổng mở + Admin CHƯA tác động hồ sơ */}
+            {canEdit && student.status === 'Submitted' && !isReviewed && (
+              <button
+                onClick={() => setShowUnsubmitModal(true)}
+                className="px-8 py-3 bg-white text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-orange-500 hover:text-white transition-all active:scale-95 border border-gray-100"
+              >
+                Hủy nộp để chỉnh sửa
+              </button>
+            )}
+            {/* Admin đã xem/tác động → khóa vĩnh viễn, không cho hủy nộp dù cổng còn mở */}
+            {canEdit && student.status === 'Submitted' && isReviewed && (
+              <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
+                <i className="fas fa-lock text-orange-400"></i> Admin đã thẩm định — Không thể hủy nộp
+              </div>
             )}
             {!canEdit && student.status === 'Submitted' && (
                <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
