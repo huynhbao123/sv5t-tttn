@@ -56,9 +56,12 @@ class Command(BaseCommand):
                 }
             )
             
+            # GIẢNG VIÊN YÊU CẦU: Cập nhật lại mật khẩu mặc định mỗi lần khởi động dự án
+            # để đảm bảo người quản trị luôn biết mật khẩu vào hệ thống (Admin@123)
+            acc.set_password(password)
+            acc.save()
+            
             if created:
-                acc.set_password(password)
-                acc.save()
                 
                 if acc.VaiTro == 'SinhVien':
                     from students.models import SinhVien
