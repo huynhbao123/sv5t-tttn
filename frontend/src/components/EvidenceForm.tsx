@@ -133,6 +133,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
       fileName: files.length > 0 ? files[0].name : (initialData?.fileName || ''),
       danh_sach_file: initialData?.danh_sach_file,
       date: evidenceDate || new Date().toISOString().split('T')[0],
+      evidenceDate: evidenceDate || '',  // NgayMinhChung → gửi lên backend
       points: calculatedPoints,
       isHardCriterion: isHard,
       status: initialData?.status || 'Pending'
