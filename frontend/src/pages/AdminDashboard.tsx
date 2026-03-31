@@ -204,7 +204,8 @@ const AdminDashboard: React.FC<{
       return;
     }
 
-    const actionTxt = action === 'Approved' ? 'DUYỆT MINH CHỨNG' : action === 'Rejected' ? 'TỪ CHỐI MINH CHỨNG' : 'YÊU CẦU GIẢI TRÌNH';
+    // If we reach here, action must be 'NeedsExplanation'
+    const actionTxt = 'YÊU CẦU GIẢI TRÌNH';
     
     setModalFeedback('');
     setFeedbackModal({
@@ -212,7 +213,7 @@ const AdminDashboard: React.FC<{
       type: action,
       title: actionTxt,
       message: `Bạn đang thực hiện hành động: ${actionTxt}.`,
-      requireFeedback: action === 'Rejected' || action === 'NeedsExplanation',
+      requireFeedback: true,
       onSubmit: (feedback) => {
         onUpdateEvidenceStatus(cat, id, action, feedback);
         setFeedbackModal(prev => ({ ...prev, show: false }));
@@ -234,7 +235,8 @@ const AdminDashboard: React.FC<{
       return;
     }
 
-    const actionTxt = action === 'Approved' ? 'XÁC NHẬN ĐẠT' : action === 'Rejected' ? 'XÁC NHẬN KHÔNG ĐẠT' : 'YÊU CẦU GIẢI TRÌNH';
+    // If we reach here, action must be 'NeedsExplanation'
+    const actionTxt = 'YÊU CẦU GIẢI TRÌNH';
     
     setModalFeedback('');
     setFeedbackModal({
@@ -242,7 +244,7 @@ const AdminDashboard: React.FC<{
       type: action,
       title: actionTxt,
       message: `Cập nhật trạng thái xác minh cho mục [${context}].`,
-      requireFeedback: action === 'Rejected' || action === 'NeedsExplanation',
+      requireFeedback: true,
       onSubmit: (feedback) => {
         onUpdateFieldVerification(fieldKey, action, feedback);
         setFeedbackModal(prev => ({ ...prev, show: false }));
@@ -1558,6 +1560,12 @@ const AdminDashboard: React.FC<{
                                   </button>
                                 )}
                               </div>
+                              {ver.evidenceDate && (
+                                <div className="text-[10px] text-purple-600 font-bold bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-100 mb-3 w-fit flex items-center gap-2">
+                                  <i className="far fa-calendar-alt"></i>
+                                  Ngảy cấp/thực hiện: {ver.evidenceDate}
+                                </div>
+                              )}
                               <div className="flex gap-2 justify-end border-t border-blue-100 pt-4">
                                  <button onClick={() => handleManualDataVerify('Approved', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'Approved' ? 'bg-green-600 text-white' : 'bg-white text-green-600 border border-green-200 hover:bg-green-50'}`}>Đạt</button>
                                  <button onClick={() => handleManualDataVerify('NeedsExplanation', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'NeedsExplanation' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500 border border-orange-200 hover:bg-orange-50'}`}>Cần giải trình</button>
