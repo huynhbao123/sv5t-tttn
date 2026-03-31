@@ -23,7 +23,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
   const [qty, setQty] = useState<number | ''>(initialData?.qty || '');
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState('');
-  const [evidenceDate, setEvidenceDate] = useState(initialData?.date || '');
+  const [evidenceDate, setEvidenceDate] = useState(initialData?.evidenceDate || initialData?.date || '');
 
   const availableSubCriteria = useMemo(() => {
     const profileBasedSlugs = [

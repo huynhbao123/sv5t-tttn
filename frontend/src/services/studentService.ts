@@ -38,7 +38,8 @@ export const studentService = {
     formData.append('LoaiMinhChung', evidence.type);
     if (evidence.decisionNumber) formData.append('SoQuyetDinh', evidence.decisionNumber);
     formData.append('SoLuong', evidence.qty?.toString() || '1');
-    if (evidence.evidenceDate) formData.append('NgayMinhChung', evidence.evidenceDate);
+    const _ngay = evidence.evidenceDate || evidence.date || '';
+    if (_ngay) formData.append('NgayMinhChung', _ngay);
     const fileToUpload = evidence.files && evidence.files.length > 0 ? evidence.files[0] : null;
     if (fileToUpload) {
       formData.append('DuongDanFile', fileToUpload);
@@ -67,7 +68,8 @@ export const studentService = {
     formData.append('LoaiMinhChung', evidence.type);
     if (evidence.decisionNumber) formData.append('SoQuyetDinh', evidence.decisionNumber);
     formData.append('SoLuong', evidence.qty?.toString() || '1');
-    if (evidence.evidenceDate) formData.append('NgayMinhChung', evidence.evidenceDate);
+    const _ngayUpdate = evidence.evidenceDate || evidence.date || '';
+    if (_ngayUpdate) formData.append('NgayMinhChung', _ngayUpdate);
     const fileToUpload = evidence.files && evidence.files.length > 0 ? evidence.files[0] : null;
     if (fileToUpload) {
       formData.append('DuongDanFile', fileToUpload);
