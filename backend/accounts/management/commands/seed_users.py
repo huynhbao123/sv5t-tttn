@@ -10,7 +10,7 @@ class Command(BaseCommand):
         users = [
             {
                 'TenDangNhap': 'admin',
-                'password': 'Admin@123',
+                'password': 'admin123',
                 'VaiTro': 'Admin',
                 'is_staff': True,
                 'is_superuser': True,
@@ -19,7 +19,7 @@ class Command(BaseCommand):
             },
             {
                 'TenDangNhap': 'admin2',
-                'password': 'Admin@123',
+                'password': 'admin123',
                 'VaiTro': 'Admin',
                 'is_staff': True,
                 'is_superuser': True,
@@ -28,7 +28,7 @@ class Command(BaseCommand):
             },
             {
                 'TenDangNhap': 'thuky',
-                'password': 'ThuKy@123',
+                'password': 'admin123',
                 'VaiTro': 'ThuKy',
                 'is_staff': True,
                 'is_superuser': False,
@@ -37,7 +37,7 @@ class Command(BaseCommand):
             },
             {
                 'TenDangNhap': '221121514105',
-                'password': 'Student@123',
+                'password': 'admin123',
                 'VaiTro': 'SinhVien',
                 'is_staff': False,
                 'is_superuser': False,
@@ -66,7 +66,7 @@ class Command(BaseCommand):
             )
             
             # GIẢNG VIÊN YÊU CẦU: Cập nhật lại mật khẩu mặc định mỗi lần khởi động dự án
-            # để đảm bảo người quản trị luôn biết mật khẩu vào hệ thống (Admin@123)
+            # để đảm bảo người quản trị luôn biết mật khẩu vào hệ thống (admin123)
             acc.set_password(password)
             acc.save()
             
