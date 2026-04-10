@@ -16,7 +16,7 @@ class TieuChiSerializer(serializers.ModelSerializer):
         model = TieuChi
         fields = [
             'id', 'MaTieuChi', 'MoTa', 'LoaiTieuChi', 'LoaiDisplay',
-            'Diem', 'CoSoQuyetDinh', 'SoLuongToiThieu',
+            'Diem', 'CoSoQuyetDinh', 'KhongSoQuyetDinh', 'SoLuongToiThieu',
             'ThuTu', 'diem_cap_do'
         ]
 
@@ -33,4 +33,4 @@ class TieuChiWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TieuChi
         fields = ['NhomTieuChi', 'MoTa', 'LoaiTieuChi', 'Diem',
-                  'CoSoQuyetDinh', 'SoLuongToiThieu', 'ThuTu']
+                  'CoSoQuyetDinh', 'KhongSoQuyetDinh', 'SoLuongToiThieu', 'ThuTu']

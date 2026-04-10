@@ -51,7 +51,7 @@ const AdminDashboard: React.FC<{
   // State for CRUD
   const LEVELS = ['Cấp Khoa/CLB', 'Cấp Trường/Phường/Xã', 'Cấp ĐHĐN', 'Cấp Tỉnh/Thành phố', 'Cấp Trung ương'];
   const LEVEL_KEYS = ['khoa', 'truong', 'dhdn', 'tinh', 'tw'];
-  type CriterionItem = { id: string; description: string; isHard: boolean; points?: number; levelPoints: Record<string, number>; hasDecisionNumber: boolean; minQty?: number };
+  type CriterionItem = { id: string; description: string; isHard: boolean; points?: number; levelPoints: Record<string, number>; hasDecisionNumber: boolean; allowNoDecision: boolean; minQty?: number };
   const [managedCriteria, setManagedCriteria] = useState<Record<string, CriterionItem[]>>({});
 
   useEffect(() => {
@@ -77,6 +77,7 @@ const AdminDashboard: React.FC<{
           points: Number(tc.Diem || 0),
           levelPoints: lp,
           hasDecisionNumber: tc.CoSoQuyetDinh,
+          allowNoDecision: tc.KhongSoQuyetDinh,
           minQty: tc.SoLuongToiThieu
         };
       });
@@ -820,15 +821,15 @@ const AdminDashboard: React.FC<{
   };
 
   // Criteria form modal state
-  const [criteriaForm, setCriteriaForm] = useState<{ mode: 'add' | 'edit'; cat: string; id?: string; description: string; isHard: boolean; hasDecisionNumber: boolean; levelPoints: Record<string, number> } | null>(null);
+  const [criteriaForm, setCriteriaForm] = useState<{ mode: 'add' | 'edit'; cat: string; id?: string; description: string; isHard: boolean; hasDecisionNumber: boolean; allowNoDecision: boolean; levelPoints: Record<string, number> } | null>(null);
 
   const openAddCriterion = (cat: string) => {
-    setCriteriaForm({ mode: 'add', cat, description: '', isHard: false, hasDecisionNumber: false, levelPoints: { khoa: 0.1, truong: 0.2, dhdn: 0.3, tinh: 0.4, tw: 0.5 } });
+    setCriteriaForm({ mode: 'add', cat, description: '', isHard: false, hasDecisionNumber: false, allowNoDecision: true, levelPoints: { khoa: 0.1, truong: 0.2, dhdn: 0.3, tinh: 0.4, tw: 0.5 } });
   };
   const openEditCriterion = (cat: string, id: string) => {
     const sub = managedCriteria[cat]?.find(s => s.id === id);
     if (!sub) return;
-    setCriteriaForm({ mode: 'edit', cat, id, description: sub.description, isHard: sub.isHard, hasDecisionNumber: sub.hasDecisionNumber, levelPoints: { ...sub.levelPoints } });
+    setCriteriaForm({ mode: 'edit', cat, id, description: sub.description, isHard: sub.isHard, hasDecisionNumber: sub.hasDecisionNumber, allowNoDecision: sub.allowNoDecision, levelPoints: { ...sub.levelPoints } });
   };
   const saveCriteriaForm = async () => {
     if (!criteriaForm || !criteriaForm.description.trim()) return;
@@ -843,6 +844,7 @@ const AdminDashboard: React.FC<{
         LoaiTieuChi: criteriaForm.isHard ? 'Cung' : 'Cong',
         Diem: 0, // Points are usually per level, but model has a base Diem
         CoSoQuyetDinh: criteriaForm.hasDecisionNumber,
+        KhongSoQuyetDinh: criteriaForm.allowNoDecision,
         SoLuongToiThieu: 1,
         ThuTu: 1
       };
@@ -1041,8 +1043,8 @@ const AdminDashboard: React.FC<{
             <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: false })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${!criteriaForm.isHard ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-400 border-gray-200'}`}>Cộng</button>
           </div>
           <div className="flex gap-1.5">
-            <button onClick={() => setCriteriaForm({ ...criteriaForm, hasDecisionNumber: false })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${!criteriaForm.hasDecisionNumber ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-400 border-gray-200'}`}>Không Sqđ</button>
-            <button onClick={() => setCriteriaForm({ ...criteriaForm, hasDecisionNumber: true })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.hasDecisionNumber ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-400 border-gray-200'}`}>Có Sqđ</button>
+            <button onClick={() => setCriteriaForm({ ...criteriaForm, allowNoDecision: !criteriaForm.allowNoDecision })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.allowNoDecision ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-400 border-gray-200'}`}>Không Sqđ</button>
+            <button onClick={() => setCriteriaForm({ ...criteriaForm, hasDecisionNumber: !criteriaForm.hasDecisionNumber })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.hasDecisionNumber ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-400 border-gray-200'}`}>Có Sqđ</button>
           </div>
         </div>
         <div className="flex gap-1.5 flex-wrap">
@@ -1092,7 +1094,10 @@ const AdminDashboard: React.FC<{
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <span className={`text-[7px] font-black uppercase px-2 py-0.5 text-white rounded flex-shrink-0 ${sub.isHard ? 'bg-blue-600' : 'bg-orange-500'}`}>{sub.isHard ? 'Cứng' : 'Cộng'}</span>
                         <span className="text-xs font-medium text-gray-700">{sub.description}</span>
-                        <span className={`text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 ${sub.hasDecisionNumber ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>{sub.hasDecisionNumber ? 'Có Sqđ' : 'Không Sqđ'}</span>
+                        <div className="flex gap-1">
+                          {sub.allowNoDecision && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-gray-100 text-gray-400">Không Sqđ</span>}
+                          {sub.hasDecisionNumber && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-green-100 text-green-700">Có Sqđ</span>}
+                        </div>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
                         <button onClick={() => openEditCriterion(cat, sub.id)} className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-all"><i className="fas fa-pen text-[10px]"></i></button>

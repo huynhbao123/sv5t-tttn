@@ -57,7 +57,8 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
         description: tc.MoTa,
         isHard: tc.LoaiTieuChi === 'Cung',
         minQty: tc.SoLuongToiThieu,
-        requireDecision: tc.CoSoQuyetDinh
+        requireDecision: tc.CoSoQuyetDinh,
+        allowNoDecision: tc.KhongSoQuyetDinh
       }));
   }, [criterionType, isHard, criteriaGroups, propsSubId, subCriterionName]);
 
@@ -68,14 +69,20 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
     if (propsSubId) {
       setSubCriterionId(propsSubId);
       const sub = availableSubCriteria.find(sc => sc.id === propsSubId);
-      if (sub?.requireDecision) {
-        setType(EvidenceType.WITH_DECISION);
+      if (sub) {
+        if (sub.requireDecision && !sub.allowNoDecision) {
+          setType(EvidenceType.WITH_DECISION);
+        } else if (!sub.requireDecision && sub.allowNoDecision) {
+          setType(EvidenceType.NO_DECISION);
+        }
       }
     } else if (availableSubCriteria.length > 0 && !subCriterionId) {
       const firstSub = availableSubCriteria[0];
       setSubCriterionId(firstSub.id);
-      if (firstSub.requireDecision) {
+      if (firstSub.requireDecision && !firstSub.allowNoDecision) {
         setType(EvidenceType.WITH_DECISION);
+      } else if (!firstSub.requireDecision && firstSub.allowNoDecision) {
+        setType(EvidenceType.NO_DECISION);
       }
     }
   }, [propsSubId, availableSubCriteria, initialData]);
@@ -211,14 +218,22 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
                 onChange={(e) => setType(e.target.value as EvidenceType)} 
                 className="w-full px-5 py-4 border border-gray-200 font-bold bg-white text-xs outline-none text-gray-900 rounded-xl transition-all"
               >
-                {Object.values(EvidenceType).map(t => (
-                  <option 
-                    key={t} 
-                    value={t}
-                  >
-                    {t}
-                  </option>
-                ))}
+                {Object.values(EvidenceType).map(t => {
+                  // Lọc các tùy chọn dựa trên cấu hình tiêu chí
+                  if (selectedSubCriterion) {
+                    const isDecisionType = t === EvidenceType.WITH_DECISION || t === EvidenceType.GK;
+                    const isNoDecisionType = t === EvidenceType.NO_DECISION;
+                    
+                    if (isDecisionType && !selectedSubCriterion.requireDecision) return null;
+                    if (isNoDecisionType && !selectedSubCriterion.allowNoDecision) return null;
+                  }
+                  
+                  return (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>

@@ -29,6 +29,7 @@ class TieuChi(models.Model):
     LoaiTieuChi = models.CharField(max_length=10, choices=LOAI_CHOICES, default='Cong')
     Diem = models.FloatField(null=True, blank=True)
     CoSoQuyetDinh = models.BooleanField(default=False)
+    KhongSoQuyetDinh = models.BooleanField(default=True)
     SoLuongToiThieu = models.IntegerField(null=True, blank=True)
     ThuTu = models.IntegerField(default=0)
 

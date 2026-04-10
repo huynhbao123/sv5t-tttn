@@ -28,6 +28,7 @@ export interface SubCriterion {
   points?: number; 
   note?: string;
   minQty?: number;
+  allowNoDecision?: boolean;
 }
 
 export interface Evidence {
