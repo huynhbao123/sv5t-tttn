@@ -12,6 +12,8 @@
   "dependencies": {
     "@google/genai": "^1.38.0",
     "axios": "^1.13.6",
+    "framer-motion": "^12.4.7",
+    "lucide-react": "^0.476.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-hot-toast": "^2.6.0",
