@@ -24,5 +24,7 @@ Hệ thống hỗ trợ nộp minh chứng, xét duyệt và vinh danh Sinh viê
 2. Cài đặt thư viện: `npm install`
 3. Chạy dev: `npm run dev`
 
+Đây là đồ án tốt nghiệp của nhóm 10
+
 ---
 *Dự án được phát triển phục vụ đồ án tốt nghiệp với tiêu chuẩn mã nguồn sạch và kiến trúc mở rộng.*
