@@ -12,12 +12,14 @@ class TieuChiSerializer(serializers.ModelSerializer):
     diem_cap_do = DiemTheoCapDoSerializer(many=True, read_only=True)
     LoaiDisplay = serializers.CharField(source='get_LoaiTieuChi_display', read_only=True)
 
+    IsLatestCode = serializers.ReadOnlyField(default=True)
+
     class Meta:
         model = TieuChi
         fields = [
             'id', 'MaTieuChi', 'MoTa', 'LoaiTieuChi', 'LoaiDisplay',
             'Diem', 'CoSoQuyetDinh', 'KhongSoQuyetDinh', 'SoLuongToiThieu',
-            'ThuTu', 'diem_cap_do'
+            'ThuTu', 'diem_cap_do', 'IsLatestCode'
         ]
 
 
