@@ -19,7 +19,10 @@ class NhomTieuChiListView(APIView):
         qs = NhomTieuChi.objects.prefetch_related(
             'tieu_chi', 'tieu_chi__diem_cap_do'
         ).order_by('ThuTu')
-        return Response(NhomTieuChiSerializer(qs, many=True).data)
+        data = NhomTieuChiSerializer(qs, many=True).data
+        response = Response(data)
+        response['X-API-Version'] = '2.3'  # Force rebuild and verify deploy - NEWEST
+        return response
 
     def post(self, request):
         if not request.user.is_authenticated or not request.user.VaiTro in ['Admin']:

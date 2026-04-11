@@ -12,3 +12,4 @@ python-dotenv==1.0.1
 lxml==6.0.2
 pillow==11.1.0
 requests==2.32.3
+# FORCE REBUILD 2026-04-11-21-11
