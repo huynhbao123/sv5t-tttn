@@ -77,11 +77,9 @@ const AdminDashboard: React.FC<{
           points: Number(tc.Diem || 0),
           levelPoints: lp,
           hasDecisionNumber: tc.CoSoQuyetDinh === true,
-          // Sửa fallback: Nếu API chưa có KhongSoQuyetDinh, suy luận từ CoSoQuyetDinh 
-          // (Tránh việc mặc định luôn chọn như vừa rồi gây phiền cho người dùng)
-          allowNoDecision: (tc.KhongSoQuyetDinh !== null && tc.KhongSoQuyetDinh !== undefined)
-            ? Boolean(tc.KhongSoQuyetDinh)
-            : !tc.CoSoQuyetDinh,
+          // Bỏ logic đoán. Chỉ hiển thị TRUE nếu Backend thực sự trả về TRUE.
+          // Giúp "không mặc định chọn trước" theo yêu cầu người dùng.
+          allowNoDecision: tc.KhongSoQuyetDinh === true,
           minQty: tc.SoLuongToiThieu
         };
       });
@@ -1137,10 +1135,18 @@ const AdminDashboard: React.FC<{
                     <div className="flex items-center justify-between gap-4 mb-3">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <span className={`text-[7px] font-black uppercase px-2 py-0.5 text-white rounded flex-shrink-0 ${sub.isHard ? 'bg-blue-600' : 'bg-orange-500'}`}>{sub.isHard ? 'Cứng' : 'Cộng'}</span>
-                        <span className="text-xs font-medium text-gray-700">{sub.description}</span>
-                        <div className="flex gap-1">
-                          {sub.allowNoDecision && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-gray-700 text-white">Không Sqđ</span>}
-                          {sub.hasDecisionNumber && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-green-100 text-green-700">Có Sqđ</span>}
+                        <span className="text-xs font-semibold text-gray-700">{sub.description}</span>
+                        <div className="flex gap-2.5 ml-2">
+                          {sub.hasDecisionNumber && (
+                            <span className="px-2 py-0.5 rounded bg-green-100 text-green-600 text-[8px] font-black uppercase flex items-center gap-1">
+                              <i className="fas fa-file-contract"></i> Chấp nhận SQĐ
+                            </span>
+                          )}
+                          {sub.allowNoDecision && (
+                            <span className="px-2 py-0.5 rounded bg-slate-700 text-white text-[8px] font-black uppercase flex items-center gap-1">
+                              <i className="fas fa-ban"></i> Chấp nhận KHÔNG SQĐ
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
