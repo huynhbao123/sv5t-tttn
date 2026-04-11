@@ -77,7 +77,7 @@ const AdminDashboard: React.FC<{
           points: Number(tc.Diem || 0),
           levelPoints: lp,
           hasDecisionNumber: tc.CoSoQuyetDinh,
-          allowNoDecision: tc.KhongSoQuyetDinh,
+          allowNoDecision: tc.KhongSoQuyetDinh !== undefined ? tc.KhongSoQuyetDinh : !tc.CoSoQuyetDinh,
           minQty: tc.SoLuongToiThieu
         };
       });
@@ -1095,7 +1095,7 @@ const AdminDashboard: React.FC<{
                         <span className={`text-[7px] font-black uppercase px-2 py-0.5 text-white rounded flex-shrink-0 ${sub.isHard ? 'bg-blue-600' : 'bg-orange-500'}`}>{sub.isHard ? 'Cứng' : 'Cộng'}</span>
                         <span className="text-xs font-medium text-gray-700">{sub.description}</span>
                         <div className="flex gap-1">
-                          {sub.allowNoDecision && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-gray-100 text-gray-400">Không Sqđ</span>}
+                          {sub.allowNoDecision && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-gray-700 text-white">Không Sqđ</span>}
                           {sub.hasDecisionNumber && <span className="text-[7px] font-black uppercase px-2 py-0.5 rounded flex-shrink-0 bg-green-100 text-green-700">Có Sqđ</span>}
                         </div>
                       </div>

@@ -58,7 +58,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
         isHard: tc.LoaiTieuChi === 'Cung',
         minQty: tc.SoLuongToiThieu,
         requireDecision: tc.CoSoQuyetDinh,
-        allowNoDecision: tc.KhongSoQuyetDinh
+        allowNoDecision: tc.KhongSoQuyetDinh !== undefined ? tc.KhongSoQuyetDinh : !tc.CoSoQuyetDinh
       }));
   }, [criterionType, isHard, criteriaGroups, propsSubId, subCriterionName]);
 
