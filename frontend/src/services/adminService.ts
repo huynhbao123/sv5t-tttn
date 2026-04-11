@@ -161,7 +161,7 @@ export const adminService = {
     return response.data;
   },
 
-  addTieuChi: async (data: { NhomTieuChi: number, MoTa: string, LoaiTieuChi: string, Diem?: number, CoSoQuyetDinh?: boolean, SoLuongToiThieu?: number, ThuTu?: number }): Promise<any> => {
+  addTieuChi: async (data: { NhomTieuChi: number, MoTa: string, LoaiTieuChi: string, Diem?: number, CoSoQuyetDinh?: boolean, KhongSoQuyetDinh?: boolean, SoLuongToiThieu?: number, ThuTu?: number }): Promise<any> => {
     const response = await apiClient.post('/api/admin/criteria/tieuchi/', data);
     return response.data;
   },

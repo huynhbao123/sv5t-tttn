@@ -849,6 +849,8 @@ const AdminDashboard: React.FC<{
         ThuTu: 1
       };
 
+      console.log('[saveCriteria] payload:', JSON.stringify(payload));
+
       if (criteriaForm.mode === 'add') {
         const newTc = await adminService.addTieuChi(payload);
         // Also update scores
@@ -1042,9 +1044,41 @@ const AdminDashboard: React.FC<{
             <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: true })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.isHard ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-400 border-gray-200'}`}>Cứng</button>
             <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: false })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${!criteriaForm.isHard ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-400 border-gray-200'}`}>Cộng</button>
           </div>
-          <div className="flex gap-1.5">
-            <button onClick={() => setCriteriaForm({ ...criteriaForm, allowNoDecision: !criteriaForm.allowNoDecision })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.allowNoDecision ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-400 border-gray-200'}`}>Không Sqđ</button>
-            <button onClick={() => setCriteriaForm({ ...criteriaForm, hasDecisionNumber: !criteriaForm.hasDecisionNumber })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.hasDecisionNumber ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-400 border-gray-200'}`}>Có Sqđ</button>
+          {/* CÓ SQĐ / KHÔNG SQĐ: 2 checkbox ĐỘC LẬP - có thể chọn cả hai cùng lúc */}
+          <div className="flex flex-col gap-1">
+            <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest">Hình thức nộp minh chứng <span className="text-blue-500">(chọn một hoặc cả hai)</span>:</p>
+            <div className="flex gap-2">
+              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 cursor-pointer transition-all select-none
+                ${criteriaForm.allowNoDecision ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-400'}`}>
+                <input
+                  type="checkbox"
+                  className="w-3 h-3 accent-white"
+                  checked={criteriaForm.allowNoDecision}
+                  onChange={e => setCriteriaForm(prev => prev ? { ...prev, allowNoDecision: e.target.checked } : prev)}
+                />
+                <i className="fas fa-ban text-[8px]"></i> Không SQĐ
+              </label>
+              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 cursor-pointer transition-all select-none
+                ${criteriaForm.hasDecisionNumber ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-400'}`}>
+                <input
+                  type="checkbox"
+                  className="w-3 h-3 accent-white"
+                  checked={criteriaForm.hasDecisionNumber}
+                  onChange={e => setCriteriaForm(prev => prev ? { ...prev, hasDecisionNumber: e.target.checked } : prev)}
+                />
+                <i className="fas fa-file-alt text-[8px]"></i> Có SQĐ
+              </label>
+            </div>
+            {criteriaForm.allowNoDecision && criteriaForm.hasDecisionNumber && (
+              <p className="text-[7px] text-green-600 font-bold uppercase tracking-wide flex items-center gap-1">
+                <i className="fas fa-check-circle"></i> Sinh viên có thể nộp với hoặc không có SQĐ
+              </p>
+            )}
+            {!criteriaForm.allowNoDecision && !criteriaForm.hasDecisionNumber && (
+              <p className="text-[7px] text-red-500 font-bold uppercase tracking-wide flex items-center gap-1">
+                <i className="fas fa-exclamation-triangle"></i> Vui lòng chọn ít nhất một hình thức
+              </p>
+            )}
           </div>
         </div>
         <div className="flex gap-1.5 flex-wrap">
@@ -1058,7 +1092,13 @@ const AdminDashboard: React.FC<{
         </div>
         <div className="flex justify-end gap-2 pt-1">
           <button onClick={() => setCriteriaForm(null)} className="px-4 py-2 border border-gray-200 text-gray-400 text-[9px] font-black uppercase rounded-lg hover:bg-gray-100 transition-all">Hủy</button>
-          <button onClick={saveCriteriaForm} disabled={!criteriaForm.description.trim()} className={`px-5 py-2 text-[9px] font-black uppercase rounded-lg transition-all ${criteriaForm.description.trim() ? 'bg-blue-900 text-white hover:bg-orange-600' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>{criteriaForm.mode === 'add' ? 'Thêm' : 'Lưu'}</button>
+          <button
+            onClick={saveCriteriaForm}
+            disabled={!criteriaForm.description.trim() || (!criteriaForm.allowNoDecision && !criteriaForm.hasDecisionNumber)}
+            className={`px-5 py-2 text-[9px] font-black uppercase rounded-lg transition-all ${criteriaForm.description.trim() && (criteriaForm.allowNoDecision || criteriaForm.hasDecisionNumber) ? 'bg-blue-900 text-white hover:bg-orange-600' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+          >
+            {criteriaForm.mode === 'add' ? 'Thêm' : 'Lưu'}
+          </button>
         </div>
       </div>
     );
