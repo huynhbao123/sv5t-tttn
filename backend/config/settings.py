@@ -130,6 +130,9 @@ _cors_origins_list = [o.strip() for o in _cors_origins_raw.split(',') if o.strip
 if '*' in _cors_origins_list:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
+    # Ensure production Vercel URL is always allowed
+    if 'https://sv5t-tttn.vercel.app' not in _cors_origins_list:
+        _cors_origins_list.append('https://sv5t-tttn.vercel.app')
     CORS_ALLOWED_ORIGINS = _cors_origins_list
 
 CORS_ALLOW_CREDENTIALS = True
