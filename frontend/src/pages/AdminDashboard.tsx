@@ -77,11 +77,10 @@ const AdminDashboard: React.FC<{
           points: Number(tc.Diem || 0),
           levelPoints: lp,
           hasDecisionNumber: tc.CoSoQuyetDinh === true,
-          // KhongSoQuyetDinh: nếu field không có trong API (production cũ), default là TRUE
-          // Không dùng !CoSoQuyetDinh vì đó là logic sai (ép buộc loại trừ nhau)
+          // KhongSoQuyetDinh: nếu field không có trong API, default là FALSE (admin phải tự chọn)
           allowNoDecision: tc.KhongSoQuyetDinh !== null && tc.KhongSoQuyetDinh !== undefined
             ? Boolean(tc.KhongSoQuyetDinh)
-            : true,
+            : false,
           minQty: tc.SoLuongToiThieu
         };
       });
@@ -828,7 +827,7 @@ const AdminDashboard: React.FC<{
   const [criteriaForm, setCriteriaForm] = useState<{ mode: 'add' | 'edit'; cat: string; id?: string; description: string; isHard: boolean; hasDecisionNumber: boolean; allowNoDecision: boolean; levelPoints: Record<string, number> } | null>(null);
 
   const openAddCriterion = (cat: string) => {
-    setCriteriaForm({ mode: 'add', cat, description: '', isHard: false, hasDecisionNumber: false, allowNoDecision: true, levelPoints: { khoa: 0.1, truong: 0.2, dhdn: 0.3, tinh: 0.4, tw: 0.5 } });
+    setCriteriaForm({ mode: 'add', cat, description: '', isHard: false, hasDecisionNumber: false, allowNoDecision: false, levelPoints: { khoa: 0.1, truong: 0.2, dhdn: 0.3, tinh: 0.4, tw: 0.5 } });
   };
   const openEditCriterion = (cat: string, id: string) => {
     const sub = managedCriteria[cat]?.find(s => s.id === id);
