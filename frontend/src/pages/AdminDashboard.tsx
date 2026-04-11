@@ -77,11 +77,11 @@ const AdminDashboard: React.FC<{
           points: Number(tc.Diem || 0),
           levelPoints: lp,
           hasDecisionNumber: tc.CoSoQuyetDinh === true,
-          // Nếu API chưa có trường KhongSoQuyetDinh (Render chưa update), 
-          // mặc định là true để admin có thể chọn cả 2 thoải mái.
+          // Sửa fallback: Nếu API chưa có KhongSoQuyetDinh, suy luận từ CoSoQuyetDinh 
+          // (Tránh việc mặc định luôn chọn như vừa rồi gây phiền cho người dùng)
           allowNoDecision: (tc.KhongSoQuyetDinh !== null && tc.KhongSoQuyetDinh !== undefined)
             ? Boolean(tc.KhongSoQuyetDinh)
-            : true,
+            : !tc.CoSoQuyetDinh,
           minQty: tc.SoLuongToiThieu
         };
       });
