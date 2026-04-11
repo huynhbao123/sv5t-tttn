@@ -57,8 +57,11 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
         description: tc.MoTa,
         isHard: tc.LoaiTieuChi === 'Cung',
         minQty: tc.SoLuongToiThieu,
-        requireDecision: tc.CoSoQuyetDinh,
-        allowNoDecision: tc.KhongSoQuyetDinh !== undefined ? tc.KhongSoQuyetDinh : !tc.CoSoQuyetDinh
+        requireDecision: tc.CoSoQuyetDinh === true,
+        // KhongSoQuyetDinh: nếu field không có trong API (production cũ), default là TRUE
+        allowNoDecision: tc.KhongSoQuyetDinh !== null && tc.KhongSoQuyetDinh !== undefined
+          ? Boolean(tc.KhongSoQuyetDinh)
+          : true
       }));
   }, [criterionType, isHard, criteriaGroups, propsSubId, subCriterionName]);
 

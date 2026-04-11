@@ -76,8 +76,12 @@ const AdminDashboard: React.FC<{
           isHard: tc.LoaiTieuChi === 'Cung',
           points: Number(tc.Diem || 0),
           levelPoints: lp,
-          hasDecisionNumber: tc.CoSoQuyetDinh,
-          allowNoDecision: tc.KhongSoQuyetDinh !== undefined ? tc.KhongSoQuyetDinh : !tc.CoSoQuyetDinh,
+          hasDecisionNumber: tc.CoSoQuyetDinh === true,
+          // KhongSoQuyetDinh: nếu field không có trong API (production cũ), default là TRUE
+          // Không dùng !CoSoQuyetDinh vì đó là logic sai (ép buộc loại trừ nhau)
+          allowNoDecision: tc.KhongSoQuyetDinh !== null && tc.KhongSoQuyetDinh !== undefined
+            ? Boolean(tc.KhongSoQuyetDinh)
+            : true,
           minQty: tc.SoLuongToiThieu
         };
       });
