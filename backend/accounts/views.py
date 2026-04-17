@@ -247,11 +247,19 @@ class ForgotPasswordView(APIView):
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
         reset_link = f"{frontend_url}/reset-password?token={token_obj.Token}"
 
-        # Kiểm tra xem SMTP có được cấu hình không
-        email_configured = bool(getattr(settings, 'EMAIL_HOST_USER', ''))
+        # Kiểm tra xem SMTP có được cấu hình thật không
+        # (placeholder 'your-email@gmail.com' không phải config thật)
+        raw_user = getattr(settings, 'EMAIL_HOST_USER', '')
+        raw_pass = getattr(settings, 'EMAIL_HOST_PASSWORD', '')
+        email_configured = (
+            bool(raw_user) and
+            bool(raw_pass) and
+            'your-email' not in raw_user and
+            'your-gmail' not in raw_pass
+        )
 
         if email_configured:
-            # Gửi email thật
+            # Gửi email thật (nền)
             subject = '🔐 Đặt lại mật khẩu - Hệ thống Sinh viên 5 Tốt'
             message = (
                 f"Xin chào,\n\n"
@@ -259,34 +267,28 @@ class ForgotPasswordView(APIView):
                 f"Nhấn vào liên kết dưới đây để đặt mật khẩu mới (có hiệu lực trong 15 phút):\n\n"
                 f"{reset_link}\n\n"
                 f"Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\n"
-                f"Trân trọng,\n"
-                f"Hệ thống Sinh viên 5 Tốt - ĐH Kinh tế - ĐHĐN"
+                f"Trân trọng,\nHệ thống Sinh viên 5 Tốt - ĐH Kinh tế - ĐHĐN"
             )
             try:
-                send_mail(
-                    subject,
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                )
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
                 print(f"[ForgotPassword] Email sent to {email}")
-            except Exception as e:
-                print(f"[ForgotPassword] Email send error: {e}")
-                # Fallback: trả link trực tiếp khi gửi thất bại
+                # Email gửi OK → thông báo kiểm tra hộp thư, vẫn kèm link dự phòng
                 return Response({
-                    'detail': 'Không thể gửi email. Hãy dùng liên kết dưới đây để đặt lại mật khẩu:',
+                    'detail': f'Email đặt lại mật khẩu đã gửi đến {email}. Kiểm tra hộp thư và Spam nhé!',
                     'reset_link': reset_link,
                 }, status=status.HTTP_200_OK)
-
-            return Response({
-                'detail': f'Email hướng dẫn đặt lại mật khẩu đã được gửi đến {email}. Kiểm tra hòm thư và Spam nhé!'
-            }, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(f"[ForgotPassword] Email send error: {e}")
+                # Gửi thất bại → trả link trực tiếp
+                return Response({
+                    'detail': 'Không thể gửi email. Hãy dùng liên kết bên dưới để đặt lại mật khẩu:',
+                    'reset_link': reset_link,
+                }, status=status.HTTP_200_OK)
         else:
-            # Chế độ Demo: SMTP chưa cấu hình → trả link trực tiếp
-            print(f"[ForgotPassword] SMTP not configured. Reset link: {reset_link}")
+            # SMTP chưa cấu hình → luôn trả link trực tiếp
+            print(f"[ForgotPassword] Demo mode. Reset link: {reset_link}")
             return Response({
-                'detail': 'Hệ thống email chưa được cấu hình. Hãy dùng liên kết dưới đây để đặt lại mật khẩu:',
+                'detail': 'Liên kết đặt lại mật khẩu đã được tạo. Hãy bấm vào liên kết bên dưới:',
                 'reset_link': reset_link,
             }, status=status.HTTP_200_OK)
 

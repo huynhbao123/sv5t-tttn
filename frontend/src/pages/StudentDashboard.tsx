@@ -1176,7 +1176,6 @@ const StudentDashboard: React.FC<{
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-3xl font-black text-[#0054a6] uppercase font-formal tracking-tighter">{student.fullName}</h1>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mt-1 italic">Mã sinh viên: {student.studentId} • {student.faculty}</p>
             </div>
           </div>
 
