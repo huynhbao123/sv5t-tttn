@@ -76,7 +76,7 @@ const LoginView: React.FC<{ onLogin: (role: 'student' | 'admin', studentId?: str
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mật khẩu</label>
-                <a href="#" className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:text-orange-500 transition-colors">Quên mật khẩu?</a>
+                <button type="button" onClick={() => onNavigate('/forgot-password')} className="text-[9px] font-black text-blue-600 uppercase tracking-widest hover:text-orange-500 transition-colors">Quên mật khẩu?</button>
               </div>
               <div className="relative">
                 <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>

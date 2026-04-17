@@ -26,6 +26,7 @@ class SinhVien(models.Model):
     MaSV = models.CharField(max_length=20, unique=True)
     Lop = models.CharField(max_length=50)
     Khoa = models.CharField(max_length=100)
+    Email = models.EmailField(max_length=100, blank=True, null=True, verbose_name='Email sinh viên')
     DiemTBC = models.FloatField(default=0)
     DiemRenLuyen = models.IntegerField(default=0)
     DiemTheDuc = models.FloatField(default=0)

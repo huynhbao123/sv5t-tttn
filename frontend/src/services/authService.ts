@@ -142,6 +142,16 @@ export const authService = {
 
     localStorage.setItem('user', JSON.stringify(payload));
     return { token: data.access, refresh: data.refresh, user: payload };
+  },
+
+  forgotPassword: async (email: string): Promise<string> => {
+    const response = await apiClient.post('/api/auth/forgot-password/', { email });
+    return response.data.detail;
+  },
+
+  resetPassword: async (token: string, password: string): Promise<string> => {
+    const response = await apiClient.post('/api/auth/reset-password/', { token, password });
+    return response.data.detail;
   }
 };
 

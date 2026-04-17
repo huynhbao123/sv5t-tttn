@@ -190,3 +190,126 @@ class MicrosoftLoginView(APIView):
             'user': MeSerializer(user).data,
         })
 
+
+class ForgotPasswordView(APIView):
+    """
+    Quên mật khẩu: Nhận email → Tìm tài khoản → Tạo token → Gửi email chứa link reset.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        if not email:
+            return Response({'detail': 'Vui lòng nhập email.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Tìm tài khoản qua email trong NguoiDung (Admin/ThuKy) hoặc SinhVien
+        from students.models import SinhVien
+        from .models import PasswordResetToken
+        from django.core.mail import send_mail
+        from django.conf import settings
+        from django.utils import timezone
+
+        user = None
+
+        # 1. Tìm trong NguoiDung (Admin, ThuKy, ThamDinh)
+        try:
+            nguoi_dung = NguoiDung.objects.get(Email__iexact=email)
+            user = nguoi_dung.TaiKhoan
+        except NguoiDung.DoesNotExist:
+            pass
+
+        # 2. Tìm trong SinhVien
+        if not user:
+            try:
+                sinh_vien = SinhVien.objects.get(Email__iexact=email)
+                user = sinh_vien.TaiKhoan
+            except SinhVien.DoesNotExist:
+                pass
+
+        if not user:
+            # Không tiết lộ email có tồn tại hay không (bảo mật)
+            return Response({
+                'detail': 'Nếu email này có trong hệ thống, bạn sẽ nhận được email hướng dẫn đặt lại mật khẩu.'
+            }, status=status.HTTP_200_OK)
+
+        # Vô hiệu hóa tất cả token cũ chưa dùng
+        PasswordResetToken.objects.filter(
+            TaiKhoan=user, DaSuDung=False
+        ).update(DaSuDung=True)
+
+        # Tạo token mới (15 phút)
+        token_obj = PasswordResetToken.objects.create(
+            TaiKhoan=user,
+            HetHan=timezone.now() + timezone.timedelta(minutes=15)
+        )
+
+        # Tạo link reset
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+        reset_link = f"{frontend_url}/reset-password?token={token_obj.Token}"
+
+        # Gửi email
+        subject = '🔐 Đặt lại mật khẩu - Hệ thống Sinh viên 5 Tốt'
+        message = (
+            f"Xin chào,\n\n"
+            f"Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản: {user.TenDangNhap}\n\n"
+            f"Nhấn vào liên kết dưới đây để đặt mật khẩu mới (có hiệu lực trong 15 phút):\n\n"
+            f"{reset_link}\n\n"
+            f"Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\n"
+            f"Trân trọng,\n"
+            f"Hệ thống Sinh viên 5 Tốt - ĐH Kinh tế - ĐHĐN"
+        )
+
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            print(f"[ForgotPassword] Email send error: {e}")
+            return Response({
+                'detail': 'Lỗi khi gửi email. Vui lòng thử lại sau hoặc liên hệ Admin.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({
+            'detail': 'Nếu email này có trong hệ thống, bạn sẽ nhận được email hướng dẫn đặt lại mật khẩu.'
+        }, status=status.HTTP_200_OK)
+
+
+class ResetPasswordView(APIView):
+    """
+    Đặt lại mật khẩu: Nhận token + mật khẩu mới → Xác minh token → Cập nhật mật khẩu.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token_str = request.data.get('token', '').strip()
+        new_password = request.data.get('password', '')
+
+        if not token_str:
+            return Response({'detail': 'Token không hợp lệ.'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(new_password) < 6:
+            return Response({'detail': 'Mật khẩu phải có ít nhất 6 ký tự.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        from .models import PasswordResetToken
+
+        try:
+            token_obj = PasswordResetToken.objects.get(Token=token_str)
+        except (PasswordResetToken.DoesNotExist, ValueError):
+            return Response({'detail': 'Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not token_obj.is_valid():
+            return Response({'detail': 'Link đặt lại mật khẩu đã hết hạn. Vui lòng thử lại.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Đặt mật khẩu mới
+        user = token_obj.TaiKhoan
+        user.set_password(new_password)
+        user.save()
+
+        # Đánh dấu token đã sử dụng
+        token_obj.DaSuDung = True
+        token_obj.save()
+
+        return Response({'detail': 'Mật khẩu đã được đặt lại thành công! Bạn có thể đăng nhập bằng mật khẩu mới.'})

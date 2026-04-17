@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+import uuid
+from django.utils import timezone
 
 
 class TaiKhoanManager(BaseUserManager):
@@ -70,3 +72,29 @@ class NguoiDung(models.Model):
 
     def __str__(self):
         return self.HoTen
+
+
+class PasswordResetToken(models.Model):
+    """Token dùng cho chức năng Quên mật khẩu - hết hạn sau 15 phút"""
+    TaiKhoan = models.ForeignKey(
+        TaiKhoan, on_delete=models.CASCADE, related_name='reset_tokens'
+    )
+    Token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    NgayTao = models.DateTimeField(auto_now_add=True)
+    HetHan = models.DateTimeField()
+    DaSuDung = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'PasswordResetToken'
+        verbose_name = 'Token đặt lại mật khẩu'
+
+    def save(self, *args, **kwargs):
+        if not self.HetHan:
+            self.HetHan = timezone.now() + timezone.timedelta(minutes=15)
+        super().save(*args, **kwargs)
+
+    def is_valid(self):
+        return not self.DaSuDung and timezone.now() < self.HetHan
+
+    def __str__(self):
+        return f"Reset token for {self.TaiKhoan.TenDangNhap} ({'valid' if self.is_valid() else 'expired'})"
