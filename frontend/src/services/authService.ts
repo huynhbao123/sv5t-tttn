@@ -144,9 +144,9 @@ export const authService = {
     return { token: data.access, refresh: data.refresh, user: payload };
   },
 
-  forgotPassword: async (email: string): Promise<string> => {
+  forgotPassword: async (email: string): Promise<{ detail: string; reset_link?: string }> => {
     const response = await apiClient.post('/api/auth/forgot-password/', { email });
-    return response.data.detail;
+    return response.data;
   },
 
   resetPassword: async (token: string, password: string): Promise<string> => {
