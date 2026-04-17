@@ -71,9 +71,13 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
       setSubCriterionId(propsSubId);
       const sub = availableSubCriteria.find(sc => sc.id === propsSubId);
       if (sub) {
+        // Cả 2 đều true -> mặc định NO_DECISION (dễ nhập hơn)
+        // Chỉ requireDecision -> bắt buộc WITH_DECISION
+        // Chỉ allowNoDecision -> mặc định NO_DECISION
         if (sub.requireDecision && !sub.allowNoDecision) {
           setType(EvidenceType.WITH_DECISION);
-        } else if (!sub.requireDecision && sub.allowNoDecision) {
+        } else {
+          // Bao gồm cả trường hợp: allowNoDecision=true (dù requireDecision có hay không)
           setType(EvidenceType.NO_DECISION);
         }
       }
@@ -82,7 +86,7 @@ const EvidenceForm: React.FC<EvidenceFormProps> = ({ criterionType, isHard, subC
       setSubCriterionId(firstSub.id);
       if (firstSub.requireDecision && !firstSub.allowNoDecision) {
         setType(EvidenceType.WITH_DECISION);
-      } else if (!firstSub.requireDecision && firstSub.allowNoDecision) {
+      } else {
         setType(EvidenceType.NO_DECISION);
       }
     }

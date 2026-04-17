@@ -76,8 +76,10 @@ class TieuChiDetailView(APIView):
             return Response({'detail': 'Không tìm thấy.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = TieuChiWriteSerializer(obj, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(TieuChiSerializer(obj).data)
+        updated_obj = serializer.save()
+        # Refresh from DB to get latest saved data (including CoSoQuyetDinh, KhongSoQuyetDinh)
+        updated_obj.refresh_from_db()
+        return Response(TieuChiSerializer(updated_obj).data)
 
     def delete(self, request, pk):
         obj = self.get_object(pk)

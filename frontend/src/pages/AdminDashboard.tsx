@@ -76,10 +76,9 @@ const AdminDashboard: React.FC<{
           isHard: tc.LoaiTieuChi === 'Cung',
           points: Number(tc.Diem || 0),
           levelPoints: lp,
-          hasDecisionNumber: tc.CoSoQuyetDinh === true,
-          // Bỏ logic đoán. Chỉ hiển thị TRUE nếu Backend thực sự trả về TRUE.
-          // Giúp "không mặc định chọn trước" theo yêu cầu người dùng.
-          allowNoDecision: tc.KhongSoQuyetDinh === true,
+          // Dùng Boolean() thay vì === true để an toàn khi API trả về 0/1 hoặc null
+          hasDecisionNumber: Boolean(tc.CoSoQuyetDinh),
+          allowNoDecision: Boolean(tc.KhongSoQuyetDinh),
           minQty: tc.SoLuongToiThieu
         };
       });
@@ -840,13 +839,14 @@ const AdminDashboard: React.FC<{
       const group = criteriaGroups.find(g => g.TenNhom === criteriaForm.cat);
       if (!group) throw new Error("Category not found on backend");
 
+      // Đảm bảo cả 2 field boolean luôn được gửi tường minh (không để DRF dùng giá trị mặc định)
       const payload = {
         NhomTieuChi: group.id,
-        MoTa: criteriaForm.description,
+        MoTa: criteriaForm.description.trim(),
         LoaiTieuChi: criteriaForm.isHard ? 'Cung' : 'Cong',
-        Diem: 0, // Points are usually per level, but model has a base Diem
-        CoSoQuyetDinh: criteriaForm.hasDecisionNumber,
-        KhongSoQuyetDinh: criteriaForm.allowNoDecision,
+        Diem: 0,
+        CoSoQuyetDinh: criteriaForm.hasDecisionNumber === true,
+        KhongSoQuyetDinh: criteriaForm.allowNoDecision === true,
         SoLuongToiThieu: 1,
         ThuTu: 1
       };
