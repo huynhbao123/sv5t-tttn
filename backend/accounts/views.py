@@ -263,10 +263,9 @@ class ForgotPasswordView(APIView):
             try:
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
                 print(f"[ForgotPassword] Email sent to {email}")
-                # Email gửi OK → thông báo kiểm tra hộp thư, vẫn kèm link dự phòng
+                # Email gửi OK → thông báo kiểm tra hộp thư (KHÔNG trả về link trực tiếp nữa)
                 return Response({
                     'detail': f'Email đặt lại mật khẩu đã gửi đến {email}. Kiểm tra hộp thư và Spam nhé!',
-                    'reset_link': reset_link,
                 }, status=status.HTTP_200_OK)
             except Exception as e:
                 print(f"[ForgotPassword] Email send error: {e}")
