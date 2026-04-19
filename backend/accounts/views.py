@@ -193,7 +193,8 @@ class MicrosoftLoginView(APIView):
 
 class ForgotPasswordView(APIView):
     """
-    Quên mật khẩu: Nhận email → Tìm tài khoản → Tạo token → Gửi email chứa link reset.
+    Quên mật khẩu (chỉ dành cho tài khoản quản trị: Admin, ThuKy, ThamDinh).
+    Sinh viên đăng nhập qua Microsoft → tự đặt lại mật khẩu phía Microsoft.
     """
     permission_classes = [AllowAny]
 
@@ -202,8 +203,6 @@ class ForgotPasswordView(APIView):
         if not email:
             return Response({'detail': 'Vui lòng nhập email.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Tìm tài khoản qua email trong NguoiDung (Admin/ThuKy) hoặc SinhVien
-        from students.models import SinhVien
         from .models import PasswordResetToken
         from django.core.mail import send_mail
         from django.conf import settings
@@ -211,23 +210,15 @@ class ForgotPasswordView(APIView):
 
         user = None
 
-        # 1. Tìm trong NguoiDung (Admin, ThuKy, ThamDinh)
+        # Chỉ tìm trong NguoiDung (Admin, ThuKy, ThamDinh)
         try:
             nguoi_dung = NguoiDung.objects.get(Email__iexact=email)
             user = nguoi_dung.TaiKhoan
         except NguoiDung.DoesNotExist:
             pass
 
-        # 2. Tìm trong SinhVien
-        if not user:
-            try:
-                sinh_vien = SinhVien.objects.get(Email__iexact=email)
-                user = sinh_vien.TaiKhoan
-            except SinhVien.DoesNotExist:
-                pass
-
-        if not user:
-            # Không tiết lộ email có tồn tại hay không (bảo mật)
+        # Nếu không tìm thấy HOẶC là tài khoản SinhVien → trả thông báo chung (bảo mật)
+        if not user or user.VaiTro == 'SinhVien':
             return Response({
                 'detail': 'Nếu email này có trong hệ thống, bạn sẽ nhận được email hướng dẫn đặt lại mật khẩu.'
             }, status=status.HTTP_200_OK)

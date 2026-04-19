@@ -43,7 +43,7 @@ const ForgotPasswordView: React.FC<{ onNavigate: (page: string) => void }> = ({ 
             </div>
             <h2 className="text-xl font-black text-[#002b5c] uppercase tracking-tight">Quên mật khẩu</h2>
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">
-              Nhập email để nhận liên kết đặt lại mật khẩu
+              Dành cho tài khoản quản trị viên
             </p>
           </div>
 
@@ -103,7 +103,7 @@ const ForgotPasswordView: React.FC<{ onNavigate: (page: string) => void }> = ({ 
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Địa chỉ Email</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Địa chỉ Email quản trị</label>
                   <div className="relative">
                     <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
                     <input
@@ -112,13 +112,20 @@ const ForgotPasswordView: React.FC<{ onNavigate: (page: string) => void }> = ({ 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl text-sm font-bold focus:border-[#0054a6] outline-none transition-all placeholder:text-gray-300 placeholder:font-medium bg-gray-50/10"
-                      placeholder="example@due.udn.vn"
+                      placeholder="admin@due.edu.vn"
                     />
                   </div>
-                  <p className="text-[9px] text-gray-400 font-medium mt-1 ml-1">
-                    <i className="fas fa-info-circle mr-1"></i>
-                    Nhập email đã đăng ký với tài khoản của bạn
-                  </p>
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-xl space-y-1">
+                    <p className="text-[9px] text-blue-700 font-black uppercase tracking-widest flex items-center gap-1.5">
+                      <i className="fas fa-shield-alt"></i> Lưu ý
+                    </p>
+                    <p className="text-[9px] text-blue-600 font-medium">
+                      Chức năng này <strong>chỉ dành cho quản trị viên</strong> (Admin, Thư ký, Thẩm định).
+                    </p>
+                    <p className="text-[9px] text-blue-600 font-medium">
+                      Sinh viên đăng nhập qua <strong>Microsoft</strong> → vào <strong>account.microsoft.com</strong> để lấy lại mật khẩu.
+                    </p>
+                  </div>
                 </div>
 
                 <button
