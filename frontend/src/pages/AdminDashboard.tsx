@@ -297,7 +297,7 @@ const AdminDashboard: React.FC<{
 
     return (
       <div className="fixed inset-0 z-[2000] bg-blue-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-        <div className="bg-white rounded-3xl w-full max-w-md border border-gray-100 overflow-hidden animate-fade-up">
+        <div className="bg-white rounded-3xl w-full max-w-md border border-gray-200/30 border-gray-200/30/30 overflow-hidden animate-fade-up">
           <div className={`px-8 py-6 text-white flex justify-between items-center ${feedbackModal.type === 'Approved' ? 'bg-green-600' : feedbackModal.type === 'Rejected' ? 'bg-red-600' : 'bg-orange-500'}`}>
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight">{feedbackModal.title}</h3>
@@ -316,7 +316,7 @@ const AdminDashboard: React.FC<{
                   autoFocus
                   value={modalFeedback}
                   onChange={e => setModalFeedback(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:border-blue-900 outline-none transition-all h-32"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/30/30 rounded-xl text-sm font-medium focus:border-blue-900 outline-none transition-all h-32"
                   placeholder="Nháº­p ná»™i dung táº¡i Ä‘Ã¢y..."
                 />
               </div>
@@ -346,7 +346,7 @@ const AdminDashboard: React.FC<{
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-black text-blue-900 uppercase">Quáº£n lÃ½ GÆ°Æ¡ng máº·t tiÃªu biá»ƒu</h2>
-        <button onClick={openAddFace} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
+        <button onClick={openAddFace} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-gray-200/30 border-blue-950">
           <i className="fas fa-plus mr-2"></i>ThÃªm gÆ°Æ¡ng máº·t
         </button>
       </div>
@@ -361,21 +361,21 @@ const AdminDashboard: React.FC<{
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">TÃªn sinh viÃªn</label>
-              <input type="text" value={faceForm.name} onChange={e => setFaceForm({ ...faceForm, name: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="VD: Nguyá»…n VÄƒn A" />
+              <input type="text" value={faceForm.name} onChange={e => setFaceForm({ ...faceForm, name: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="VD: Nguyá»…n VÄƒn A" />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ThÃ nh tÃ­ch ná»•i báº­t</label>
-              <input type="text" value={faceForm.achievement} onChange={e => setFaceForm({ ...faceForm, achievement: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="VD: Giáº£i Nháº¥t NCKH Cáº¥p Quá»‘c gia" />
+              <input type="text" value={faceForm.achievement} onChange={e => setFaceForm({ ...faceForm, achievement: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="VD: Giáº£i Nháº¥t NCKH Cáº¥p Quá»‘c gia" />
             </div>
             <div className="md:col-span-2 space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">TiÃªu Ä‘á» / TrÃ­ch dáº«n</label>
-              <textarea value={faceForm.content} onChange={e => setFaceForm({ ...faceForm, content: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-medium h-24" placeholder="VD: GÆ°Æ¡ng máº·t sinh viÃªn xuáº¥t sáº¯c tiÃªu biá»ƒu cá»§a nhÃ  trÆ°á»ng." />
+              <textarea value={faceForm.content} onChange={e => setFaceForm({ ...faceForm, content: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-medium h-24" placeholder="VD: GÆ°Æ¡ng máº·t sinh viÃªn xuáº¥t sáº¯c tiÃªu biá»ƒu cá»§a nhÃ  trÆ°á»ng." />
             </div>
             <div className="md:col-span-2 space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">HÃ¬nh áº£nh vinh danh</label>
               <div className="flex gap-4 items-center">
                 <label className="flex-1 cursor-pointer">
-                  <div className="px-4 py-3 bg-gray-50 border border-dashed border-gray-200 rounded-xl hover:border-blue-900 hover:bg-white transition-all flex items-center justify-center gap-3">
+                  <div className="px-4 py-3 bg-gray-50 border border-gray-200/30 border-dashed border-gray-200/30 rounded-xl hover:border-blue-900 hover:bg-white transition-all flex items-center justify-center gap-3">
                     <i className="fas fa-cloud-upload-alt text-gray-400"></i>
                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{faceForm.imageFile ? faceForm.imageFile.name : 'Chá»n áº£nh tá»« mÃ¡y tÃ­nh'}</span>
                   </div>
@@ -405,20 +405,20 @@ const AdminDashboard: React.FC<{
           </div>
 
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
-            <button onClick={() => setFaceForm(null)} className="px-6 py-3 border text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Há»§y bá»</button>
-            <button onClick={handleSaveFace} disabled={!faceForm.name || !faceForm.achievement} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all border border-blue-950">LÆ°u thÃ´ng tin</button>
+            <button onClick={() => setFaceForm(null)} className="px-6 py-3 border border-gray-200/30 text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Há»§y bá»</button>
+            <button onClick={handleSaveFace} disabled={!faceForm.name || !faceForm.achievement} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all border border-gray-200/30 border-blue-950">LÆ°u thÃ´ng tin</button>
           </div>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {faces.map(face => (
-          <div key={face.id} className="bg-white border border-gray-100 rounded-xl overflow-hidden group transition-all relative">
+          <div key={face.id} className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-xl overflow-hidden group transition-all relative">
             <div className="aspect-[4/3] bg-gray-100 overflow-hidden relative">
               <img src={face.image} className="w-full h-full object-cover" alt={face.name} />
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
-                <button onClick={() => openEditFace(face)} className="w-8 h-8 bg-white/90 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-gray-100"><i className="fas fa-pen text-[10px]"></i></button>
-                <button onClick={() => handleDeleteFace(face.id)} className="w-8 h-8 bg-white/90 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-gray-100"><i className="fas fa-trash text-[10px]"></i></button>
+                <button onClick={() => openEditFace(face)} className="w-8 h-8 bg-white/90 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-gray-200/30 border-gray-200/30/30"><i className="fas fa-pen text-[10px]"></i></button>
+                <button onClick={() => handleDeleteFace(face.id)} className="w-8 h-8 bg-white/90 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-gray-200/30 border-gray-200/30/30"><i className="fas fa-trash text-[10px]"></i></button>
               </div>
             </div>
             <div className="p-6">
@@ -472,7 +472,7 @@ const AdminDashboard: React.FC<{
     return (
       <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-           <div className="bg-white p-8 border border-gray-200 rounded-2xl space-y-6 transition-all hover:bg-gray-50/50">
+           <div className="bg-white p-8 border border-gray-200/30 border-gray-200/30 rounded-2xl space-y-6 transition-all hover:bg-gray-50/50">
               <div className="flex items-center gap-4 mb-4">
                  <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600"><i className="fas fa-calendar-alt"></i></div>
                  <div>
@@ -489,7 +489,7 @@ const AdminDashboard: React.FC<{
                        value={systemSettings.ThoiGianBatDau ? systemSettings.ThoiGianBatDau.substring(0, 16) : ''} 
                        onChange={e => setSystemSettings({ ...systemSettings, ThoiGianBatDau: e.target.value })}
                        onBlur={() => handleSaveSettings({ ThoiGianBatDau: systemSettings.ThoiGianBatDau })}
-                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-500 transition-all outline-none"
+                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/30/30 rounded-xl text-sm font-bold focus:border-blue-500 transition-all outline-none"
                     />
                  </div>
                  <div className="space-y-2">
@@ -499,13 +499,13 @@ const AdminDashboard: React.FC<{
                        value={systemSettings.ThoiGianKetThuc ? systemSettings.ThoiGianKetThuc.substring(0, 16) : ''} 
                        onChange={e => setSystemSettings({ ...systemSettings, ThoiGianKetThuc: e.target.value })}
                        onBlur={() => handleSaveSettings({ ThoiGianKetThuc: systemSettings.ThoiGianKetThuc })}
-                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-500 transition-all outline-none"
+                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/30/30 rounded-xl text-sm font-bold focus:border-blue-500 transition-all outline-none"
                     />
                  </div>
               </div>
            </div>
 
-           <div className="bg-white p-8 border border-gray-200 rounded-2xl space-y-6 transition-all hover:bg-gray-50/50">
+           <div className="bg-white p-8 border border-gray-200/30 border-gray-200/30 rounded-2xl space-y-6 transition-all hover:bg-gray-50/50">
               <div className="flex items-center gap-4 mb-4">
                  <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600"><i className="fas fa-power-off"></i></div>
                  <div>
@@ -525,20 +525,20 @@ const AdminDashboard: React.FC<{
                    onClick={() => handleSaveSettings({ TrangThaiMo: !systemSettings.TrangThaiMo })}
                    className={`w-14 h-8 rounded-full p-1 transition-all duration-500 group ${systemSettings.TrangThaiMo ? 'bg-green-500' : 'bg-gray-300'}`}
                  >
-                    <div className={`w-6 h-6 bg-white rounded-full transition-all duration-500 transform border border-gray-200 ${systemSettings.TrangThaiMo ? 'translate-x-6 rotate-180' : 'translate-x-0'}`}></div>
+                    <div className={`w-6 h-6 bg-white rounded-full transition-all duration-500 transform border border-gray-200/30 border-gray-200/30 ${systemSettings.TrangThaiMo ? 'translate-x-6 rotate-180' : 'translate-x-0'}`}></div>
                  </button>
               </div>
 
-              <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-100 italic text-[11px] font-bold text-blue-800/60 leading-relaxed flex gap-3">
+              <div className="p-5 bg-blue-50/50 rounded-2xl border border-gray-200/30 border-blue-100 italic text-[11px] font-bold text-blue-800/60 leading-relaxed flex gap-3">
                  <i className="fas fa-info-circle mt-1"></i>
                  <span>LÆ°u Ã½: Ngay cáº£ khi cá»•ng Ä‘Ã³ng, cÃ¡c há»“ sÆ¡ Ä‘ang trong tráº¡ng thÃ¡i <span className="text-orange-600 uppercase tracking-tighter">[Äang giáº£i trÃ¬nh]</span> váº«n cÃ³ thá»ƒ chá»‰nh sá»­a.</span>
               </div>
            </div>
         </div>
 
-        <div className="bg-white p-10 border border-gray-200 rounded-3xl space-y-8 relative overflow-hidden group transition-all">
+        <div className="bg-white p-10 border border-gray-200/30 border-gray-200/30 rounded-3xl space-y-8 relative overflow-hidden group transition-all">
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10 opacity-50 group-hover:scale-110 transition-transform"></div>
-           <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
+           <div className="flex items-center gap-4 border-b border-gray-200/30/30 pb-6">
               <div className="w-12 h-12 bg-blue-900 rounded-2xl flex items-center justify-center text-white"><i className="fas fa-bullhorn animate-bounce"></i></div>
               <div>
                  <h4 className="text-sm font-black text-blue-900 uppercase tracking-[0.2em]">ThÃ´ng tin thÃ´ng bÃ¡o</h4>
@@ -556,7 +556,7 @@ const AdminDashboard: React.FC<{
                     value={systemSettings.ThongBaoHieuLuc} 
                     onChange={e => setSystemSettings({ ...systemSettings, ThongBaoHieuLuc: e.target.value })}
                     onBlur={() => handleSaveSettings({ ThongBaoHieuLuc: systemSettings.ThongBaoHieuLuc })}
-                    className="w-full px-6 py-5 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold focus:border-blue-600 transition-all outline-none min-h-[120px]" 
+                    className="w-full px-6 py-5 bg-gray-50 border border-gray-200/30 border-gray-200/30 rounded-2xl text-sm font-bold focus:border-blue-600 transition-all outline-none min-h-[120px]" 
                     placeholder="VD: Cá»•ng ná»™p há»“ sÆ¡ Ä‘ang má»Ÿ. Háº¡n chÃ³t Ä‘áº¿n 23:59 ngÃ y..."
                  />
               </div>
@@ -569,7 +569,7 @@ const AdminDashboard: React.FC<{
                     value={systemSettings.ThongBaoHetHan} 
                     onChange={e => setSystemSettings({ ...systemSettings, ThongBaoHetHan: e.target.value })}
                     onBlur={() => handleSaveSettings({ ThongBaoHetHan: systemSettings.ThongBaoHetHan })}
-                    className="w-full px-6 py-5 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-bold focus:border-red-500 transition-all outline-none min-h-[120px]" 
+                    className="w-full px-6 py-5 bg-gray-50 border border-gray-200/30 border-gray-200/30 rounded-2xl text-sm font-bold focus:border-red-500 transition-all outline-none min-h-[120px]" 
                     placeholder="VD: Cá»•ng ná»™p há»“ sÆ¡ hiá»‡n Ä‘Ã£ Ä‘Ã³ng. Vui lÃ²ng liÃªn há»‡ Admin náº¿u cÃ³ tháº¯c máº¯c."
                  />
               </div>
@@ -603,9 +603,9 @@ const AdminDashboard: React.FC<{
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i>
-            <input type="text" placeholder="TÃ¬m kiáº¿m theo tÃªn hoáº·c mÃ£ SV..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-11 pr-4 py-3 border border-gray-100 rounded-xl text-sm font-medium focus:border-blue-500 outline-none transition-all" />
+            <input type="text" placeholder="TÃ¬m kiáº¿m theo tÃªn hoáº·c mÃ£ SV..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-11 pr-4 py-3 border border-gray-200/30 border-gray-200/30/30 rounded-xl text-sm font-medium focus:border-blue-500 outline-none transition-all" />
           </div>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-4 py-3 border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest focus:border-blue-500 outline-none bg-white cursor-pointer">
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-4 py-3 border border-gray-200/30 border-gray-200/30/30 rounded-xl text-[10px] font-black uppercase tracking-widest focus:border-blue-500 outline-none bg-white cursor-pointer">
             <option value="all">Táº¥t cáº£ tráº¡ng thÃ¡i</option>
             <option value="Submitted">Chá» tháº©m Ä‘á»‹nh</option>
             <option value="Processing">Äang giáº£i trÃ¬nh</option>
@@ -614,9 +614,9 @@ const AdminDashboard: React.FC<{
           </select>
         </div>
         {/* Table */}
-        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+        <div className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-2xl overflow-hidden">
           <table className="w-full text-left">
-            <thead className="bg-[#fcfdfe] text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-100">
+            <thead className="bg-[#fcfdfe] text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-200/30/30">
               <tr><th className="px-6 py-4">Sinh viÃªn</th><th className="px-6 py-4">Lá»›p</th><th className="px-6 py-4 text-center">Tráº¡ng thÃ¡i</th><th className="px-6 py-4 text-center">Äiá»ƒm</th><th className="px-6 py-4"></th></tr>
             </thead>
             <tbody className="divide-y divide-gray-50/50">
@@ -642,7 +642,7 @@ const AdminDashboard: React.FC<{
                       ) : null}
                       <button 
                         onClick={() => { onSelectStudent(s.id); setIsReviewing(true); }} 
-                        className="w-[110px] flex items-center justify-center py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950"
+                        className="w-[110px] flex items-center justify-center py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-gray-200/30 border-blue-950"
                       >
                         <i className="fas fa-eye mr-1.5"></i>Tháº©m Ä‘á»‹nh
                       </button>
@@ -671,7 +671,7 @@ const AdminDashboard: React.FC<{
                                 }
                               });
                             }}
-                            className="w-full h-full rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-red-200"
+                            className="w-full h-full rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-gray-200/30 border-red-200"
                             title="XÃ³a há»“ sÆ¡ bá»‹ tá»« chá»‘i"
                           >
                             <i className="fas fa-trash text-[10px]"></i>
@@ -721,8 +721,8 @@ const AdminDashboard: React.FC<{
             { label: 'Cáº§n giáº£i trÃ¬nh', val: processing, icon: 'fa-clock', color: 'bg-orange-500', bg: 'bg-orange-50' },
             { label: 'Tá»« chá»‘i', val: rejected, icon: 'fa-times-circle', color: 'bg-red-500', bg: 'bg-red-50' },
           ].map((stat, i) => (
-            <div key={i} className={`${stat.bg} p-6 rounded-2xl border border-gray-100 flex items-center gap-5 transition-transform hover:scale-[1.02] duration-300`}>
-              <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-white text-lg border border-white/20`}><i className={`fas ${stat.icon}`}></i></div>
+            <div key={i} className={`${stat.bg} p-6 rounded-2xl border border-gray-200/30 border-gray-200/30/30 flex items-center gap-5 transition-transform hover:scale-[1.02] duration-300`}>
+              <div className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center text-white text-lg border border-gray-200/30 border-white/20`}><i className={`fas ${stat.icon}`}></i></div>
               <div>
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
                 <p className="text-2xl font-black text-blue-900 font-formal">{stat.val}</p>
@@ -733,8 +733,8 @@ const AdminDashboard: React.FC<{
 
 
         <div className="grid grid-cols-1 gap-8">
-          <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100 bg-[#fcfdfe] flex justify-between items-center">
+          <div className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-2xl overflow-hidden">
+            <div className="px-6 py-5 border-b border-gray-200/30/30 bg-[#fcfdfe] flex justify-between items-center">
               <h3 className="text-xs font-black text-blue-900 uppercase tracking-[0.2em]">Top há»“ sÆ¡ xuáº¥t sáº¯c</h3>
               <button 
                 onClick={() => setIsTopExpanded(true)}
@@ -745,7 +745,7 @@ const AdminDashboard: React.FC<{
             </div>
             <div className="p-0">
               {topStudents.map((s, i) => (
-                <div key={s.id} className="px-6 py-4 flex items-center justify-between hover:bg-orange-50/30 border-b border-gray-50 last:border-0">
+                <div key={s.id} className="px-6 py-4 flex items-center justify-between hover:bg-orange-50/30 border-b border-gray-200/20 last:border-0">
                   <div className="flex items-center gap-4">
                     <span className={`text-xs font-black ${i === 0 ? 'text-orange-500' : 'text-gray-400'}`}>{i + 1}.</span>
                     <div>
@@ -763,7 +763,7 @@ const AdminDashboard: React.FC<{
           </div>
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-8 space-y-6">
+        <div className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-2xl p-8 space-y-6">
           <h3 className="text-xs font-black text-blue-900 uppercase tracking-widest">Tiáº¿n Ä‘á»™ xÃ©t duyá»‡t chung</h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
@@ -1010,18 +1010,18 @@ const AdminDashboard: React.FC<{
           <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">{criteriaForm.mode === 'add' ? 'ThÃªm tiÃªu chÃ­ má»›i' : 'Chá»‰nh sá»­a tiÃªu chÃ­'}</span>
           <button onClick={() => setCriteriaForm(null)} className="w-7 h-7 rounded-lg bg-gray-200 hover:bg-red-100 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all"><i className="fas fa-times text-[10px]"></i></button>
         </div>
-        <textarea value={criteriaForm.description} onChange={e => setCriteriaForm({ ...criteriaForm, description: e.target.value })} rows={2} className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-medium outline-none focus:border-blue-500 resize-none" placeholder="MÃ´ táº£ tiÃªu chÃ­..." />
+        <textarea value={criteriaForm.description} onChange={e => setCriteriaForm({ ...criteriaForm, description: e.target.value })} rows={2} className="w-full px-4 py-2.5 border-2 border-gray-200/30 rounded-lg text-sm font-medium outline-none focus:border-blue-500 resize-none" placeholder="MÃ´ táº£ tiÃªu chÃ­..." />
         <div className="flex gap-3 flex-wrap">
           <div className="flex gap-1.5">
-            <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: true })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.isHard ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-400 border-gray-200'}`}>Cá»©ng</button>
-            <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: false })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${!criteriaForm.isHard ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-400 border-gray-200'}`}>Cá»™ng</button>
+            <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: true })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${criteriaForm.isHard ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-400 border-gray-200/30'}`}>Cá»©ng</button>
+            <button onClick={() => setCriteriaForm({ ...criteriaForm, isHard: false })} className={`px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 transition-all ${!criteriaForm.isHard ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-400 border-gray-200/30'}`}>Cá»™ng</button>
           </div>
           {/* CÃ“ SQÄ / KHÃ”NG SQÄ: 2 checkbox Äá»˜C Láº¬P - cÃ³ thá»ƒ chá»n cáº£ hai cÃ¹ng lÃºc */}
           <div className="flex flex-col gap-1">
             <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest">HÃ¬nh thá»©c ná»™p minh chá»©ng <span className="text-blue-500">(chá»n má»™t hoáº·c cáº£ hai)</span>:</p>
             <div className="flex gap-2">
               <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 cursor-pointer transition-all select-none
-                ${criteriaForm.allowNoDecision ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-400'}`}>
+                ${criteriaForm.allowNoDecision ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-400 border-gray-200/30 hover:border-gray-400'}`}>
                 <input
                   type="checkbox"
                   className="w-3 h-3 accent-white"
@@ -1031,7 +1031,7 @@ const AdminDashboard: React.FC<{
                 <i className="fas fa-ban text-[8px]"></i> KhÃ´ng SQÄ
               </label>
               <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[8px] font-black uppercase border-2 cursor-pointer transition-all select-none
-                ${criteriaForm.hasDecisionNumber ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-400'}`}>
+                ${criteriaForm.hasDecisionNumber ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-400 border-gray-200/30 hover:border-gray-400'}`}>
                 <input
                   type="checkbox"
                   className="w-3 h-3 accent-white"
@@ -1055,15 +1055,15 @@ const AdminDashboard: React.FC<{
         </div>
         <div className="flex gap-1.5 flex-wrap">
           {LEVELS.map((lvl, i) => (
-            <div key={lvl} className="flex items-center gap-1 bg-white border rounded-md px-2 py-1">
+            <div key={lvl} className="flex items-center gap-1 bg-white border border-gray-200/30 rounded-md px-2 py-1">
               <span className="text-[7px] font-bold text-gray-400 w-16 truncate">{lvl}</span>
-              <input type="number" step="0.1" min="0" value={criteriaForm.levelPoints[LEVEL_KEYS[i]] || 0} onChange={e => setCriteriaForm({ ...criteriaForm, levelPoints: { ...criteriaForm.levelPoints, [LEVEL_KEYS[i]]: parseFloat(e.target.value) || 0 } })} className="w-12 text-center text-[10px] font-black text-orange-600 bg-white border border-orange-200 rounded outline-none focus:border-orange-500 py-0.5" />
+              <input type="number" step="0.1" min="0" value={criteriaForm.levelPoints[LEVEL_KEYS[i]] || 0} onChange={e => setCriteriaForm({ ...criteriaForm, levelPoints: { ...criteriaForm.levelPoints, [LEVEL_KEYS[i]]: parseFloat(e.target.value) || 0 } })} className="w-12 text-center text-[10px] font-black text-orange-600 bg-white border border-gray-200/30 border-orange-200 rounded outline-none focus:border-orange-500 py-0.5" />
               <span className="text-[7px] text-gray-300">Ä‘</span>
             </div>
           ))}
         </div>
         <div className="flex justify-end gap-2 pt-1">
-          <button onClick={() => setCriteriaForm(null)} className="px-4 py-2 border border-gray-200 text-gray-400 text-[9px] font-black uppercase rounded-lg hover:bg-gray-100 transition-all">Há»§y</button>
+          <button onClick={() => setCriteriaForm(null)} className="px-4 py-2 border border-gray-200/30 border-gray-200/30 text-gray-400 text-[9px] font-black uppercase rounded-lg hover:bg-gray-100 transition-all">Há»§y</button>
           <button
             onClick={saveCriteriaForm}
             disabled={!criteriaForm.description.trim() || (!criteriaForm.allowNoDecision && !criteriaForm.hasDecisionNumber)}
@@ -1082,8 +1082,8 @@ const AdminDashboard: React.FC<{
         <h2 className="text-lg font-black text-blue-900 uppercase">Danh sÃ¡ch tiÃªu chÃ­</h2>
       </div>
       {(Object.entries(managedCriteria) as [string, CriterionItem[]][]).map(([cat, subs]) => (
-        <div key={cat} className="bg-white border border-gray-100 rounded-2xl overflow-hidden mb-6">
-          <div className="bg-[#fcfdfe] px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div key={cat} className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-2xl overflow-hidden mb-6">
+          <div className="bg-[#fcfdfe] px-6 py-4 border-b border-gray-200/30/30 flex items-center justify-between">
             <h3 className="text-sm font-black text-blue-900 uppercase">{cat}</h3>
             <div className="flex items-center gap-3">
               <span className="text-[9px] font-bold text-gray-400">{subs.length} tiÃªu chÃ­</span>
@@ -1126,9 +1126,9 @@ const AdminDashboard: React.FC<{
                     </div>
                     <div className="flex gap-1.5 flex-wrap">
                       {LEVELS.map((lvl, i) => (
-                        <div key={lvl} className="flex items-center gap-1 bg-gray-50 border rounded-md px-2 py-1">
+                        <div key={lvl} className="flex items-center gap-1 bg-gray-50 border border-gray-200/30 rounded-md px-2 py-1">
                           <span className="text-[7px] font-bold text-gray-400 w-16 truncate">{lvl}</span>
-                          <input type="number" step="0.1" min="0" value={sub.levelPoints[LEVEL_KEYS[i]] || 0} onChange={e => { const val = parseFloat(e.target.value) || 0; setManagedCriteria(prev => ({ ...prev, [cat]: prev[cat].map(s => s.id === sub.id ? { ...s, levelPoints: { ...s.levelPoints, [LEVEL_KEYS[i]]: val } } : s) })); }} className="w-12 text-center text-[10px] font-black text-orange-600 bg-white border border-orange-200 rounded outline-none focus:border-orange-500 py-0.5" />
+                          <input type="number" step="0.1" min="0" value={sub.levelPoints[LEVEL_KEYS[i]] || 0} onChange={e => { const val = parseFloat(e.target.value) || 0; setManagedCriteria(prev => ({ ...prev, [cat]: prev[cat].map(s => s.id === sub.id ? { ...s, levelPoints: { ...s.levelPoints, [LEVEL_KEYS[i]]: val } } : s) })); }} className="w-12 text-center text-[10px] font-black text-orange-600 bg-white border border-gray-200/30 border-orange-200 rounded outline-none focus:border-orange-500 py-0.5" />
                           <span className="text-[7px] text-gray-300">Ä‘</span>
                         </div>
                       ))}
@@ -1147,13 +1147,13 @@ const AdminDashboard: React.FC<{
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-black text-blue-900 uppercase">Quáº£n lÃ½ ngÆ°á»i dÃ¹ng</h2>
-        <button onClick={handleAddUser} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
+        <button onClick={handleAddUser} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-gray-200/30 border-blue-950">
           <i className="fas fa-user-plus mr-1.5"></i>ThÃªm ngÆ°á»i dÃ¹ng
         </button>
       </div>
-      <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-[#fcfdfe] text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] border-b border-gray-100">
+          <thead className="bg-[#fcfdfe] text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] border-b border-gray-200/30/30">
             <tr><th className="px-6 py-4">Há» tÃªn</th><th className="px-6 py-4">Email</th><th className="px-6 py-4">Vai trÃ²</th><th className="px-6 py-4"></th></tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -1185,7 +1185,7 @@ const AdminDashboard: React.FC<{
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-black text-blue-900 uppercase">Quáº£n lÃ½ bÃ i viáº¿t</h2>
-        <button onClick={handleAddPost} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950">
+        <button onClick={handleAddPost} className="px-5 py-2.5 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-gray-200/30 border-blue-950">
           <i className="fas fa-plus mr-1.5"></i>ThÃªm bÃ i viáº¿t
         </button>
       </div>
@@ -1200,17 +1200,17 @@ const AdminDashboard: React.FC<{
           <div className="grid grid-cols-1 gap-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">TiÃªu Ä‘á» bÃ i viáº¿t</label>
-              <input type="text" value={articleForm.title} onChange={e => setArticleForm({ ...articleForm, title: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="Nháº­p tiÃªu Ä‘á»..." />
+              <input type="text" value={articleForm.title} onChange={e => setArticleForm({ ...articleForm, title: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold" placeholder="Nháº­p tiÃªu Ä‘á»..." />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ná»™i dung bÃ i viáº¿t</label>
-              <textarea value={articleForm.content} onChange={e => setArticleForm({ ...articleForm, content: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-medium h-48" placeholder="Nháº­p ná»™i dung chi tiáº¿t..." />
+              <textarea value={articleForm.content} onChange={e => setArticleForm({ ...articleForm, content: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-medium h-48" placeholder="Nháº­p ná»™i dung chi tiáº¿t..." />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">HÃ¬nh áº£nh bÃ i viáº¿t</label>
               <div className="flex gap-4 items-center">
                 <label className="flex-1 cursor-pointer">
-                  <div className="px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl hover:border-blue-900 hover:bg-white transition-all flex items-center justify-center gap-3">
+                  <div className="px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-200/30 rounded-xl hover:border-blue-900 hover:bg-white transition-all flex items-center justify-center gap-3">
                     <i className="fas fa-cloud-upload-alt text-gray-400"></i>
                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{articleForm.imageFile ? articleForm.imageFile.name : 'Chá»n áº£nh bÃ i viáº¿t'}</span>
                   </div>
@@ -1232,7 +1232,7 @@ const AdminDashboard: React.FC<{
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tráº¡ng thÃ¡i</label>
-              <select value={articleForm.status} onChange={e => setArticleForm({ ...articleForm, status: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold">
+              <select value={articleForm.status} onChange={e => setArticleForm({ ...articleForm, status: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none text-sm font-bold">
                 <option value="draft">Báº£n nhÃ¡p</option>
                 <option value="published">ÄÃ£ Ä‘Äƒng</option>
               </select>
@@ -1240,15 +1240,15 @@ const AdminDashboard: React.FC<{
           </div>
 
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
-            <button onClick={() => setArticleForm(null)} className="px-6 py-3 border text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Há»§y bá»</button>
-            <button onClick={handleSaveArticle} disabled={!articleForm.title} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all border border-blue-950">LÆ°u bÃ i viáº¿t</button>
+            <button onClick={() => setArticleForm(null)} className="px-6 py-3 border border-gray-200/30 text-gray-400 font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-gray-50">Há»§y bá»</button>
+            <button onClick={handleSaveArticle} disabled={!articleForm.title} className="px-8 py-3 bg-blue-900 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all border border-gray-200/30 border-blue-950">LÆ°u bÃ i viáº¿t</button>
           </div>
         </div>
       )}
 
       <div className="space-y-4">
         {posts.map(p => (
-          <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center justify-between transition-all hover:border-blue-100">
+          <div key={p.id} className="bg-white border border-gray-200/30 border-gray-200/30/30 rounded-2xl p-5 flex items-center justify-between transition-all hover:border-blue-100">
             <div className="flex items-center gap-4 flex-1">
               <div className="w-16 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border">
                 {p.image ? (
@@ -1265,7 +1265,7 @@ const AdminDashboard: React.FC<{
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => handleTogglePostStatus(p.id, p.status)} 
-                className={`text-[8px] font-black uppercase px-3 py-1 rounded-full border cursor-pointer hover:opacity-80 transition-all ${p.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}
+                className={`text-[8px] font-black uppercase px-3 py-1 rounded-full border border-gray-200/30 cursor-pointer hover:opacity-80 transition-all ${p.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200/30'}`}
               >
                 {p.status === 'published' ? 'ÄÃ£ Ä‘Äƒng' : 'Báº£n nhÃ¡p'}
               </button>
@@ -1290,7 +1290,7 @@ const AdminDashboard: React.FC<{
 
     return (
       <div className="fixed inset-0 z-[1200] bg-blue-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl w-full max-w-4xl border border-white/20 overflow-hidden animate-fade-up flex flex-col max-h-[90vh]">
+        <div className="bg-white rounded-3xl w-full max-w-4xl border border-gray-200/30 border-white/20 overflow-hidden animate-fade-up flex flex-col max-h-[90vh]">
           <div className="px-8 py-6 bg-blue-900 text-white flex justify-between items-center flex-shrink-0">
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight">Top 100 Há»“ sÆ¡ xuáº¥t sáº¯c</h3>
@@ -1301,7 +1301,7 @@ const AdminDashboard: React.FC<{
 
           <div className="flex-1 overflow-y-auto p-4">
             <table className="w-full text-left">
-              <thead className="sticky top-0 bg-[#fcfdfe] z-10 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
+              <thead className="sticky top-0 bg-[#fcfdfe] z-10 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-200/30/30">
                 <tr>
                   <th className="px-6 py-4 w-16">Háº¡ng</th>
                   <th className="px-6 py-4">Sinh viÃªn</th>
@@ -1327,7 +1327,7 @@ const AdminDashboard: React.FC<{
                     <td className="px-6 py-5 text-right">
                       <button 
                         onClick={() => { onSelectStudent(s.id); setIsReviewing(true); setIsTopExpanded(false); }}
-                        className="px-4 py-2 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-600 hover:text-white transition-all border border-blue-100 group-hover:border-blue-200"
+                        className="px-4 py-2 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-600 hover:text-white transition-all border border-gray-200/30 border-blue-100 group-hover:border-blue-200"
                       >
                         <i className="fas fa-eye mr-1.5"></i>Xem há»“ sÆ¡
                       </button>
@@ -1361,7 +1361,7 @@ const AdminDashboard: React.FC<{
   return (
     <div className="flex h-[calc(100vh-6rem)] overflow-hidden animate-fade-in font-sans">
       {/* Sidebar */}
-      <div className="w-64 bg-[#0a1628] flex-shrink-0 flex flex-col h-full border-r border-white-[0.02]">
+      <div className="w-64 bg-[#0a1628] flex-shrink-0 flex flex-col h-full border-r border-white/5">
         <div className="px-6 py-6 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-black text-sm">A</div>
@@ -1378,7 +1378,7 @@ const AdminDashboard: React.FC<{
               onClick={() => navigate(`/admin/${item.key}`)}
               className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-left transition-all text-[11px] font-bold
                 ${activeTab === item.key
-                  ? 'bg-blue-600/20 text-white border border-blue-500/20'
+                  ? 'bg-blue-600/20 text-white border border-gray-200/30 border-blue-500/20'
                   : 'text-blue-200/50 hover:bg-white/5 hover:text-blue-200'
                 }`}
             >
@@ -1395,7 +1395,7 @@ const AdminDashboard: React.FC<{
       {/* Main Content */}
       <div className="flex-1 bg-gray-50 flex flex-col h-full overflow-y-auto">
         {/* Top bar */}
-        <div className="bg-white px-8 py-5 border-b border-gray-100 flex items-center justify-between">
+        <div className="bg-white px-8 py-5 border-b border-gray-200/30/30 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-black text-blue-900 uppercase tracking-tight">{SIDEBAR_ITEMS.find(i => i.key === activeTab)?.label}</h1>
             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Há»‡ thá»‘ng XÃ©t duyá»‡t Sinh viÃªn 5 Tá»‘t</p>
@@ -1426,7 +1426,7 @@ const AdminDashboard: React.FC<{
                 <span className="text-[9px] font-bold text-blue-300/40 uppercase">Tá»•ng Ä‘iá»ƒm:</span>
                 <span className="text-orange-400 font-black text-sm">{selectedStudent.totalScore}</span>
               </div>
-              <button onClick={() => handleAction('Rejected')} className="px-4 py-2 border border-red-400/20 text-red-400 font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-red-500/20 transition-all">Tá»« chá»‘i</button>
+              <button onClick={() => handleAction('Rejected')} className="px-4 py-2 border border-gray-200/30 border-red-400/20 text-red-400 font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-red-500/20 transition-all">Tá»« chá»‘i</button>
               {getExplanationCount() > 0 && <button onClick={() => handleAction('Processing')} className="px-4 py-2 bg-orange-500/80 text-white font-black text-[9px] uppercase tracking-widest rounded-lg hover:bg-orange-500 transition-all">YC Giáº£i trÃ¬nh ({getExplanationCount()})</button>}
                <button 
                 onClick={() => handleAction('Approved')} 
@@ -1497,9 +1497,9 @@ const AdminDashboard: React.FC<{
                           }
                           return null;
                         })()}
-                        {pendingCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 border border-blue-400/50"></span>}
-                        {explainCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 border border-orange-400/50"></span>}
-                        {rejectCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-red-500 border border-red-400/50"></span>}
+                        {pendingCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 border border-gray-200/30 border-blue-400/50"></span>}
+                        {explainCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 border border-gray-200/30 border-orange-400/50"></span>}
+                        {rejectCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-red-500 border border-gray-200/30 border-red-400/50"></span>}
                         {evs.length > 0 && pendingCount === 0 && explainCount === 0 && rejectCount === 0 && <i className="fas fa-check-circle text-green-500 text-[10px]"></i>}
                       </div>
                     </button>
@@ -1535,7 +1535,7 @@ const AdminDashboard: React.FC<{
                           <h4 className="text-2xl font-black text-blue-900 uppercase font-formal tracking-tight">{cat}</h4>
                           <div className="flex items-center gap-4 mt-1">
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">XÃ¡c thá»±c thÃ´ng tin vÃ  minh chá»©ng bá»• sung</p>
-                            <div className="flex gap-3 bg-white/50 px-3 py-1 rounded-lg border border-gray-100 text-[7px] font-black uppercase tracking-tighter">
+                            <div className="flex gap-3 bg-white/50 px-3 py-1 rounded-lg border border-gray-200/30 border-gray-200/30/30 text-[7px] font-black uppercase tracking-tighter">
                                <div className="flex items-center gap-1.5 text-red-500"><i className="fas fa-exclamation-triangle"></i> Cá»©ng: Pháº£i Ä‘áº¡t</div>
                                <div className="flex items-center gap-1.5 text-blue-500"><i className="fas fa-plus-circle"></i> Cá»™ng: ThÃªm Ä‘iá»ƒm</div>
                             </div>
@@ -1543,12 +1543,12 @@ const AdminDashboard: React.FC<{
                         </div>
                         <div className="flex gap-3 items-center">
                           {fieldKey && (
-                            <div className={`px-4 py-2 rounded-xl flex items-center gap-3 border-2 transition-all ${verification?.status === 'Approved' ? 'bg-green-50 border-green-200' : verification?.status === 'NeedsExplanation' ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-100'}`}>
+                            <div className={`px-4 py-2 rounded-xl flex items-center gap-3 border-2 transition-all ${verification?.status === 'Approved' ? 'bg-green-50 border-green-200' : verification?.status === 'NeedsExplanation' ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-200/30/30'}`}>
                               <span className="text-[9px] font-black text-gray-400 uppercase">{contextName}: <span className="text-orange-600 text-sm ml-2">{dataValue}</span></span>
                             </div>
                           )}
                           {cat === CriterionType.ETHICS && selectedStudent.isPartyMember && (
-                            <div className={`px-4 py-2 rounded-xl flex items-center gap-3 border-2 transition-all ${selectedStudent.verifications.partyMember?.status === 'Approved' ? 'bg-green-50 border-green-200' : selectedStudent.verifications.partyMember?.status === 'NeedsExplanation' ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-100'}`}>
+                            <div className={`px-4 py-2 rounded-xl flex items-center gap-3 border-2 transition-all ${selectedStudent.verifications.partyMember?.status === 'Approved' ? 'bg-green-50 border-green-200' : selectedStudent.verifications.partyMember?.status === 'NeedsExplanation' ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-200/30/30'}`}>
                               <span className="text-[9px] font-black text-gray-400 uppercase">Äá»‘i tÆ°á»£ng: <span className="text-blue-600 text-[10px] ml-2 font-black">Äáº¢NG VIÃŠN</span></span>
                             </div>
                           )}
@@ -1566,7 +1566,7 @@ const AdminDashboard: React.FC<{
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
                                     <p className="text-[8px] font-black text-blue-400 uppercase tracking-widest">{cName} ({dVal})</p>
-                                    <span className="px-1.5 py-0.5 bg-red-50 text-red-500 text-[6px] font-black uppercase rounded border border-red-100 shrink-0">Báº¯t buá»™c</span>
+                                    <span className="px-1.5 py-0.5 bg-red-50 text-red-500 text-[6px] font-black uppercase rounded border border-gray-200/30 border-red-100 shrink-0">Báº¯t buá»™c</span>
                                   </div>
                                   <p className="text-sm text-gray-700 font-bold leading-relaxed italic">"{ver.explanation || '(KhÃ´ng cÃ³ ná»™i dung vÄƒn báº£n)'}"</p>
                                   {ver.explanationDate && (
@@ -1579,22 +1579,22 @@ const AdminDashboard: React.FC<{
                                 {ver.fileUrl && (
                                   <button 
                                     onClick={() => window.open(formatUrl(ver.fileUrl), '_blank')}
-                                    className="px-4 py-2 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-blue-950 flex items-center gap-2"
+                                    className="px-4 py-2 bg-blue-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-orange-600 transition-all border border-gray-200/30 border-blue-950 flex items-center gap-2"
                                   >
                                     <i className="fas fa-file-download"></i> Xem file
                                   </button>
                                 )}
                               </div>
                               {ver.evidenceDate && (
-                                <div className="text-[10px] text-purple-600 font-bold bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-100 mb-3 w-fit flex items-center gap-2">
+                                <div className="text-[10px] text-purple-600 font-bold bg-purple-50 px-2.5 py-1 rounded-lg border border-gray-200/30 border-purple-100 mb-3 w-fit flex items-center gap-2">
                                   <i className="far fa-calendar-alt"></i>
                                   Ngáº£y cáº¥p/thá»±c hiá»‡n: {ver.evidenceDate}
                                 </div>
                               )}
                               <div className="flex gap-2 justify-end border-t border-blue-100 pt-4">
-                                 <button onClick={() => handleManualDataVerify('Approved', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'Approved' ? 'bg-green-600 text-white' : 'bg-white text-green-600 border border-green-200 hover:bg-green-50'}`}>Äáº¡t</button>
-                                 <button onClick={() => handleManualDataVerify('NeedsExplanation', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'NeedsExplanation' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500 border border-orange-200 hover:bg-orange-50'}`}>Cáº§n giáº£i trÃ¬nh</button>
-                                 <button onClick={() => handleManualDataVerify('Rejected', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'Rejected' ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-200 hover:bg-red-50'}`}>KhÃ´ng Ä‘áº¡t</button>
+                                 <button onClick={() => handleManualDataVerify('Approved', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'Approved' ? 'bg-green-600 text-white' : 'bg-white text-green-600 border border-gray-200/30 border-green-200 hover:bg-green-50'}`}>Äáº¡t</button>
+                                 <button onClick={() => handleManualDataVerify('NeedsExplanation', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'NeedsExplanation' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500 border border-gray-200/30 border-orange-200 hover:bg-orange-50'}`}>Cáº§n giáº£i trÃ¬nh</button>
+                                 <button onClick={() => handleManualDataVerify('Rejected', fKey, cName)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${ver?.status === 'Rejected' ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-gray-200/30 border-red-200 hover:bg-red-50'}`}>KhÃ´ng Ä‘áº¡t</button>
                               </div>
                             </div>
                           );
@@ -1623,14 +1623,14 @@ const AdminDashboard: React.FC<{
                            const showQty = (ev.qty !== undefined && ev.qty > 1) || (criterion?.minQty !== undefined && criterion.minQty > 0) || ev.subCriterionId === 'vol_hard_2';
 
                           return (
-                            <div key={ev.id} className={`group bg-white p-5 border rounded-2xl flex gap-6 items-center transition-all ${ev.status === 'Approved' ? 'border-green-500/30 bg-green-50/20' : ev.status === 'Rejected' ? 'border-red-500/30 bg-red-50/20' : ev.status === 'NeedsExplanation' ? 'border-orange-500/40 bg-orange-50/30' : 'border-gray-200'}`}>
+                            <div key={ev.id} className={`group bg-white p-5 border border-gray-200/30 rounded-2xl flex gap-6 items-center transition-all ${ev.status === 'Approved' ? 'border-green-500/30 bg-green-50/20' : ev.status === 'Rejected' ? 'border-red-500/30 bg-red-50/20' : ev.status === 'NeedsExplanation' ? 'border-orange-500/40 bg-orange-50/30' : 'border-gray-200/30'}`}>
                               {/* Image Preview */}
                               {ev.fileUrl && (ev.fileUrl.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/) || ev.fileName.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/)) ? (
-                                <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden border cursor-pointer">
+                                <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden border border-gray-200/30 cursor-pointer">
                                   <img src={ev.fileUrl} alt={ev.name} className="w-full h-full object-cover hover:scale-105 transition-transform" onClick={() => window.open(ev.fileUrl, '_blank')} />
                                 </div>
                               ) : (
-                                <div className="w-20 h-20 flex-shrink-0 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 text-blue-400">
+                                <div className="w-20 h-20 flex-shrink-0 bg-blue-50 rounded-xl flex items-center justify-center border border-gray-200/30 border-blue-100 text-blue-400">
                                   <i className="fas fa-file-pdf text-2xl"></i>
                                 </div>
                               )}
@@ -1641,11 +1641,11 @@ const AdminDashboard: React.FC<{
                                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                                        <p className="text-[8px] font-black text-blue-600 uppercase tracking-widest truncate">{ev.subCriterionName}</p>
                                        {ev.isHardCriterion ? (
-                                         <span className="px-1 py-0.5 bg-red-100 text-red-600 text-[6px] font-black uppercase rounded border border-red-200 flex items-center gap-1 shrink-0" title="Báº¯t buá»™c Ä‘áº¡t">
+                                         <span className="px-1 py-0.5 bg-red-100 text-red-600 text-[6px] font-black uppercase rounded border border-gray-200/30 border-red-200 flex items-center gap-1 shrink-0" title="Báº¯t buá»™c Ä‘áº¡t">
                                            <i className="fas fa-exclamation-triangle"></i> Cá»©ng
                                          </span>
                                        ) : (
-                                         <span className="px-1 py-0.5 bg-blue-100 text-blue-600 text-[6px] font-black uppercase rounded border border-blue-200 flex items-center gap-1 shrink-0" title="Cá»™ng Ä‘iá»ƒm">
+                                         <span className="px-1 py-0.5 bg-blue-100 text-blue-600 text-[6px] font-black uppercase rounded border border-gray-200/30 border-blue-200 flex items-center gap-1 shrink-0" title="Cá»™ng Ä‘iá»ƒm">
                                            <i className="fas fa-plus-circle"></i> Cá»™ng
                                          </span>
                                        )}
@@ -1681,7 +1681,7 @@ const AdminDashboard: React.FC<{
                                    )}
                                     {ev.evidenceDate && (
                                       <>
-                                        <span className="text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100 flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+                                        <span className="text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-gray-200/30 border-purple-100 flex items-center gap-1.5 shrink-0 whitespace-nowrap">
                                           <i className="far fa-calendar-alt"></i>
                                           {ev.evidenceDate}
                                         </span>
@@ -1691,7 +1691,7 @@ const AdminDashboard: React.FC<{
                                    <button onClick={() => window.open(ev.fileUrl, '_blank')} className="text-blue-500 hover:text-orange-500 transition-colors flex items-center gap-1"><i className="fas fa-eye"></i> Xem file</button>
                                  </div>
                                {ev.studentExplanation && (
-                                 <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl relative overflow-hidden animate-fade-in ">
+                                 <div className="mt-4 p-4 bg-blue-50 border border-gray-200/30 border-blue-200 rounded-xl relative overflow-hidden animate-fade-in ">
                                    <div className="absolute top-0 right-0 px-2 py-0.5 bg-blue-600 text-white text-[6px] font-black uppercase rounded-bl-lg">Giáº£i trÃ¬nh SV</div>
                                    <p className="text-[11px] font-bold text-gray-800 leading-relaxed italic"><i className="fas fa-comment-dots mr-2 text-blue-500"></i>"{ev.studentExplanation}"</p>
                                    {ev.explanationDate && (
@@ -1706,14 +1706,14 @@ const AdminDashboard: React.FC<{
                             </div>
 
                             <div className="flex flex-col gap-1">
-                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Approved')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Approved' ? 'bg-green-600 text-white border border-green-500' : 'bg-gray-50 text-green-600 hover:bg-green-100'}`} title="Äáº¡t"><i className="fas fa-check text-[10px]"></i></button>
-                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'NeedsExplanation')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'NeedsExplanation' ? 'bg-orange-500 text-white border border-orange-400' : 'bg-gray-50 text-orange-500 hover:bg-orange-100'}`} title="YÃªu cáº§u giáº£i trÃ¬nh"><i className="fas fa-comment-dots text-[10px]"></i></button>
-                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Rejected')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Rejected' ? 'bg-red-600 text-white border border-red-500' : 'bg-gray-50 text-red-600 hover:bg-red-100'}`} title="KhÃ´ng Ä‘áº¡t"><i className="fas fa-times text-[10px]"></i></button>
+                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Approved')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Approved' ? 'bg-green-600 text-white border border-gray-200/30 border-green-500' : 'bg-gray-50 text-green-600 hover:bg-green-100'}`} title="Äáº¡t"><i className="fas fa-check text-[10px]"></i></button>
+                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'NeedsExplanation')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'NeedsExplanation' ? 'bg-orange-500 text-white border border-gray-200/30 border-orange-400' : 'bg-gray-50 text-orange-500 hover:bg-orange-100'}`} title="YÃªu cáº§u giáº£i trÃ¬nh"><i className="fas fa-comment-dots text-[10px]"></i></button>
+                              <button onClick={() => handleEvidenceAction(cat, ev.id, 'Rejected')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${ev.status === 'Rejected' ? 'bg-red-600 text-white border border-gray-200/30 border-red-500' : 'bg-gray-50 text-red-600 hover:bg-red-100'}`} title="KhÃ´ng Ä‘áº¡t"><i className="fas fa-times text-[10px]"></i></button>
                             </div>
                           </div>
                         );
                       })) : (
-                          <div className="py-20 text-center space-y-4 bg-white rounded-3xl border border-dashed border-gray-200">
+                          <div className="py-20 text-center space-y-4 bg-white rounded-3xl border border-gray-200/30 border-dashed border-gray-200/30">
                              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-200 text-2xl"><i className="fas fa-folder-open"></i></div>
                              <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest">KhÃ´ng cÃ³ minh chá»©ng bá»• sung</p>
                           </div>
@@ -1730,7 +1730,7 @@ const AdminDashboard: React.FC<{
       {/* User Management Modal */}
       {userForm.show && (
         <div className="fixed inset-0 z-[1200] bg-blue-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-xl border border-gray-100 overflow-hidden animate-fade-up">
+          <div className="bg-white rounded-3xl w-full max-w-xl border border-gray-200/30 border-gray-200/30/30 overflow-hidden animate-fade-up">
             <div className="px-8 py-6 bg-blue-900 text-white flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-black uppercase tracking-tight">ThÃªm ngÆ°á»i dÃ¹ng má»›i</h3>
@@ -1749,7 +1749,7 @@ const AdminDashboard: React.FC<{
                   <button
                     key={r.key}
                     onClick={() => setUserForm({ ...userForm, data: { ...userForm.data, VaiTro: r.key } })}
-                    className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${userForm.data.VaiTro === r.key ? 'bg-white text-blue-900 border border-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
+                    className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${userForm.data.VaiTro === r.key ? 'bg-white text-blue-900 border border-gray-200/30 border-gray-200/30' : 'text-gray-400 hover:text-gray-600'}`}
                   >
                     {r.label}
                   </button>
@@ -1763,7 +1763,7 @@ const AdminDashboard: React.FC<{
                     type="text"
                     value={userForm.data.TenDangNhap}
                     onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, TenDangNhap: e.target.value } })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 border-gray-200/30 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                     placeholder="VD: 20123456"
                   />
                 </div>
@@ -1773,7 +1773,7 @@ const AdminDashboard: React.FC<{
                     type="password"
                     value={userForm.data.MatKhau}
                     onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, MatKhau: e.target.value } })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 border-gray-200/30 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                     placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   />
                 </div>
@@ -1785,7 +1785,7 @@ const AdminDashboard: React.FC<{
                   type="text"
                   value={userForm.data.HoTen}
                   onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, HoTen: e.target.value } })}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-bold focus:border-blue-900 outline-none transition-all uppercase"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/30/30 rounded-xl text-sm font-bold focus:border-blue-900 outline-none transition-all uppercase"
                   placeholder="VD: NGUYá»„N VÄ‚N A"
                 />
               </div>
@@ -1796,7 +1796,7 @@ const AdminDashboard: React.FC<{
                   type="email"
                   value={userForm.data.Email}
                   onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, Email: e.target.value } })}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-sm font-medium focus:border-blue-900 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/30/30 rounded-xl text-sm font-medium focus:border-blue-900 outline-none transition-all"
                   placeholder={userForm.data.VaiTro === 'SinhVien' ? 'Äá»ƒ trá»‘ng náº¿u dÃ¹ng email máº·c Ä‘á»‹nh' : 'VD: admin@due.udn.vn'}
                 />
               </div>
@@ -1809,7 +1809,7 @@ const AdminDashboard: React.FC<{
                       type="text"
                       value={userForm.data.Lop}
                       onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, Lop: e.target.value } })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 border-gray-200/30 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                       placeholder="VD: 47K12.1"
                     />
                   </div>
@@ -1819,7 +1819,7 @@ const AdminDashboard: React.FC<{
                       type="text"
                       value={userForm.data.Khoa}
                       onChange={e => setUserForm({ ...userForm, data: { ...userForm.data, Khoa: e.target.value } })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200/30 border-gray-200/30 rounded-xl text-sm font-bold focus:border-blue-600 outline-none transition-all"
                       placeholder="VD: Khoa CÃ´ng nghá»‡ thÃ´ng tin"
                     />
                   </div>
