@@ -698,13 +698,6 @@ const AdminDashboard: React.FC<{
     const processing = students.filter(s => s.status === 'Processing').length;
     const rejected = students.filter(s => s.status === 'Rejected').length;
 
-    // Faculty breakdown
-    const faculties = Array.from(new Set(students.map(s => s.faculty)));
-    const facultyStats = faculties.map(f => {
-      const sInF = students.filter(s => s.faculty === f);
-      const appInF = sInF.filter(s => s.status === 'Approved').length;
-      return { name: f, total: sInF.length, approved: appInF };
-    });
 
     // Top students: Only show fully APPROVED profiles
     const topStudents = [...students]
@@ -731,40 +724,10 @@ const AdminDashboard: React.FC<{
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white border rounded-xl overflow-hidden">
-            <div className="px-6 py-5 border-b bg-gray-50/50 flex justify-between items-center">
-              <h3 className="text-xs font-black text-blue-900 uppercase tracking-[0.2em]">Thống kê theo đơn vị</h3>
-              <i className="fas fa-university text-gray-300"></i>
-            </div>
-            <div className="p-0 overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-white border-b text-[8px] font-black uppercase text-gray-400 tracking-widest">
-                  <tr><th className="px-6 py-4">Khoa/Đơn vị</th><th className="px-6 py-4 text-center">Hồ sơ</th><th className="px-6 py-4 text-center">Đã duyệt</th><th className="px-6 py-4 text-center">Tỷ lệ</th></tr>
-                </thead>
-                <tbody className="divide-y">
-                  {facultyStats.map((f, i) => (
-                    <tr key={i} className="hover:bg-blue-50/30">
-                      <td className="px-6 py-4 text-[10px] font-black text-blue-900 uppercase">{f.name}</td>
-                      <td className="px-6 py-4 text-center text-sm font-bold text-gray-500">{f.total}</td>
-                      <td className="px-6 py-4 text-center text-sm font-bold text-green-600">{f.approved}</td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex items-center gap-3">
-                          <span className="text-[10px] font-black text-blue-900">{Math.round((f.approved / f.total) * 100)}%</span>
-                          <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden min-w-[60px]">
-                            <div className="h-full bg-blue-500" style={{ width: `${(f.approved / f.total) * 100}%` }}></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 gap-8">
 
-          <div className="bg-white border rounded-xl overflow-hidden">
-            <div className="px-6 py-5 border-b bg-gray-50/50 flex justify-between items-center">
+          <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+            <div className="px-6 py-5 border-b border-gray-100 bg-[#fcfdfe] flex justify-between items-center">
               <h3 className="text-xs font-black text-blue-900 uppercase tracking-[0.2em]">Top hồ sơ xuất sắc</h3>
               <button 
                 onClick={() => setIsTopExpanded(true)}
