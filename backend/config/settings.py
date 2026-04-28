@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_filters',
+    'drf_spectacular',
     # Local apps
     'accounts',
     'students',
@@ -110,6 +111,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# ── Swagger / API Docs (drf-spectacular) ─────────
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Hệ thống Sinh Viên 5 Tốt - API Documentation',
+    'DESCRIPTION': 'Tài liệu mô tả toàn bộ các API của hệ thống đánh giá Sinh viên 5 tốt.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # ── JWT ─────────────────────────────────────────
