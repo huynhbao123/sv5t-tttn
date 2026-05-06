@@ -249,28 +249,62 @@ class ForgotPasswordView(APIView):
             'your-gmail' not in raw_pass
         )
 
+        subject = '🔐 Đặt lại mật khẩu - Hệ thống Sinh viên 5 Tốt'
+        message = (
+            f"Xin chào,\n\n"
+            f"Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản: {user.TenDangNhap}\n\n"
+            f"Nhấn vào liên kết dưới đây để đặt mật khẩu mới (có hiệu lực trong 15 phút):\n\n"
+            f"{reset_link}\n\n"
+            f"Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\n"
+            f"Trân trọng,\nHệ thống Sinh viên 5 Tốt - ĐH Kinh tế - ĐHĐN"
+        )
+
+        # Ưu tiên dùng Resend API nếu có cấu hình
+        resend_api_key = getattr(settings, 'RESEND_API_KEY', '')
+        if resend_api_key:
+            import requests
+            print(f"[ForgotPassword] Using Resend API for {email}")
+            resend_url = "https://api.resend.com/emails"
+            headers = {
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            }
+            # Với tài khoản chưa verify domain, Resend bắt dùng 'onboarding@resend.dev'
+            payload = {
+                "from": "SV5T System <onboarding@resend.dev>",
+                "to": [email],
+                "subject": subject,
+                "text": message
+            }
+            try:
+                resp = requests.post(resend_url, headers=headers, json=payload, timeout=10)
+                if resp.status_code in [200, 201]:
+                    return Response({
+                        'detail': f'Email đặt lại mật khẩu đã được gửi qua hệ thống Resend đến {email}.',
+                    }, status=status.HTTP_200_OK)
+                else:
+                    print(f"[ForgotPassword] Resend error: {resp.text}")
+                    return Response({
+                        'detail': 'Hệ thống Resend từ chối gửi email. (Có thể do email nhận chưa được xác thực)',
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except Exception as e:
+                print(f"[ForgotPassword] Resend request failed: {e}")
+                return Response({
+                    'detail': 'Không thể kết nối đến máy chủ email Resend.',
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Nếu không có Resend API Key, quay lại dùng SMTP truyền thống
         if email_configured:
-            # Gửi email thật (nền)
-            subject = '🔐 Đặt lại mật khẩu - Hệ thống Sinh viên 5 Tốt'
-            message = (
-                f"Xin chào,\n\n"
-                f"Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản: {user.TenDangNhap}\n\n"
-                f"Nhấn vào liên kết dưới đây để đặt mật khẩu mới (có hiệu lực trong 15 phút):\n\n"
-                f"{reset_link}\n\n"
-                f"Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.\n\n"
-                f"Trân trọng,\nHệ thống Sinh viên 5 Tốt - ĐH Kinh tế - ĐHĐN"
-            )
             try:
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
                 print(f"[ForgotPassword] Email sent to {email}")
-                # Email gửi OK → thông báo kiểm tra hộp thư (KHÔNG trả về link trực tiếp nữa)
                 return Response({
                     'detail': f'Email đặt lại mật khẩu đã gửi đến {email}. Kiểm tra hộp thư và Spam nhé!',
                 }, status=status.HTTP_200_OK)
             except Exception as e:
                 print(f"[ForgotPassword] Email send error: {e}")
                 return Response({
-                    'detail': 'Hệ thống gặp sự cố khi gửi email. Vui lòng thử lại sau hoặc liên hệ quản trị viên.',
+                    'detail': 'Hệ thống gặp sự cố khi gửi email SMTP. Vui lòng thử lại sau.',
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             print(f"[ForgotPassword] SMTP not configured.")
