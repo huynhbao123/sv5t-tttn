@@ -269,9 +269,9 @@ class ForgotPasswordView(APIView):
                 "Authorization": f"Bearer {resend_api_key}",
                 "Content-Type": "application/json"
             }
-            # Với tài khoản chưa verify domain, Resend bắt dùng 'onboarding@resend.dev'
+            # Với tên miền đã verify, dùng địa chỉ noreply chính chủ
             payload = {
-                "from": "SV5T System <onboarding@resend.dev>",
+                "from": "Hệ thống Sinh viên 5 Tốt <noreply@sinhvien5tot.site>",
                 "to": [email],
                 "subject": subject,
                 "text": message
