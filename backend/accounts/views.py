@@ -269,18 +269,14 @@ class ForgotPasswordView(APIView):
                 }, status=status.HTTP_200_OK)
             except Exception as e:
                 print(f"[ForgotPassword] Email send error: {e}")
-                # Gửi thất bại → trả link trực tiếp
                 return Response({
-                    'detail': 'Không thể gửi email. Hãy dùng liên kết bên dưới để đặt lại mật khẩu:',
-                    'reset_link': reset_link,
-                }, status=status.HTTP_200_OK)
+                    'detail': 'Hệ thống gặp sự cố khi gửi email. Vui lòng thử lại sau hoặc liên hệ quản trị viên.',
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            # SMTP chưa cấu hình → luôn trả link trực tiếp
-            print(f"[ForgotPassword] Demo mode. Reset link: {reset_link}")
+            print(f"[ForgotPassword] SMTP not configured.")
             return Response({
-                'detail': 'Liên kết đặt lại mật khẩu đã được tạo. Hãy bấm vào liên kết bên dưới:',
-                'reset_link': reset_link,
-            }, status=status.HTTP_200_OK)
+                'detail': 'Chức năng gửi email chưa được cấu hình. Vui lòng liên hệ quản trị viên hệ thống.',
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 class ResetPasswordView(APIView):
